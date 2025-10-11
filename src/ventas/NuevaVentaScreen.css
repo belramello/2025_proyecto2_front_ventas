@@ -1,0 +1,115 @@
+/* --- Estilos generales para las tablas de NuevaVentaScreen --- */
+
+.table-main {
+  background-color: #ffffff; /* Fondo blanco para la tabla principal */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* --- Tablas dentro del resumen de venta (card) --- */
+.table-summary {
+  background-color: transparent !important;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+}
+
+.table-summary th,
+.table-summary td {
+  background-color: transparent !important;
+  border: none;
+  padding: 6px 10px;
+  color: #333;
+}
+
+/* El encabezado más fuerte */
+.table-summary thead th {
+  font-weight: bold;
+  color: #222;
+}
+
+/* Total en negrita */
+.table-summary .fw-bold td {
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* --- Contenedor del input de búsqueda --- */
+.product-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-search input {
+  width: 25%;
+  min-width: 160px;
+}
+
+/* --- Ajustes de tabla principal --- */
+.table-main th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table-main td,
+.table-main th {
+  vertical-align: middle;
+  text-align: center;
+}
+/* --- Título y descripción de la pantalla --- */
+.titulo-nueva-venta {
+  margin-left: 2rem;
+  margin-top: 0.5rem;
+}
+
+.descripcion-nueva-venta {
+  margin-left: 2rem;
+  color: #555;
+}
+
+/* --- Botón eliminar producto --- */
+.btn-eliminar-producto {
+  padding: 2px 6px;
+  font-size: 14px;
+}
+
+/* --- Contenedor del input de búsqueda --- */
+.contenedor-busqueda {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-codigo {
+  width: 25%;
+  min-width: 160px;
+}
+
+.btn-buscar {
+  min-width: 100px;
+}
+
+/* --- Card del resumen --- */
+.resumen-venta-card {
+  border-radius: 10px;
+}
+
+.titulo-resumen {
+  text-align: center;
+}
+
+/* --- Select de medio de pago --- */
+.select-medio-pago {
+  cursor: pointer;
+}
+
+/* --- Botón principal --- */
+.btn-registrar-venta {
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-registrar-venta:hover {
+  transform: scale(1.02);
+}
