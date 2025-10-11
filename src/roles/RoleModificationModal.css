@@ -1,0 +1,55 @@
+/* Fondo oscuro detrás del modal */
+.custom-modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1040;
+}
+
+/* Contenedor general del modal */
+.custom-modal-container {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1050;
+}
+
+/* Centrado del modal */
+.custom-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo del título */
+.custom-modal-title {
+  font-size: 24px;
+}
+
+/* Estilos de la tabla */
+.custom-table-container {
+  text-align: center;
+  margin-left: 3rem; /* equivale a ms-5 */
+  margin-right: 3rem; /* equivale a me-5 */
+}
+
+/* Anchos de columnas */
+.custom-col-small {
+  width: 5%;
+}
+
+.custom-col-medium {
+  width: 25%;
+}
+
+.custom-col-large {
+  width: 45%;
+  text-align: left;
+}
+
+/* Sombra del contenido */
+.custom-modal-content {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border: none;
+}

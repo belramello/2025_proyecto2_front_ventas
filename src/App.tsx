@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import VentasScreen from "./ventas/VentasScreen";
 import NuevaVentaScreen from "./ventas/NuevaVentaScreen";
+import UsuariosScreen from "./roles/UsuariosScreen";
 function App() {
   return (
     <BrowserRouter>
@@ -24,6 +25,15 @@ function App() {
             <>
               <NavBar />
               <NuevaVentaScreen />
+            </>
+          }
+        />
+        <Route
+          path="/usuarios"
+          element={
+            <>
+              <NavBar />
+              <UsuariosScreen />
             </>
           }
         />

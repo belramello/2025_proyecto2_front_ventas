@@ -1,0 +1,32 @@
+.usuarios-screen-container {
+  margin: 0 3rem;
+  margin-top: 1.5rem;
+}
+
+.usuarios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titulo-usuarios {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.subtitulo-usuarios {
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+/* Botón personalizado tipo “outline purple” */
+.btn-outline-purple {
+  color: var(--bs-purple);
+  border: 2px solid var(--bs-indigo);
+  transition: all 0.3s ease;
+}
+
+.btn-outline-purple:hover {
+  background-color: var(--bs-indigo);
+  color: white;
+}
