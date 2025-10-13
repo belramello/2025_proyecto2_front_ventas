@@ -1,26 +1,31 @@
-import { createContext, useState, useEffect } from 'react';
-import { eliminarTokens, obtenerToken } from '../utils/storage';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
+import { eliminarTokens, obtenerToken } from "../utils/storage";
 
-// Definición de la estructura del payload del JWT
+// Estructura del payload del JWT
 interface JwtPayload {
   exp?: number;
 }
 
-// Función para verificar si un token JWT es válido (no expirado)
-const isValidJwt = ( token: string | null ): boolean => {
+// Función para verificar si un JWT no ha expirado
+const isValidJwt = (token: string | null): boolean => {
   if (!token) return false;
-  
+
   try {
-    const payload = JSON.parse(atob(token.split('.')[1])) as JwtPayload;
-    if (!payload.exp) return false;
-
-    return payload.exp * 1000 > Date.now();
-  } catch(error) {
-    console.error('Error decodificando el token JWT:', error);
+    const payload = JSON.parse(atob(token.split(".")[1])) as JwtPayload;
+    return payload.exp ? payload.exp * 1000 > Date.now() : false;
+  } catch (error) {
+    console.error("Error decodificando el JWT:", error);
+    return false;
   }
-  return false;
-}
+};
 
+// Estructura del contexto
 export interface AuthContextType {
   isAuth: boolean;
   nombre: string | null;
@@ -29,10 +34,16 @@ export interface AuthContextType {
   logout: () => void;
 }
 
-// Creación del contexto de autenticación
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Crear contexto
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
-export const AuthProvider = ({children}): {children: React.ReactNode} => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuth, setIsAuth] = useState(false);
   const [nombre, setNombre] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +52,7 @@ export const AuthProvider = ({children}): {children: React.ReactNode} => {
     const checkAuth = () => {
       setIsLoading(true);
       const token = obtenerToken();
-      const storedNombre = localStorage.getItem('nombre');
+      const storedNombre = localStorage.getItem("nombre");
 
       if (isValidJwt(token) && storedNombre) {
         setIsAuth(true);
@@ -73,4 +84,11 @@ export const AuthProvider = ({children}): {children: React.ReactNode} => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+// Hook personalizado para usar el contexto fácilmente
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth debe usarse dentro de AuthProvider");
+  return context;
 };
