@@ -1,7 +1,7 @@
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  user: {
+  usuario: {
     id: number;
     nombre: string;
     email: string;
