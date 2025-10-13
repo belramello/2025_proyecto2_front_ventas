@@ -23,7 +23,7 @@ export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) 
     if (storedUser) {
       const user = JSON.parse(storedUser);
       if (user.rol !== requiredRole) {
-        return <Navigate to="/not-authorized" replace />;
+        return <Navigate to="/login" replace />;
       }
     }
   }
