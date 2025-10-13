@@ -25,6 +25,7 @@ const LoginPage = () => {
       guardarToken(data.accessToken, data.refreshToken, data.usuario.nombre);
       login(data.usuario.nombre);
       navigate("/productos");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Error de autenticación. Por favor, verifica tus credenciales.');
     } finally {
