@@ -1,15 +1,15 @@
 import axios from "axios";
+import type { LoginCredentials } from "./interfaces/login-credentials.interface";
+import type { LoginResponse } from "./interfaces/login-response.interface";
 
 const API_URL = "http://localhost:3000/auth";
 
-export const loginRequest = async (credentials) => {
+export const loginRequest = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   try {
-    const { data } = await axios.post(`${API_URL}/login`, credentials, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
-    });
-    return data; // { access_token, refresh_token, user }
+    const response = await axios.post<LoginResponse>(`${API_URL}/login`, credentials);
+    return response.data;
   } catch (error) {
-    throw error || { message: "Error de conexión" };
+    console.error("Error durante el login:", error);
+    throw error;
   }
 };
