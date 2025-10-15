@@ -10,6 +10,8 @@ import Pagination from "../components/Pagination";
 import type { MedioDePago } from "../types/MedioDePagoType";
 import { formatFecha, formatHora } from "../utils/formatDate";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+// ...existing code...
 
 const VentasScreen = () => {
   const navigate = useNavigate();
@@ -17,17 +19,20 @@ const VentasScreen = () => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchVentas = useCallback(async (page: number) => {
+  const fetchVentas = useCallback(async (pageNumber: number) => {
     setLoading(true);
+    setError(null);
     try {
-      const data = await VentasService.getVentas(page);
+      const data = await VentasService.getVentas(pageNumber);
       console.log(data);
       setVentas(data.ventas);
       setLastPage(data.lastPage);
       setPage(data.page);
     } catch (err) {
       console.error("Error cargando ventas:", err);
+      setError("Error cargando ventas. Intentá de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -36,6 +41,10 @@ const VentasScreen = () => {
   useEffect(() => {
     fetchVentas(page);
   }, [page]);
+
+  const handleRetry = () => {
+    fetchVentas(page);
+  };
 
   return (
     <div>
@@ -49,7 +58,9 @@ const VentasScreen = () => {
       />
       ;
       <div className="table-responsive ms-4 me-4" style={{ marginTop: "10px" }}>
-        {loading ? (
+        {error ? (
+          <ErrorMessage message={error} onRetry={handleRetry} />
+        ) : loading ? (
           <LoadingSpinner />
         ) : ventas.length === 0 ? (
           <p className="text-center mt-4">No hay ventas registradas.</p>
@@ -92,7 +103,7 @@ const VentasScreen = () => {
       <Pagination
         currentPage={page}
         lastPage={lastPage}
-        onPageChange={(newPage) => fetchVentas(newPage)}
+        onPageChange={(newPage) => setPage(newPage)}
       />
     </div>
   );

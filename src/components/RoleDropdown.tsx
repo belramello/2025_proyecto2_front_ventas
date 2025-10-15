@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Rol } from "../interfaces/rolInterface";
+import type { Rol } from "../interfaces/rol-interface";
 
 interface RoleDropdownProps {
   rolActual: Rol;
@@ -21,7 +21,7 @@ const RoleDropdown: React.FC<RoleDropdownProps> = ({
         return "btn-warning text-white";
       case "vendedor":
         return "btn-success text-white";
-      case "auditor de seguridad":
+      case "dueño":
         return "btn-primary text-white";
       default:
         return "btn-secondary text-white";

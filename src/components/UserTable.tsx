@@ -1,6 +1,6 @@
 import React from "react";
 import type { Usuario } from "../interfaces/usuarioInterface";
-import type { Rol } from "../interfaces/rolInterface";
+import type { Rol } from "../interfaces/rol-interface";
 import RoleDropdown from "./RoleDropdown";
 
 interface UserTableProps {

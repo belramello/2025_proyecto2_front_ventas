@@ -1,72 +1,69 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserTable from "../components/UserTable";
-import type { Permiso } from "../interfaces/permisoInterface";
-import type { Rol } from "../interfaces/rolInterface";
+import type { Rol } from "../interfaces/rol-interface";
 import type { Usuario } from "../interfaces/usuarioInterface";
 import RoleModificationModal from "./RoleModificationModal";
 import "./UsuariosScreen.css";
+import { getRolesRequest } from "../services/rolesService";
+import { UsuariosService } from "../services/usuariosService";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
 
 function UsuariosScreen() {
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [roles, setRoles] = useState<Rol[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
-  const permisosEjemplo: Permiso[] = [
-    { id: 1, nombre: "Crear producto", categoria: "productos" },
-    { id: 2, nombre: "Editar producto", categoria: "productos" },
-  ];
+  const getRoles = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const roles = await getRolesRequest();
+      setRoles(roles);
+    } catch (error) {
+      setError(
+        "Error al obtener los roles disponibles, porfavor intentá de nuevo."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const rolesIniciales: Rol[] = [
-    {
-      id: 1,
-      nombre: "Administrador",
-      modificable: true,
-      permisos: permisosEjemplo,
-      descripcion: "Control total del sistema",
-    },
-    {
-      id: 2,
-      nombre: "Vendedor",
-      modificable: true,
-      permisos: [],
-      descripcion: "Gestiona ventas por mostrador",
-    },
-    {
-      id: 3,
-      nombre: "Auditor de Seguridad",
-      modificable: false,
-      permisos: [],
-      descripcion: "Acceso sólo a logs de seguridad",
-    },
-  ];
+  useEffect(() => {
+    getRoles();
+    getUsuarios();
+  }, []);
 
-  const [roles] = useState<Rol[]>(rolesIniciales);
-  const [usuarios, setUsuarios] = useState<Usuario[]>([
-    {
-      id: 1,
-      nombre: "Carolina",
-      apellido: "Corazza",
-      email: "carolinapaulacorazza@gmail.com",
-      rol: rolesIniciales[0],
-    },
-    {
-      id: 2,
-      nombre: "Belén",
-      apellido: "Ramello",
-      email: "belenramello@gmail.com",
-      rol: rolesIniciales[1],
-    },
-    {
-      id: 3,
-      nombre: "Juan",
-      apellido: "Saby",
-      email: "juansaby@gmail.com",
-      rol: rolesIniciales[2],
-    },
-  ]);
+  const getUsuarios = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const usuariosPaginados = await UsuariosService.getUsuariosRequest();
+      setUsuarios(usuariosPaginados.usuarios);
+    } catch (error) {
+      setError("Error al obtener los usuarios, porfavor intentá de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleRoleChange = (userId: number, nuevoRol: Rol) => {
-    setUsuarios((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, rol: nuevoRol } : u))
-    );
+  const handleRoleChange = async (userId: number, nuevoRol: Rol) => {
+    setError(null);
+    try {
+      await UsuariosService.asignarRolAUsuario(userId, nuevoRol.id);
+      setUsuarios((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, rol: nuevoRol } : u))
+      );
+    } catch (err) {
+      setError("No se pudo asignar el rol. Intentá de nuevo.");
+    }
+  };
+
+  const retryFetch = () => {
+    getRoles();
+    getUsuarios();
   };
 
   return (
@@ -93,12 +90,18 @@ function UsuariosScreen() {
             </button>
           </div>
         </div>
-
-        <UserTable
-          usuarios={usuarios}
-          roles={roles}
-          onRoleChange={handleRoleChange}
-        />
+        {error && <ErrorMessage message={error} onRetry={retryFetch} />}
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          !error && (
+            <UserTable
+              usuarios={usuarios}
+              roles={roles}
+              onRoleChange={handleRoleChange}
+            />
+          )
+        )}
       </div>
 
       <RoleModificationModal
