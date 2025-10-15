@@ -1,11 +1,10 @@
-import type { MedioDePago } from "../types/MedioDePagoType";
+import type { DetalleVenta } from "./detalle-venta.interface";
 
 export interface Venta {
   id: number;
-  fecha: string;
-  hora: string;
-  total: string;
-  pago: string;
+  total: number;
+  medioDePago: string;
   vendedor: string;
-  medioDePago: MedioDePago;
+  fecha: string;
+  detalles: DetalleVenta[];
 }

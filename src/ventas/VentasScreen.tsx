@@ -1,37 +1,41 @@
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import PaymentBadge from "../components/PaymentBadge";
-import type { MedioDePago } from "../types/MedioDePagoType";
 import PrimaryButton from "../components/Button";
 import FullWidthButton from "../components/FullWidthButton";
 import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { VentasService } from "../services/ventasService";
+import type { Venta } from "../interfaces/venta-interface";
+import Pagination from "../components/Pagination";
+import type { MedioDePago } from "../types/MedioDePagoType";
+import { formatFecha, formatHora } from "../utils/formatDate";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const VentasScreen = () => {
   const navigate = useNavigate();
-  const ventas = [
-    {
-      fecha: "02/10/2024",
-      hora: "16:40",
-      total: "$14,000.50",
-      medioDePago: "débito" as MedioDePago,
-      vendedor: "Bel Ramello",
-      badgeColor: "#c1daff",
-      textColor: "var(--bs-primary)",
-    },
-    {
-      fecha: "02/10/2024",
-      hora: "16:30",
-      total: "$10,000.50",
-      medioDePago: "crédito" as MedioDePago,
-      vendedor: "Belén Ramello",
-    },
-    {
-      fecha: "02/10/2024",
-      hora: "16:30",
-      total: "$10,000.50",
-      medioDePago: "efectivo" as MedioDePago,
-      vendedor: "Belén Ramello",
-    },
-  ];
+  const [ventas, setVentas] = useState<Venta[]>([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const fetchVentas = useCallback(async (page: number) => {
+    setLoading(true);
+    try {
+      const data = await VentasService.getVentas(page);
+      console.log(data);
+      setVentas(data.ventas);
+      setLastPage(data.lastPage);
+      setPage(data.page);
+    } catch (err) {
+      console.error("Error cargando ventas:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchVentas(page);
+  }, [page]);
 
   return (
     <div>
@@ -41,44 +45,55 @@ const VentasScreen = () => {
         label="Nueva Venta"
         icon={BsFillPlusCircleFill}
         variant="warning"
-        onClick={() => navigate("/nueva-venta")} // ✅ correcto
+        onClick={() => navigate("/nueva-venta")}
       />
       ;
       <div className="table-responsive ms-4 me-4" style={{ marginTop: "10px" }}>
-        <table className="table">
-          <thead>
-            <tr>
-              <th style={{ textAlign: "center" }}>Fecha</th>
-              <th style={{ textAlign: "center" }}>Hora</th>
-              <th style={{ textAlign: "center" }}>Total</th>
-              <th style={{ textAlign: "center" }}>Medio de Pago</th>
-              <th style={{ textAlign: "center" }}>Vendedor</th>
-              <th style={{ textAlign: "center" }}>Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ventas.map((venta, index) => (
-              <tr key={index} style={{ textAlign: "center" }}>
-                <td>{venta.fecha}</td>
-                <td>{venta.hora}</td>
-                <td>{venta.total}</td>
-                <td>
-                  {venta.medioDePago && (
-                    <PaymentBadge medio={venta.medioDePago} />
-                  )}
-                </td>
-                <td>{venta.vendedor}</td>
-                <td>
-                  <PrimaryButton
-                    label="VER DETALLE"
-                    onClick={() => console.log("VER DETALLE")}
-                  />
-                </td>
+        {loading ? (
+          <LoadingSpinner />
+        ) : ventas.length === 0 ? (
+          <p className="text-center mt-4">No hay ventas registradas.</p>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th style={{ textAlign: "center" }}>Fecha</th>
+                <th style={{ textAlign: "center" }}>Hora</th>
+                <th style={{ textAlign: "center" }}>Total</th>
+                <th style={{ textAlign: "center" }}>Medio de Pago</th>
+                <th style={{ textAlign: "center" }}>Vendedor</th>
+                <th style={{ textAlign: "center" }}>Opciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {ventas.map((venta, index) => (
+                <tr key={index} style={{ textAlign: "center" }}>
+                  <td>{formatFecha(venta.fecha)}</td>
+                  <td>{formatHora(venta.fecha)}</td>
+                  <td>${venta.total}</td>
+                  <td>
+                    {venta.medioDePago && (
+                      <PaymentBadge medio={venta.medioDePago as MedioDePago} />
+                    )}
+                  </td>
+                  <td>{venta.vendedor}</td>
+                  <td>
+                    <PrimaryButton
+                      label="VER DETALLE"
+                      onClick={() => console.log("VER DETALLE")}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
+      <Pagination
+        currentPage={page}
+        lastPage={lastPage}
+        onPageChange={(newPage) => fetchVentas(newPage)}
+      />
     </div>
   );
 };
