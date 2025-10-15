@@ -5,6 +5,7 @@ import NuevaVentaScreen from "./ventas/NuevaVentaScreen";
 import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import LoginScreen from "./login/LoginScreen";
+import UsuariosScreen from "./roles/UsuariosScreen";
 
 function App() {
   return (
