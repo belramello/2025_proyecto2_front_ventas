@@ -1,13 +1,12 @@
-import { Navigate } from 'react-router-dom';
-import { useContext, type JSX } from 'react';
-import { AuthContext } from '../context/authContext';
+import { Navigate } from "react-router-dom";
+import { useContext, type ReactNode } from "react";
+import { AuthContext } from "../context/authContext";
 
 interface ProtectedRouteProps {
-  children: JSX.Element;
-  requiredRole?: string;
+  children: ReactNode;
 }
-
-export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+//requiredRole?: string;
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const auth = useContext(AuthContext);
 
   if (!auth) return null;
@@ -17,6 +16,7 @@ export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) 
 
   if (!isAuth) return <Navigate to="/login" replace />;
 
+  /*
   // Si tiene rol requerido, se puede ampliar para verificarlo
   if (requiredRole) {
     const storedUser = localStorage.getItem('user');
@@ -27,6 +27,7 @@ export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) 
       }
     }
   }
+    */
 
   return children;
 };

@@ -1,8 +1,7 @@
 import { useContext, useState } from "react";
-import { AuthContext } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { guardarToken } from "../../utils/storage";
-import { loginRequest } from "../../api/login/authApi";
+import { AuthContext } from "../context/authContext";
+import { loginRequest } from "../services/authService";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -19,15 +18,13 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+
     try {
       const data = await loginRequest({ email, password });
-      guardarToken(data.accessToken, data.refreshToken, data.usuario.nombre);
       login(data.usuario.nombre);
-      navigate("/productos");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      navigate("/inicio");
     } catch (err) {
-      setError('Error de autenticación. Por favor, verifica tus credenciales.');
+      setError("Error de autenticación. Por favor, verifica tus credenciales.");
     } finally {
       setLoading(false);
     }
@@ -39,7 +36,9 @@ const LoginPage = () => {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-2xl shadow-md w-80"
       >
-        <h2 className="text-2xl font-semibold mb-4 text-center">Iniciar sesión</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-center">
+          Iniciar sesión
+        </h2>
 
         <input
           type="email"
@@ -65,7 +64,7 @@ const LoginPage = () => {
           disabled={loading}
           className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
         >
-          {loading ? 'Cargando...' : 'Ingresar'}
+          {loading ? "Cargando..." : "Ingresar"}
         </button>
       </form>
     </div>
