@@ -11,7 +11,6 @@ import type { MedioDePago } from "../types/MedioDePagoType";
 import { formatFecha, formatHora } from "../utils/formatDate";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
-// ...existing code...
 
 const VentasScreen = () => {
   const navigate = useNavigate();
@@ -26,7 +25,6 @@ const VentasScreen = () => {
     setError(null);
     try {
       const data = await VentasService.getVentas(pageNumber);
-      console.log(data);
       setVentas(data.ventas);
       setLastPage(data.lastPage);
       setPage(data.page);

@@ -4,39 +4,83 @@ import type { Producto } from "../interfaces/producto-interface";
 import type { MedioDePago } from "../types/MedioDePagoType";
 import "./NuevaVentaScreen.css";
 import SearchProductBar from "../components/SearchProductBar";
-
-const productosIniciales: Producto[] = [
-  {
-    id: 1,
-    codigo: "0123",
-    nombre: "Lápices Faber Castell",
-    precioUnitario: 14000.5,
-    stock: 40,
-  },
-  {
-    id: 2,
-    codigo: "0456",
-    nombre: "Calculadora",
-    precioUnitario: 10000.5,
-    stock: 30,
-  },
-];
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+import { ProductosService } from "../services/productosService";
+import { VentasService } from "../services/ventasService";
 
 function NuevaVentaScreen() {
-  const [productos, setProductos] = useState<Producto[]>(productosIniciales);
-  const [cantidades, setCantidades] = useState<Record<string, number>>(
-    productosIniciales.reduce((acc, p) => ({ ...acc, [p.codigo]: 1 }), {})
-  );
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [cantidades, setCantidades] = useState<Record<string, number>>({});
   const [medioDePago, setMedioDePago] = useState<MedioDePago>("efectivo");
   const [codigoBusqueda, setCodigoBusqueda] = useState("");
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [registroLoading, setRegistroLoading] = useState(false);
+  const [registroError, setRegistroError] = useState<string | null>(null);
 
-  const buscarProducto = () => {
-    console.log("Buscar producto con código:", codigoBusqueda);
+  const buscarProducto = async () => {
+    const codigo = codigoBusqueda.trim();
+    setSearchError(null);
+    if (!codigo) {
+      setSearchError("Ingresá un código.");
+      return;
+    }
+
+    // verificar duplicado por código
+    if (productos.some((p) => p.codigo === codigo)) {
+      setSearchError("Ese producto ya está en el resumen.");
+      return;
+    }
+
+    setSearchLoading(true);
+    try {
+      const producto: Producto =
+        await ProductosService.obtenerProductoPorCodigo(codigo);
+
+      if (!producto) {
+        setSearchError("No se encontró ningún producto con ese código.");
+        return;
+      }
+
+      if (producto.stock <= 0) {
+        setSearchError("El producto no tiene stock disponible.");
+        return;
+      }
+
+      // doble chequeo por si el backend devolviera un producto con mismo código
+      if (productos.some((p) => p.codigo === producto.codigo)) {
+        setSearchError("Ese producto ya está en el resumen.");
+      } else {
+        setProductos((prev) => [...prev, producto]);
+        setCantidades((prev) => ({ ...prev, [producto.codigo]: 1 }));
+        setCodigoBusqueda("");
+      }
+    } catch (err: any) {
+      setSearchError("Error al buscar el producto. Intentá de nuevo.");
+      console.error("Error buscarProducto:", err);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const handleCantidadChange = (codigo: string, delta: number) => {
+    setSearchError(null);
     setCantidades((prev) => {
-      const nuevaCantidad = Math.max(0, (prev[codigo] || 0) + delta);
+      const current = prev[codigo] || 0;
+      const producto = productos.find((p) => p.codigo === codigo);
+      if (!producto) return prev;
+
+      const nuevaCantidad = Math.max(0, current + delta);
+
+      // si se intenta aumentar más que el stock, no permitir y avisar
+      if (nuevaCantidad > producto.stock) {
+        setSearchError(
+          `No hay stock suficiente. Stock disponible: ${producto.stock}.`
+        );
+        return prev;
+      }
+
       return { ...prev, [codigo]: nuevaCantidad };
     });
   };
@@ -48,19 +92,62 @@ function NuevaVentaScreen() {
       delete nuevo[codigo];
       return nuevo;
     });
+    setSearchError(null);
   };
 
   const calcularSubtotal = (p: Producto) =>
-    (cantidades[p.codigo] || 0) * p.precioUnitario;
+    (cantidades[p.codigo] || 0) * p.precio;
   const total = productos.reduce((acc, p) => acc + calcularSubtotal(p), 0);
 
-  const registrarVenta = () => {
-    console.log("Productos:", productos);
-    console.log("Cantidades:", cantidades);
-    console.log("Medio de pago:", medioDePago);
-    console.log("Registrar venta");
-  };
+  const registrarVenta = async () => {
+    setRegistroError(null);
+    if (productos.length === 0) {
+      setRegistroError("Agregá al menos un producto para registrar la venta.");
+      return;
+    }
+    const detalles: { productoId: number; cantidad: number }[] = [];
+    for (const p of productos) {
+      const cantidad = Math.max(0, cantidades[p.codigo] || 0);
+      if (cantidad < 1) {
+        setRegistroError(
+          `Ingresá al menos 1 unidad para el producto "${p.nombre}".`
+        );
+        return;
+      }
+      if (cantidad > p.stock) {
+        setRegistroError(
+          `Cantidad para "${p.nombre}" supera el stock disponible (${p.stock}).`
+        );
+        return;
+      }
+      detalles.push({ productoId: p.id, cantidad });
+    }
 
+    const dto = {
+      detalles,
+      medioDePago,
+    } as {
+      detalles: { productoId: number; cantidad: number }[];
+      medioDePago: "efectivo" | "credito" | "debito";
+    };
+
+    setRegistroLoading(true);
+    try {
+      await VentasService.registrarVenta(dto);
+      setProductos([]);
+      setCantidades({});
+      setCodigoBusqueda("");
+      setRegistroError(null);
+      alert("Venta registrada correctamente.");
+    } catch (err: any) {
+      console.error("Error registrarVenta:", err);
+      setRegistroError(
+        err?.message || "Error al registrar la venta. Intentá de nuevo."
+      );
+    } finally {
+      setRegistroLoading(false);
+    }
+  };
   return (
     <>
       <h1 className="titulo-nueva-venta">Nueva Venta</h1>
@@ -89,7 +176,7 @@ function NuevaVentaScreen() {
                     <tr key={p.codigo}>
                       <td>{p.codigo}</td>
                       <td>{p.nombre}</td>
-                      <td>${p.precioUnitario.toFixed(2)}</td>
+                      <td>${p.precio.toFixed(2)}</td>
                       <td>{p.stock}</td>
                       <td>
                         <QuantityButton
@@ -117,6 +204,15 @@ function NuevaVentaScreen() {
                         onChange={setCodigoBusqueda}
                         onSearch={buscarProducto}
                       />
+                      <div className="mt-2">
+                        {searchLoading && <LoadingSpinner />}
+                        {searchError && (
+                          <ErrorMessage
+                            message={searchError}
+                            onRetry={buscarProducto}
+                          />
+                        )}
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -166,17 +262,22 @@ function NuevaVentaScreen() {
                     }
                   >
                     <option value="efectivo">Efectivo</option>
-                    <option value="crédito">Crédito</option>
-                    <option value="débito">Débito</option>
+                    <option value="credito">Crédito</option>
+                    <option value="debito">Débito</option>
                   </select>
                 </div>
-
+                {registroError && (
+                  <ErrorMessage
+                    message={registroError}
+                    onRetry={registrarVenta}
+                  />
+                )}
                 <button
                   className="btn btn-success w-100 fw-bold btn-registrar-venta"
                   type="submit"
                   onClick={() => registrarVenta()}
                 >
-                  REGISTRAR VENTA
+                  {registroLoading ? "Registrando..." : "REGISTRAR VENTA"}
                 </button>
               </div>
             </div>

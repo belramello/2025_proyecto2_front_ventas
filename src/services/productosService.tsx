@@ -1,0 +1,15 @@
+import type { Producto } from "../interfaces/producto-interface";
+import api from "../utils/api";
+
+export const ProductosService = {
+  async obtenerProductoPorCodigo(codigo: string): Promise<Producto> {
+    try {
+      const { data } = await api.get<Producto>(`/productos/codigo/${codigo}`);
+      console.log("data", data);
+      return data;
+    } catch (error) {
+      console.error("Error al obtener producto:", error);
+      throw error;
+    }
+  },
+};
