@@ -2,6 +2,7 @@ import type { LoginResponse } from "../interfaces/login-response.interface";
 import type { LoginCredentials } from "../interfaces/login-credentials.interface";
 import { eliminarTokens, guardarToken } from "../utils/storage";
 import api from "../utils/api";
+import type { RegistrarUsuarioDto } from "../interfaces/registrar-usuario-dto";
 
 export const loginRequest = async (
   credentials: LoginCredentials
@@ -23,5 +24,17 @@ export const cerrarSesion = () => {
     window.location.href = "login";
   } catch (error) {
     console.error("Error al cerrar sesión");
+  }
+};
+
+export const registrarUsuario = async (
+  registrarUsuarioDto: RegistrarUsuarioDto
+): Promise<void> => {
+  try {
+    await api.post<LoginResponse>(`/auth/register`, registrarUsuarioDto);
+    return;
+  } catch (error) {
+    console.error("Error al registrar usuario:", error);
+    throw error;
   }
 };

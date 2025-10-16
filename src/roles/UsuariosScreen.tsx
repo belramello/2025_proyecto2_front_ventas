@@ -8,6 +8,8 @@ import { getRolesRequest } from "../services/rolesService";
 import { UsuariosService } from "../services/usuariosService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
+import { useNavigate } from "react-router-dom";
+import CreateUsuarioModal from "./create-usuarios/CreateUsuariosScreen";
 
 function UsuariosScreen() {
   const [showRoleModal, setShowRoleModal] = useState(false);
@@ -15,6 +17,7 @@ function UsuariosScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const getRoles = async () => {
     setLoading(true);
@@ -79,7 +82,10 @@ function UsuariosScreen() {
           </div>
 
           <div>
-            <button className="btn btn-info mx-2 fw-bold text-light">
+            <button
+              className="btn btn-info mx-2 fw-bold text-light"
+              onClick={() => setShowCreateModal(true)}
+            >
               NUEVO USUARIO
             </button>
             <button
@@ -108,6 +114,11 @@ function UsuariosScreen() {
         show={showRoleModal}
         onClose={() => setShowRoleModal(false)}
         roles={roles}
+      />
+      <CreateUsuarioModal
+        show={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={getUsuarios} // opcional, refresca la tabla al crear
       />
     </>
   );
