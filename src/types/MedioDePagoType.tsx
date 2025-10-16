@@ -1,4 +1,4 @@
-export type MedioDePago = "efectivo" | "crédito" | "débito";
+export type MedioDePago = "efectivo" | "credito" | "debito";
 
 export const MediosDePago = {
   EFECTIVO: "efectivo" as MedioDePago,

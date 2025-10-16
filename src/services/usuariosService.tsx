@@ -9,6 +9,7 @@ export const UsuariosService = {
       const { data } = await api.get<UsuariosPaginatedResponse>(
         `/usuarios?page=${page}`
       );
+      console.log("data", data);
       return data;
     } catch (error) {
       console.error("Error al obtener los usuarios:", error);

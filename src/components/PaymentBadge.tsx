@@ -2,9 +2,9 @@ import React from "react";
 import type { MedioDePago } from "../types/MedioDePagoType";
 
 export const MediosDePago = {
-  EFECTIVO: "Efectivo" as MedioDePago,
-  CREDITO: "Crédito" as MedioDePago,
-  DEBITO: "Débito" as MedioDePago,
+  EFECTIVO: "efectivo" as MedioDePago,
+  CREDITO: "credito" as MedioDePago,
+  DEBITO: "debito" as MedioDePago,
 };
 
 interface PaymentBadgeProps {
@@ -16,11 +16,11 @@ const badgeStyles: Record<MedioDePago, React.CSSProperties> = {
     backgroundColor: "#d4edda",
     color: "#155724",
   },
-  crédito: {
+  credito: {
     backgroundColor: "#d6c8ff",
     color: "#4a148c",
   },
-  débito: {
+  debito: {
     backgroundColor: "#fff3cd",
     color: "#856404",
   },
