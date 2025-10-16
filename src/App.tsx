@@ -49,8 +49,10 @@ function App() {
             path="/usuarios"
             element={
               <>
-                <NavBar />
-                <UsuariosScreen />
+                <ProtectedRoute>
+                  <NavBar />
+                  <UsuariosScreen />
+                </ProtectedRoute>
               </>
             }
           />
@@ -63,7 +65,6 @@ function App() {
               </>
             }
           />
-
         </Routes>
       </BrowserRouter>
     </AuthProvider>
