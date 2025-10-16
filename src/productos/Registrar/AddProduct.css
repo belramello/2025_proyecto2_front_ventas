@@ -1,0 +1,162 @@
+/* ===== Reset ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: "Inter", sans-serif;
+  background-color: #fff;
+}
+
+/* ===== Página general ===== */
+.add-product-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background-color: #f8f8f6;
+  color: #152536;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  height: 60px;
+  background-color: #00c8b3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px;
+}
+
+.navbar-logo {
+  background-color: #00c3d0;
+  color: #343a40;
+  font-weight: 600;
+  font-size: 20px;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 8px;
+}
+
+.navbar-links a {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 6px 16px;
+  border-radius: 4px;
+}
+
+.navbar-links a.active {
+  color: #5227cc;
+}
+
+.navbar-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+
+/* ===== Contenedor principal ===== */
+.form-container {
+  flex: 1;
+  padding: 48px 80px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  margin: 40px auto;
+  width: 90%;
+  max-width: 1300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h1 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 32px;
+}
+
+/* ===== Formulario ===== */
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.form-row {
+  display: flex;
+  gap: 32px;
+}
+
+label {
+  font-weight: 800;
+  font-size: 16px;
+}
+
+input, textarea, select {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  width: 100%;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+/* ===== Botones ===== */
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  width: fit-content;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn.green { background-color: #34c759; }
+.btn.pink { background-color: #efb8c8; }
+.btn.purple { background-color: #cb30e0; }
+.btn.teal { background-color: #00c3d0; }
+.btn.red { background-color: #b3261e; }
+
+/* ===== Acciones ===== */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  .form-row {
+    flex-direction: column;
+  }
+}

@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import LoginScreen from "./login/LoginScreen";
 import UsuariosScreen from "./roles/UsuariosScreen";
+import ProductsList from "./productos/Catálogo/ProductList";
 
 function App() {
   return (
@@ -53,6 +54,16 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/productos"
+            element={
+              <>
+                <NavBar />
+                <ProductsList />
+              </>
+            }
+          />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
