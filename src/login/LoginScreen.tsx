@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/authContext";
+import { AuthContext } from "../auth/context/authContext";
 import { loginRequest } from "../services/authService";
 
 const LoginPage = () => {
@@ -21,7 +21,7 @@ const LoginPage = () => {
 
     try {
       const data = await loginRequest({ email, password });
-      login(data.usuario.nombre);
+      login(data.usuario.permisos);
       navigate("/inicio");
     } catch (err) {
       setError("Error de autenticación. Por favor, verifica tus credenciales.");

@@ -10,7 +10,7 @@ export const loginRequest = async (
   try {
     const response = await api.post<LoginResponse>(`/auth/login`, credentials);
     const { accessToken, refreshToken, usuario } = response.data;
-    guardarToken(accessToken, refreshToken, usuario.nombre);
+    guardarToken(accessToken, refreshToken, usuario.permisos);
     return response.data;
   } catch (error) {
     console.error("Error al iniciar sesión:", error);

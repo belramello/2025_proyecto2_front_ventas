@@ -3,4 +3,5 @@ export interface Rol {
   nombre: "Vendedor" | "Administrador" | "Dueño";
   modificable: boolean;
   descripcion: string;
+  permisos: number[];
 }

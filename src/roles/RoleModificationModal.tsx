@@ -62,7 +62,7 @@ function RoleModificationModal({
                           {rol.descripcion}
                         </td>
                         <td>
-                          {rol.nombre === "Administrador" ? (
+                          {rol.nombre === "Dueño" ? (
                             <span className="text-muted">-</span>
                           ) : (
                             <Button

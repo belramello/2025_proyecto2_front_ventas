@@ -1,4 +1,4 @@
-import type { Usuario } from "./usuarioInterface";
+import type { Usuario } from "./usuario-interface";
 
 export interface UsuariosPaginatedResponse {
   usuarios: Usuario[];

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import UserTable from "../components/UserTable";
 import type { Rol } from "../interfaces/rol-interface";
-import type { Usuario } from "../interfaces/usuarioInterface";
+import type { Usuario } from "../interfaces/usuario-interface";
 import RoleModificationModal from "./RoleModificationModal";
 import "./UsuariosScreen.css";
 import { getRolesRequest } from "../services/rolesService";
 import { UsuariosService } from "../services/usuariosService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
-import { useNavigate } from "react-router-dom";
 import CreateUsuarioModal from "./create-usuarios/CreateUsuariosScreen";
+import { PermissionGuard } from "../auth/guards/permisos-guard";
+import { Permisos } from "../auth/enums/permisos-enum";
 
 function UsuariosScreen() {
   const [showRoleModal, setShowRoleModal] = useState(false);
@@ -82,43 +83,54 @@ function UsuariosScreen() {
           </div>
 
           <div>
-            <button
-              className="btn btn-info mx-2 fw-bold text-light"
-              onClick={() => setShowCreateModal(true)}
+            <PermissionGuard requiredPermission={Permisos.ASIGNAR_ROL}>
+              <button
+                className="btn btn-info mx-2 fw-bold text-light"
+                onClick={() => setShowCreateModal(true)}
+              >
+                NUEVO USUARIO
+              </button>
+            </PermissionGuard>
+            <PermissionGuard
+              requiredPermission={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
             >
-              NUEVO USUARIO
-            </button>
-            <button
-              className="btn btn-outline-purple fw-bold"
-              onClick={() => setShowRoleModal(true)}
-            >
-              MODIFICAR ROL
-            </button>
+              <button
+                className="btn btn-outline-purple fw-bold"
+                onClick={() => setShowRoleModal(true)}
+              >
+                MODIFICAR ROL
+              </button>
+            </PermissionGuard>
           </div>
         </div>
-        {error && <ErrorMessage message={error} onRetry={retryFetch} />}
-        {loading ? (
-          <LoadingSpinner />
-        ) : (
-          !error && (
-            <UserTable
-              usuarios={usuarios}
-              roles={roles}
-              onRoleChange={handleRoleChange}
-            />
-          )
-        )}
+        <PermissionGuard requiredPermission={Permisos.ASIGNAR_ROL}>
+          {error && <ErrorMessage message={error} onRetry={retryFetch} />}
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            !error && (
+              <UserTable
+                usuarios={usuarios}
+                roles={roles}
+                onRoleChange={handleRoleChange}
+              />
+            )
+          )}
+        </PermissionGuard>
       </div>
-
-      <RoleModificationModal
-        show={showRoleModal}
-        onClose={() => setShowRoleModal(false)}
-        roles={roles}
-      />
+      <PermissionGuard
+        requiredPermission={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
+      >
+        <RoleModificationModal
+          show={showRoleModal}
+          onClose={() => setShowRoleModal(false)}
+          roles={roles}
+        />
+      </PermissionGuard>
       <CreateUsuarioModal
         show={showCreateModal}
         onClose={() => setShowCreateModal(false)}
-        onSuccess={getUsuarios} // opcional, refresca la tabla al crear
+        onSuccess={getUsuarios}
       />
     </>
   );

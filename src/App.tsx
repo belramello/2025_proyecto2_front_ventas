@@ -2,11 +2,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import VentasScreen from "./ventas/VentasScreen";
 import NuevaVentaScreen from "./ventas/NuevaVentaScreen";
-import { AuthProvider } from "./context/authContext";
-import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { AuthProvider } from "./auth/context/authContext";
+import { ProtectedRoute } from "./auth/routes/ProtectedRoute";
 import LoginScreen from "./login/LoginScreen";
 import UsuariosScreen from "./roles/UsuariosScreen";
 import ProductsList from "./productos/Catálogo/ProductList";
+import { PermissionGuard } from "./auth/guards/permisos-guard";
+import { Permisos } from "./auth/enums/permisos-enum";
 
 function App() {
   return (
@@ -39,8 +41,10 @@ function App() {
             element={
               <ProtectedRoute>
                 <>
-                  <NavBar />
-                  <NuevaVentaScreen />
+                  <PermissionGuard requiredPermission={Permisos.CREAR_VENTA}>
+                    <NavBar />
+                    <NuevaVentaScreen />
+                  </PermissionGuard>
                 </>
               </ProtectedRoute>
             }
@@ -51,7 +55,9 @@ function App() {
               <>
                 <ProtectedRoute>
                   <NavBar />
-                  <UsuariosScreen />
+                  <PermissionGuard requiredPermission={Permisos.ASIGNAR_ROL}>
+                    <UsuariosScreen />
+                  </PermissionGuard>
                 </ProtectedRoute>
               </>
             }
@@ -61,7 +67,9 @@ function App() {
             element={
               <>
                 <NavBar />
-                <ProductsList />
+                <PermissionGuard requiredPermission={Permisos.VER_PRODUCTOS}>
+                  <ProductsList />
+                </PermissionGuard>
               </>
             }
           />

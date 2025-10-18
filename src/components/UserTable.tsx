@@ -1,5 +1,5 @@
 import React from "react";
-import type { Usuario } from "../interfaces/usuarioInterface";
+import type { Usuario } from "../interfaces/usuario-interface";
 import type { Rol } from "../interfaces/rol-interface";
 import RoleDropdown from "./RoleDropdown";
 

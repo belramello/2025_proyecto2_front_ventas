@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { BsBook } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
-import { AuthContext } from "../context/authContext";
+import { AuthContext } from "../auth/context/authContext";
 import { cerrarSesion } from "../services/authService";
 
 function NavBarComponent() {

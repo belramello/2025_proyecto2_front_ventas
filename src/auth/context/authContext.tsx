@@ -5,7 +5,11 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import { eliminarTokens, obtenerToken } from "../utils/storage";
+import {
+  eliminarTokens,
+  obtenerPermisos,
+  obtenerToken,
+} from "../../utils/storage";
 
 // Estructura del payload del JWT
 interface JwtPayload {
@@ -28,9 +32,9 @@ const isValidJwt = (token: string | null): boolean => {
 // Estructura del contexto
 export interface AuthContextType {
   isAuth: boolean;
-  nombre: string | null;
+  permisos: number[] | null;
   isLoading: boolean;
-  login: (newNombre: string) => void;
+  login: (permisos: number[]) => void;
   logout: () => void;
 }
 
@@ -45,22 +49,22 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuth, setIsAuth] = useState(false);
-  const [nombre, setNombre] = useState<string | null>(null);
+  const [permisos, setPermisos] = useState<number[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = () => {
       setIsLoading(true);
       const token = obtenerToken();
-      const storedNombre = localStorage.getItem("nombre");
+      const permisosLocales = obtenerPermisos();
 
-      if (isValidJwt(token) && storedNombre) {
+      if (isValidJwt(token) && permisosLocales) {
         setIsAuth(true);
-        setNombre(storedNombre);
+        setPermisos(permisosLocales);
       } else {
         eliminarTokens();
         setIsAuth(false);
-        setNombre(null);
+        setPermisos(null);
       }
       setIsLoading(false);
     };
@@ -68,19 +72,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     checkAuth();
   }, []);
 
-  const login = (newNombre: string) => {
+  const login = (permisos: number[]) => {
     setIsAuth(true);
-    setNombre(newNombre);
+    setPermisos(permisos);
   };
 
   const logout = () => {
     eliminarTokens();
     setIsAuth(false);
-    setNombre(null);
+    setPermisos(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuth, nombre, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuth, permisos, isLoading, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
