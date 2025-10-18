@@ -1,20 +1,33 @@
 import type { ReactNode } from "react";
-import { tienePermisoHook } from "../hooks/tiene-permiso.hook";
+import { useAuth } from "../context/authContext";
 
 interface PermissionGuardProps {
-  requiredPermission: number;
+  requiredPermissions: number | number[];
+  mode?: "or" | "and"; // modo de validación (default: "or")
   children: ReactNode;
 }
 
 export const PermissionGuard = ({
-  requiredPermission,
+  requiredPermissions,
+  mode = "or",
   children,
 }: PermissionGuardProps) => {
-  const { tienePermiso } = tienePermisoHook();
+  const { permisos } = useAuth();
 
-  if (!tienePermiso(requiredPermission)) {
-    return null;
-  }
+  if (!permisos) return null;
+
+  const permisosArray = Array.isArray(requiredPermissions)
+    ? requiredPermissions
+    : [requiredPermissions];
+
+  const tienePermiso =
+    mode === "and"
+      ? // AND
+        permisosArray.every((p) => permisos.includes(Number(p)))
+      : // OR
+        permisosArray.some((p) => permisos.includes(Number(p)));
+
+  if (!tienePermiso) return null;
 
   return <>{children}</>;
 };

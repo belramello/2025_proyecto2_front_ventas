@@ -51,7 +51,7 @@ const ProductsList = () => {
     <div className="products-page">
       <h1 className="ms-5 mt-2">Gestión de Productos</h1>
       <p className="ms-5">Gestioná los productos del catálogo.</p>
-      <PermissionGuard requiredPermission={Permisos.CREAR_PRODUCTO}>
+      <PermissionGuard requiredPermissions={Permisos.CREAR_PRODUCTO}>
         <FullWidthButton
           label="Agregar Producto"
           icon={BsFillPlusCircleFill}
@@ -59,7 +59,7 @@ const ProductsList = () => {
           onClick={() => navigate("/add-product")}
         />
       </PermissionGuard>
-      <PermissionGuard requiredPermission={Permisos.VER_PRODUCTOS}>
+      <PermissionGuard requiredPermissions={Permisos.VER_PRODUCTOS}>
         <div
           className="table-responsive ms-4 me-4"
           style={{ marginTop: "10px" }}
@@ -79,7 +79,14 @@ const ProductsList = () => {
                   <th>Marca</th>
                   <th>Stock</th>
                   <th>Precio</th>
-                  <th>Opciones</th>
+                  <PermissionGuard
+                    requiredPermissions={[
+                      Permisos.MODIFICAR_PRODUCTOS,
+                      Permisos.ELIMINAR_PRODUCTOS,
+                    ]}
+                  >
+                    <th>Opciones</th>
+                  </PermissionGuard>
                 </tr>
               </thead>
               <tbody>
@@ -95,28 +102,37 @@ const ProductsList = () => {
                       )}
                     </td>
                     <td>${producto.precio}</td>
-                    <td>
-                      <div className="d-flex justify-content-center gap-2">
-                        <PermissionGuard
-                          requiredPermission={Permisos.MODIFICAR_PRODUCTOS}
-                        >
-                          <PrimaryButton
-                            label="EDITAR"
-                            variant="warning"
-                            onClick={() => console.log("Editar", producto.id)}
-                          />
-                        </PermissionGuard>
-                        <PermissionGuard
-                          requiredPermission={Permisos.ELIMINAR_PRODUCTOS}
-                        >
-                          <PrimaryButton
-                            label="ELIMINAR"
-                            variant="danger"
-                            onClick={() => console.log("Eliminar", producto.id)}
-                          />
-                        </PermissionGuard>
-                      </div>
-                    </td>
+                    <PermissionGuard
+                      requiredPermissions={[
+                        Permisos.MODIFICAR_PRODUCTOS,
+                        Permisos.ELIMINAR_PRODUCTOS,
+                      ]}
+                    >
+                      <td>
+                        <div className="d-flex justify-content-center gap-2">
+                          <PermissionGuard
+                            requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
+                          >
+                            <PrimaryButton
+                              label="EDITAR"
+                              variant="warning"
+                              onClick={() => console.log("Editar", producto.id)}
+                            />
+                          </PermissionGuard>
+                          <PermissionGuard
+                            requiredPermissions={Permisos.ELIMINAR_PRODUCTOS}
+                          >
+                            <PrimaryButton
+                              label="ELIMINAR"
+                              variant="danger"
+                              onClick={() =>
+                                console.log("Eliminar", producto.id)
+                              }
+                            />
+                          </PermissionGuard>
+                        </div>
+                      </td>
+                    </PermissionGuard>
                   </tr>
                 ))}
               </tbody>

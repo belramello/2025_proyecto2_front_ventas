@@ -83,7 +83,7 @@ function UsuariosScreen() {
           </div>
 
           <div>
-            <PermissionGuard requiredPermission={Permisos.ASIGNAR_ROL}>
+            <PermissionGuard requiredPermissions={Permisos.ASIGNAR_ROL}>
               <button
                 className="btn btn-info mx-2 fw-bold text-light"
                 onClick={() => setShowCreateModal(true)}
@@ -92,7 +92,7 @@ function UsuariosScreen() {
               </button>
             </PermissionGuard>
             <PermissionGuard
-              requiredPermission={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
+              requiredPermissions={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
             >
               <button
                 className="btn btn-outline-purple fw-bold"
@@ -103,7 +103,7 @@ function UsuariosScreen() {
             </PermissionGuard>
           </div>
         </div>
-        <PermissionGuard requiredPermission={Permisos.ASIGNAR_ROL}>
+        <PermissionGuard requiredPermissions={Permisos.ASIGNAR_ROL}>
           {error && <ErrorMessage message={error} onRetry={retryFetch} />}
           {loading ? (
             <LoadingSpinner />
@@ -119,7 +119,7 @@ function UsuariosScreen() {
         </PermissionGuard>
       </div>
       <PermissionGuard
-        requiredPermission={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
+        requiredPermissions={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
       >
         <RoleModificationModal
           show={showRoleModal}

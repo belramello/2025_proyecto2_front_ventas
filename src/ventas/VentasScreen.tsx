@@ -50,7 +50,7 @@ const VentasScreen = () => {
     <div>
       <h1 className="ms-5 mt-2">Gestión de Ventas</h1>
       <p className="ms-5">Gestioná las ventas de tu negocio.</p>
-      <PermissionGuard requiredPermission={Permisos.CREAR_VENTA}>
+      <PermissionGuard requiredPermissions={Permisos.CREAR_VENTA}>
         <FullWidthButton
           label="Nueva Venta"
           icon={BsFillPlusCircleFill}
@@ -59,7 +59,7 @@ const VentasScreen = () => {
         />
       </PermissionGuard>
       ;
-      <PermissionGuard requiredPermission={Permisos.VER_HISTORIAL_VENTAS}>
+      <PermissionGuard requiredPermissions={Permisos.VER_HISTORIAL_VENTAS}>
         <div
           className="table-responsive ms-4 me-4"
           style={{ marginTop: "10px" }}

@@ -3,6 +3,8 @@ import { BsBook } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
 import { AuthContext } from "../auth/context/authContext";
 import { cerrarSesion } from "../services/authService";
+import { PermissionGuard } from "../auth/guards/permisos-guard";
+import { Permisos } from "../auth/enums/permisos-enum";
 
 function NavBarComponent() {
   const authContext = useContext(AuthContext); // Usa useContext
@@ -42,41 +44,75 @@ function NavBarComponent() {
                   Inicio
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/usuarios">
-                  Usuarios
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/productos">
-                  Productos
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/ventas">
-                  Ventas
-                </a>
-              </li>
+              <PermissionGuard
+                requiredPermissions={[
+                  Permisos.ASIGNAR_ROL,
+                  Permisos.ACTUALIZAR_PERMISOS_POR_ROL,
+                ]}
+              >
+                <li className="nav-item">
+                  <a className="nav-link" href="/usuarios">
+                    Usuarios
+                  </a>
+                </li>
+              </PermissionGuard>
+              <PermissionGuard
+                requiredPermissions={[
+                  Permisos.CREAR_PRODUCTO,
+                  Permisos.VER_PRODUCTOS,
+                  Permisos.MODIFICAR_PRODUCTOS,
+                  Permisos.ELIMINAR_PRODUCTOS,
+                ]}
+              >
+                <li className="nav-item">
+                  <a className="nav-link" href="/productos">
+                    Productos
+                  </a>
+                </li>
+              </PermissionGuard>
+              <PermissionGuard
+                requiredPermissions={[
+                  Permisos.CREAR_VENTA,
+                  Permisos.VER_HISTORIAL_VENTAS,
+                ]}
+              >
+                <li className="nav-item">
+                  <a className="nav-link" href="/ventas">
+                    Ventas
+                  </a>
+                </li>
+              </PermissionGuard>
               <li className="nav-item">
                 <a className="nav-link" href="/dashboard">
                   Dashboard
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/marcas">
-                  Marcas
-                </a>
-              </li>
+              <PermissionGuard
+                requiredPermissions={[
+                  Permisos.CREAR_MARCAS,
+                  Permisos.VER_MARCAS,
+                  Permisos.MODIFICAR_MARCAS,
+                  Permisos.ELIMINAR_MARCAS,
+                ]}
+              >
+                <li className="nav-item">
+                  <a className="nav-link" href="/marcas">
+                    Marcas
+                  </a>
+                </li>
+              </PermissionGuard>
               <li className="nav-item">
                 <a className="nav-link" href="/proveedores">
                   Proveedores
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/seguridad">
-                  Seguridad
-                </a>
-              </li>
+              <PermissionGuard requiredPermissions={[Permisos.VER_LOGS]}>
+                <li className="nav-item">
+                  <a className="nav-link" href="/seguridad">
+                    Seguridad
+                  </a>
+                </li>
+              </PermissionGuard>
             </ul>
             <a href="index.html">
               <FaRegUserCircle

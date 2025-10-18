@@ -41,7 +41,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <>
-                  <PermissionGuard requiredPermission={Permisos.CREAR_VENTA}>
+                  <PermissionGuard requiredPermissions={Permisos.CREAR_VENTA}>
                     <NavBar />
                     <NuevaVentaScreen />
                   </PermissionGuard>
@@ -55,7 +55,7 @@ function App() {
               <>
                 <ProtectedRoute>
                   <NavBar />
-                  <PermissionGuard requiredPermission={Permisos.ASIGNAR_ROL}>
+                  <PermissionGuard requiredPermissions={Permisos.ASIGNAR_ROL}>
                     <UsuariosScreen />
                   </PermissionGuard>
                 </ProtectedRoute>
@@ -67,7 +67,7 @@ function App() {
             element={
               <>
                 <NavBar />
-                <PermissionGuard requiredPermission={Permisos.VER_PRODUCTOS}>
+                <PermissionGuard requiredPermissions={Permisos.VER_PRODUCTOS}>
                   <ProductsList />
                 </PermissionGuard>
               </>
