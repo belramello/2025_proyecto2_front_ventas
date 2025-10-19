@@ -1,0 +1,37 @@
+.custom-navbar {
+  background: linear-gradient(90deg, #00a890, #00c7ab);
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+  color: #fff !important;
+}
+
+.icon-circle {
+  width: 36px;
+  height: 36px;
+}
+
+.nav-link {
+  color: #e6fffa !important;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+
+.user-icon {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.user-icon:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import NavBar from "./components/NavBar";
+import NavBar from "./components/NavBar/NavBar";
 import VentasScreen from "./ventas/VentasScreen";
 import NuevaVentaScreen from "./ventas/NuevaVentaScreen";
 import { AuthProvider } from "./auth/context/authContext";
