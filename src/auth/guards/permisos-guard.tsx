@@ -3,7 +3,7 @@ import { useAuth } from "../context/authContext";
 
 interface PermissionGuardProps {
   requiredPermissions: number | number[];
-  mode?: "or" | "and"; // modo de validación (default: "or")
+  mode?: "or" | "and";
   children: ReactNode;
 }
 
@@ -22,10 +22,8 @@ export const PermissionGuard = ({
 
   const tienePermiso =
     mode === "and"
-      ? // AND
-        permisosArray.every((p) => permisos.includes(Number(p)))
-      : // OR
-        permisosArray.some((p) => permisos.includes(Number(p)));
+      ? permisosArray.every((p) => permisos.includes(Number(p)))
+      : permisosArray.some((p) => permisos.includes(Number(p)));
 
   if (!tienePermiso) return null;
 

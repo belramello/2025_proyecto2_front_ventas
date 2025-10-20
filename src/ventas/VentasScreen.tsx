@@ -12,7 +12,7 @@ import { formatFecha, formatHora } from "../utils/formatDate";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import { PermissionGuard } from "../auth/guards/permisos-guard";
-import { Permisos } from "../auth/enums/permisos-enum";
+import { Permisos } from "../auth/enums/permisos";
 
 const VentasScreen = () => {
   const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { AuthContext } from "../../auth/context/authContext";
 import { cerrarSesion } from "../../services/authService";
 import { PermissionGuard } from "../../auth/guards/permisos-guard";
-import { Permisos } from "../../auth/enums/permisos-enum";
+import { Permisos } from "../../auth/enums/permisos";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./NavBar.css";
 

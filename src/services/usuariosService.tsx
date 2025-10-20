@@ -1,3 +1,5 @@
+import type { UpdateUsuarioDto } from "../interfaces/update-usuario.interface";
+import type { Usuario } from "../interfaces/usuario-interface";
 import type { UsuariosPaginatedResponse } from "../interfaces/usuarios-paginated-response.interface";
 import api from "../utils/api";
 
@@ -23,6 +25,32 @@ export const UsuariosService = {
       return;
     } catch (error) {
       console.error("Error al asignar rol a usuario:", error);
+      throw error;
+    }
+  },
+
+  async eliminarUsuario(usuarioId: number): Promise<void> {
+    try {
+      await api.delete(`/usuarios/${usuarioId}`);
+      return;
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      throw error;
+    }
+  },
+
+  async actualizarUsuario(
+    usuarioId: number,
+    payload: UpdateUsuarioDto
+  ): Promise<Usuario> {
+    try {
+      const { data } = await api.patch<Usuario>(
+        `/usuarios/${usuarioId}`,
+        payload
+      );
+      return data;
+    } catch (error) {
+      console.error("Error al actualizar usuario:", error);
       throw error;
     }
   },

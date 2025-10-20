@@ -17,6 +17,10 @@ export const Permisos = {
   ASIGNAR_ROL: 16,
   ACTUALIZAR_PERMISOS_POR_ROL: 17,
   VER_LOGS: 18,
+  CREAR_USUARIOS: 19,
+  VER_USUARIOS: 20,
+  ELIMINAR_USUARIOS: 21,
+  MODIFICAR_USUARIOS: 22,
 };
 
 export type PermisosType = (typeof Permisos)[keyof typeof Permisos];

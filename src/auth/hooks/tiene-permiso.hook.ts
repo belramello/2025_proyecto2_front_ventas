@@ -1,5 +1,5 @@
 import { useAuth } from "../context/authContext";
-import type { PermisosType } from "../enums/permisos-enum";
+import type { PermisosType } from "../enums/permisos";
 
 export const tienePermisoHook = () => {
   const { permisos } = useAuth();

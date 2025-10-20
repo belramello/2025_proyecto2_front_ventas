@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import UserTable from "../components/UserTable";
 import type { Rol } from "../interfaces/rol-interface";
 import type { Usuario } from "../interfaces/usuario-interface";
-import RoleModificationModal from "./RoleModificationModal";
 import "./UsuariosScreen.css";
 import { getRolesRequest } from "../services/rolesService";
 import { UsuariosService } from "../services/usuariosService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
-import CreateUsuarioModal from "./create-usuarios/CreateUsuariosScreen";
+import CreateUsuarioModal from "./crear-usuarios/CreateUsuarioModal";
 import { PermissionGuard } from "../auth/guards/permisos-guard";
-import { Permisos } from "../auth/enums/permisos-enum";
+import { Permisos } from "../auth/enums/permisos";
+import Pagination from "../components/Pagination";
+import EditUsuarioModal from "./modificar-usuarios/ModificarUsuarioModal";
+import RoleModificationModal from "./modificar-rol/RoleModificationModal";
 
 function UsuariosScreen() {
   const [showRoleModal, setShowRoleModal] = useState(false);
@@ -19,6 +21,11 @@ function UsuariosScreen() {
   const [error, setError] = useState<string | null>(null);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [page, setPage] = useState<number>(1);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const [usuarioParaEditar, setUsuarioParaEditar] = useState<Usuario | null>(
+    null
+  );
 
   const getRoles = async () => {
     setLoading(true);
@@ -37,15 +44,19 @@ function UsuariosScreen() {
 
   useEffect(() => {
     getRoles();
-    getUsuarios();
+    fetchUsuarios(page);
   }, []);
 
-  const getUsuarios = async () => {
+  const fetchUsuarios = async (pageNumber: number = 1) => {
     setLoading(true);
     setError(null);
     try {
-      const usuariosPaginados = await UsuariosService.getUsuariosRequest();
+      const usuariosPaginados = await UsuariosService.getUsuariosRequest(
+        pageNumber
+      );
       setUsuarios(usuariosPaginados.usuarios);
+      setLastPage(usuariosPaginados.lastPage ?? 1);
+      setPage(usuariosPaginados.page ?? pageNumber);
     } catch (error) {
       setError("Error al obtener los usuarios, porfavor intentá de nuevo.");
     } finally {
@@ -65,9 +76,38 @@ function UsuariosScreen() {
     }
   };
 
+  const handleDeleteUser = async (usuario: Usuario) => {
+    const confirma = window.confirm(
+      `¿Estás seguro que querés eliminar al usuario "${usuario.nombre} ${usuario.apellido}"? Esta acción no se puede deshacer.`
+    );
+    if (!confirma) return;
+    setError(null);
+    setLoading(true);
+    try {
+      await UsuariosService.eliminarUsuario(usuario.id);
+      setUsuarios((prev) => prev.filter((u) => u.id !== usuario.id));
+      await fetchUsuarios(page);
+    } catch (err) {
+      console.error("Error eliminando usuario:", err);
+      setError("No se pudo eliminar el usuario. Intentá de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditUser = (usuario: Usuario) => {
+    setUsuarioParaEditar(usuario);
+  };
+
+  const onEditSuccess = () => {
+    setUsuarioParaEditar(null);
+
+    fetchUsuarios(page);
+  };
+
   const retryFetch = () => {
     getRoles();
-    getUsuarios();
+    fetchUsuarios(page);
   };
 
   return (
@@ -83,7 +123,7 @@ function UsuariosScreen() {
           </div>
 
           <div>
-            <PermissionGuard requiredPermissions={Permisos.ASIGNAR_ROL}>
+            <PermissionGuard requiredPermissions={Permisos.CREAR_USUARIOS}>
               <button
                 className="btn btn-info mx-2 fw-bold text-light"
                 onClick={() => setShowCreateModal(true)}
@@ -95,7 +135,7 @@ function UsuariosScreen() {
               requiredPermissions={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
             >
               <button
-                className="btn btn-outline-purple fw-bold"
+                className="btn btn-info mx-2  fw-bold"
                 onClick={() => setShowRoleModal(true)}
               >
                 MODIFICAR ROL
@@ -103,17 +143,27 @@ function UsuariosScreen() {
             </PermissionGuard>
           </div>
         </div>
-        <PermissionGuard requiredPermissions={Permisos.ASIGNAR_ROL}>
+        <PermissionGuard requiredPermissions={Permisos.VER_USUARIOS}>
           {error && <ErrorMessage message={error} onRetry={retryFetch} />}
           {loading ? (
             <LoadingSpinner />
           ) : (
             !error && (
-              <UserTable
-                usuarios={usuarios}
-                roles={roles}
-                onRoleChange={handleRoleChange}
-              />
+              <>
+                <UserTable
+                  usuarios={usuarios}
+                  roles={roles}
+                  onRoleChange={handleRoleChange}
+                  onEdit={handleEditUser}
+                  onDelete={handleDeleteUser}
+                />
+
+                <Pagination
+                  currentPage={page}
+                  lastPage={lastPage}
+                  onPageChange={(newPage) => fetchUsuarios(newPage)}
+                />
+              </>
             )
           )}
         </PermissionGuard>
@@ -127,11 +177,24 @@ function UsuariosScreen() {
           roles={roles}
         />
       </PermissionGuard>
-      <CreateUsuarioModal
-        show={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSuccess={getUsuarios}
-      />
+
+      <PermissionGuard requiredPermissions={Permisos.CREAR_USUARIOS}>
+        <CreateUsuarioModal
+          show={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={() => fetchUsuarios(page)}
+        />
+      </PermissionGuard>
+
+      <PermissionGuard requiredPermissions={Permisos.MODIFICAR_USUARIOS}>
+        <EditUsuarioModal
+          show={!!usuarioParaEditar}
+          usuario={usuarioParaEditar}
+          onClose={() => setUsuarioParaEditar(null)}
+          onSuccess={onEditSuccess}
+          roles={roles}
+        />
+      </PermissionGuard>
     </>
   );
 }

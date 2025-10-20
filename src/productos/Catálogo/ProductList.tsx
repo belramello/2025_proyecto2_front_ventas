@@ -11,7 +11,7 @@ import type { Producto } from "../../interfaces/producto-interface";
 import type { ProductosPaginatedResponse } from "../../interfaces/productos-paginated-response.interface";
 import "./ProductsList.css";
 import { PermissionGuard } from "../../auth/guards/permisos-guard";
-import { Permisos } from "../../auth/enums/permisos-enum";
+import { Permisos } from "../../auth/enums/permisos";
 
 const ProductsList = () => {
   const navigate = useNavigate();

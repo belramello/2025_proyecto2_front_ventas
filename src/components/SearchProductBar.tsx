@@ -26,10 +26,7 @@ const SearchProductBar: React.FC<SearchProductBarProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      <button
-        className="btn btn-outline-primary btn-sm btn-buscar"
-        onClick={onSearch}
-      >
+      <button className="btn  btn-info  btn-sm btn-buscar" onClick={onSearch}>
         Buscar
       </button>
     </div>

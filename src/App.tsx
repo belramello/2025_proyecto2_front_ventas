@@ -8,7 +8,7 @@ import LoginScreen from "./login/LoginScreen";
 import UsuariosScreen from "./roles/UsuariosScreen";
 import ProductsList from "./productos/Catálogo/ProductList";
 import { PermissionGuard } from "./auth/guards/permisos-guard";
-import { Permisos } from "./auth/enums/permisos-enum";
+import { Permisos } from "./auth/enums/permisos";
 
 function App() {
   return (
@@ -30,8 +30,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <>
-                  <NavBar />
-                  <VentasScreen />
+                  <PermissionGuard
+                    requiredPermissions={[
+                      Permisos.VER_HISTORIAL_VENTAS,
+                      Permisos.CREAR_VENTA,
+                    ]}
+                  >
+                    <NavBar />
+                    <VentasScreen />
+                  </PermissionGuard>
                 </>
               </ProtectedRoute>
             }
@@ -55,7 +62,16 @@ function App() {
               <>
                 <ProtectedRoute>
                   <NavBar />
-                  <PermissionGuard requiredPermissions={Permisos.ASIGNAR_ROL}>
+                  <PermissionGuard
+                    requiredPermissions={[
+                      Permisos.ASIGNAR_ROL,
+                      Permisos.CREAR_USUARIOS,
+                      Permisos.ELIMINAR_USUARIOS,
+                      Permisos.VER_USUARIOS,
+                      Permisos.MODIFICAR_USUARIOS,
+                      Permisos.ACTUALIZAR_PERMISOS_POR_ROL,
+                    ]}
+                  >
                     <UsuariosScreen />
                   </PermissionGuard>
                 </ProtectedRoute>
@@ -67,7 +83,14 @@ function App() {
             element={
               <>
                 <NavBar />
-                <PermissionGuard requiredPermissions={Permisos.VER_PRODUCTOS}>
+                <PermissionGuard
+                  requiredPermissions={[
+                    Permisos.VER_PRODUCTOS,
+                    Permisos.CREAR_PRODUCTO,
+                    Permisos.MODIFICAR_PRODUCTOS,
+                    Permisos.ELIMINAR_PRODUCTOS,
+                  ]}
+                >
                   <ProductsList />
                 </PermissionGuard>
               </>

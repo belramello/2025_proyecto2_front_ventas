@@ -1,10 +1,11 @@
-import Button from "../components/Button";
-import type { Rol } from "../interfaces/rol-interface";
+import Button from "../../components/Button";
+import type { Rol } from "../../interfaces/rol-interface";
 import "./RoleModificationModal.css";
 
 interface RoleModificationModalProps {
   show: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   roles: Rol[];
 }
 
