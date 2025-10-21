@@ -1,6 +1,6 @@
 import { useState } from "react";
 import QuantityButton from "../components/QuantityButton";
-import type { Producto } from "../interfaces/producto-interface";
+import type { Producto } from "../productos/interfaces/producto-interface";
 import type { MedioDePago } from "../types/MedioDePagoType";
 import "./NuevaVentaScreen.css";
 import SearchProductBar from "./components/SearchProductBar";

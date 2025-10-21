@@ -1,5 +1,5 @@
-import type { Producto } from "../interfaces/producto-interface";
-import type { ProductosPaginatedResponse } from "../interfaces/productos-paginated-response.interface";
+import type { Producto } from "../productos/interfaces/producto-interface";
+import type { ProductosPaginatedResponse } from "../productos/interfaces/productos-paginated-response.interface";
 import api from "../utils/api";
 
 export const ProductosService = {

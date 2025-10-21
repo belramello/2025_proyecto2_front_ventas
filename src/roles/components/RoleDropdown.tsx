@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Rol } from "../roles/interfaces/rol-interface";
+import type { Rol } from "../interfaces/rol-interface";
 
 interface RoleDropdownProps {
   rolActual: Rol;

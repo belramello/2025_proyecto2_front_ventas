@@ -1,4 +1,4 @@
-import type { Rol } from "../roles/interfaces/rol-interface";
+import type { Rol } from "./rol-interface";
 
 export interface Usuario {
   id: number;
