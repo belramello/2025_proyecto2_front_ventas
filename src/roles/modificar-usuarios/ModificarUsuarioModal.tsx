@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import type { Rol } from "../../interfaces/rol-interface";
-import type { Usuario } from "../../interfaces/usuario-interface";
+import type { Rol } from "../interfaces/rol-interface";
 import { UsuariosService } from "../../services/usuariosService";
 import ErrorMessage from "../../components/ErrorMessage";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import FormInput from "../../components/FormInput";
+import type { Usuario } from "../interfaces/usuario-interface";
 
 interface EditUsuarioModalProps {
   show: boolean;

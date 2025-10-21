@@ -5,12 +5,12 @@ import {
   getRolById,
   findAllPermisos,
 } from "../../services/rolesService";
-import type { Permiso } from "../../interfaces/permiso-interface";
+import type { Permiso } from "../interfaces/permiso-interface";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import ErrorMessage from "../../components/ErrorMessage";
-import type { RespuestaFindOneRol } from "../../interfaces/find-one-rol.interface";
+import type { RespuestaFindOneRol } from "../interfaces/find-one-rol.interface";
 import "./ModificarPermisosScreen.css";
-import { CategoriaCard } from "../../components/CategoriaCard";
+import { CategoriaCard } from "../components/CategoriaCard";
 
 export default function ModificarPermisosScreen() {
   const { id } = useParams<{ id: string }>();

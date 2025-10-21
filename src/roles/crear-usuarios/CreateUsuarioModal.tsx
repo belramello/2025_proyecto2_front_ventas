@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Rol } from "../../interfaces/rol-interface";
+import type { Rol } from "../interfaces/rol-interface";
 import { getRolesRequest } from "../../services/rolesService";
 import { registrarUsuario } from "../../services/authService";
 import ErrorMessage from "../../components/ErrorMessage";

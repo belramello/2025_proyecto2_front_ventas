@@ -1,6 +1,6 @@
-import type { UpdateUsuarioDto } from "../interfaces/update-usuario.interface";
-import type { Usuario } from "../interfaces/usuario-interface";
-import type { UsuariosPaginatedResponse } from "../interfaces/usuarios-paginated-response.interface";
+import type { UpdateUsuarioDto } from "../roles/interfaces/update-usuario.interface";
+import type { Usuario } from "../roles/interfaces/usuario-interface";
+import type { UsuariosPaginatedResponse } from "../roles/interfaces/usuarios-paginated-response.interface";
 import api from "../utils/api";
 
 export const UsuariosService = {

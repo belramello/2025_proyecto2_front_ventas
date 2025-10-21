@@ -27,7 +27,7 @@ const Pagination: React.FC<PaginationProps> = ({
       </span>
 
       <button
-        className="btn btn-outline-primary ms-2"
+        className="btn btn-info mx-2"
         disabled={currentPage === lastPage}
         onClick={() => onPageChange(currentPage + 1)}
       >

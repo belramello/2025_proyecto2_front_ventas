@@ -1,5 +1,5 @@
 import Button from "../../components/Button";
-import type { Rol } from "../../interfaces/rol-interface";
+import type { Rol } from "../interfaces/rol-interface";
 import "./RoleModificationModal.css";
 import { useNavigate } from "react-router-dom";
 

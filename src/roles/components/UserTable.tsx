@@ -1,6 +1,6 @@
 import React from "react";
 import type { Usuario } from "../interfaces/usuario-interface";
-import type { Rol } from "../interfaces/rol-interface";
+import type { Rol } from "../roles/interfaces/rol-interface";
 import RoleDropdown from "./RoleDropdown";
 import ActionButton from "./Button";
 import { PermissionGuard } from "../auth/guards/permisos-guard";

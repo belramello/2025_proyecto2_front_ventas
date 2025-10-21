@@ -1,6 +1,6 @@
-import type { RespuestaFindOneRol } from "../interfaces/find-one-rol.interface";
-import type { Permiso } from "../interfaces/permiso-interface";
-import type { Rol } from "../interfaces/rol-interface";
+import type { RespuestaFindOneRol } from "../roles/interfaces/find-one-rol.interface";
+import type { Permiso } from "../roles/interfaces/permiso-interface";
+import type { Rol } from "../roles/interfaces/rol-interface";
 import api from "../utils/api";
 
 export const getRolesRequest = async (): Promise<Rol[]> => {

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import UserTable from "../../components/UserTable";
-import type { Rol } from "../../interfaces/rol-interface";
-import type { Usuario } from "../../interfaces/usuario-interface";
+import type { Rol } from "../interfaces/rol-interface";
 import "./UsuariosScreen.css";
 import { getRolesRequest } from "../../services/rolesService";
 import { UsuariosService } from "../../services/usuariosService";
@@ -13,6 +11,8 @@ import { Permisos } from "../../auth/enums/permisos";
 import Pagination from "../../components/Pagination";
 import EditUsuarioModal from "../modificar-usuarios/ModificarUsuarioModal";
 import RoleModificationModal from "../modificar-rol/RoleModificationModal";
+import UserTable from "../components/UserTable";
+import type { Usuario } from "../interfaces/usuario-interface";
 
 function UsuariosScreen() {
   const [showRoleModal, setShowRoleModal] = useState(false);
