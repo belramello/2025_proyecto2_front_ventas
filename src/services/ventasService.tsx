@@ -1,6 +1,6 @@
-import type { VentasPaginatedResponse } from "../interfaces/ventas-paginated-response.interface";
+import type { VentasPaginatedResponse } from "../ventas/interfaces/ventas-paginated-response.interface";
 import api from "../utils/api";
-import type { CreateVentaDto } from "../interfaces/create-venta.interface";
+import type { CreateVentaDto } from "../ventas/interfaces/create-venta.interface";
 
 export const VentasService = {
   async getVentas(page: number = 1): Promise<VentasPaginatedResponse> {

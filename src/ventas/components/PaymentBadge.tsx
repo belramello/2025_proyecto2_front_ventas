@@ -1,5 +1,5 @@
 import React from "react";
-import type { MedioDePago } from "../types/MedioDePagoType";
+import type { MedioDePago } from "../../types/MedioDePagoType";
 
 export const MediosDePago = {
   EFECTIVO: "efectivo" as MedioDePago,

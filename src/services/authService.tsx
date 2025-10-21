@@ -2,7 +2,7 @@ import type { LoginResponse } from "../interfaces/login-response.interface";
 import type { LoginCredentials } from "../interfaces/login-credentials.interface";
 import { eliminarTokens, guardarToken } from "../utils/storage";
 import api from "../utils/api";
-import type { RegistrarUsuarioDto } from "../interfaces/registrar-usuario-dto";
+import type { RegistrarUsuarioDto } from "../roles/interfaces/registrar-usuario-dto";
 
 export const loginRequest = async (
   credentials: LoginCredentials

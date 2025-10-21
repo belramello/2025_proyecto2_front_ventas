@@ -1,11 +1,11 @@
 import { BsFillPlusCircleFill } from "react-icons/bs";
-import PaymentBadge from "../components/PaymentBadge";
+import PaymentBadge from "./components/PaymentBadge";
 import PrimaryButton from "../components/Button";
 import FullWidthButton from "../components/FullWidthButton";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { VentasService } from "../services/ventasService";
-import type { Venta } from "../interfaces/venta-interface";
+import type { Venta } from "./interfaces/venta-interface";
 import Pagination from "../components/Pagination";
 import type { MedioDePago } from "../types/MedioDePagoType";
 import { formatFecha, formatHora } from "../utils/formatDate";
