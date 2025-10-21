@@ -5,10 +5,11 @@ import NuevaVentaScreen from "./ventas/NuevaVentaScreen";
 import { AuthProvider } from "./auth/context/authContext";
 import { ProtectedRoute } from "./auth/routes/ProtectedRoute";
 import LoginScreen from "./login/LoginScreen";
-import UsuariosScreen from "./roles/UsuariosScreen";
+import UsuariosScreen from "./roles/pantalla-inicial/UsuariosScreen";
 import ProductsList from "./productos/Catálogo/ProductList";
 import { PermissionGuard } from "./auth/guards/permisos-guard";
 import { Permisos } from "./auth/enums/permisos";
+import ModificarPermisosScreen from "./roles/modificar-rol/ModificarPermisosScreen";
 
 function App() {
   return (
@@ -94,6 +95,19 @@ function App() {
                   <ProductsList />
                 </PermissionGuard>
               </>
+            }
+          />
+          <Route
+            path="/roles/:id/permisos"
+            element={
+              <ProtectedRoute>
+                <PermissionGuard
+                  requiredPermissions={Permisos.ACTUALIZAR_PERMISOS_POR_ROL}
+                >
+                  <NavBar />
+                  <ModificarPermisosScreen />
+                </PermissionGuard>
+              </ProtectedRoute>
             }
           />
         </Routes>

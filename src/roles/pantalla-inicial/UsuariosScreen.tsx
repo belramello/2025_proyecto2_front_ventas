@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import UserTable from "../components/UserTable";
-import type { Rol } from "../interfaces/rol-interface";
-import type { Usuario } from "../interfaces/usuario-interface";
+import UserTable from "../../components/UserTable";
+import type { Rol } from "../../interfaces/rol-interface";
+import type { Usuario } from "../../interfaces/usuario-interface";
 import "./UsuariosScreen.css";
-import { getRolesRequest } from "../services/rolesService";
-import { UsuariosService } from "../services/usuariosService";
-import LoadingSpinner from "../components/LoadingSpinner";
-import ErrorMessage from "../components/ErrorMessage";
-import CreateUsuarioModal from "./crear-usuarios/CreateUsuarioModal";
-import { PermissionGuard } from "../auth/guards/permisos-guard";
-import { Permisos } from "../auth/enums/permisos";
-import Pagination from "../components/Pagination";
-import EditUsuarioModal from "./modificar-usuarios/ModificarUsuarioModal";
-import RoleModificationModal from "./modificar-rol/RoleModificationModal";
+import { getRolesRequest } from "../../services/rolesService";
+import { UsuariosService } from "../../services/usuariosService";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import ErrorMessage from "../../components/ErrorMessage";
+import CreateUsuarioModal from "../crear-usuarios/CreateUsuarioModal";
+import { PermissionGuard } from "../../auth/guards/permisos-guard";
+import { Permisos } from "../../auth/enums/permisos";
+import Pagination from "../../components/Pagination";
+import EditUsuarioModal from "../modificar-usuarios/ModificarUsuarioModal";
+import RoleModificationModal from "../modificar-rol/RoleModificationModal";
 
 function UsuariosScreen() {
   const [showRoleModal, setShowRoleModal] = useState(false);

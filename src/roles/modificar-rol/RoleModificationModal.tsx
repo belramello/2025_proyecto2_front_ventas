@@ -1,6 +1,7 @@
 import Button from "../../components/Button";
 import type { Rol } from "../../interfaces/rol-interface";
 import "./RoleModificationModal.css";
+import { useNavigate } from "react-router-dom";
 
 interface RoleModificationModalProps {
   show: boolean;
@@ -15,6 +16,7 @@ function RoleModificationModal({
   roles,
 }: RoleModificationModalProps) {
   if (!show) return null;
+  const navigate = useNavigate();
 
   return (
     <>
@@ -69,7 +71,9 @@ function RoleModificationModal({
                             <Button
                               variant="primary"
                               size="sm"
-                              onClick={() => console.log("Modificar permisos")}
+                              onClick={() =>
+                                navigate(`/roles/${rol.id}/permisos`)
+                              }
                             >
                               MODIFICAR
                             </Button>
