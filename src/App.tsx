@@ -12,6 +12,7 @@ import { Permisos } from "./auth/enums/permisos";
 import ModificarPermisosScreen from "./roles/modificar-rol/ModificarPermisosScreen";
 import MarcasList from "./marcas/ListarMarcas/MarcasList"; 
 import FormularioMarca from "./marcas/FormularioMarca/FormularioMarca"; 
+import HistorialTable from "./auditoria/PantallaAuditoria";
 
 function App() {
   return (
@@ -162,6 +163,20 @@ function App() {
                 {/* TODO: Usar Permisos.MODIFICAR_MARCAS */}
                 <PermissionGuard requiredPermissions={Permisos.MODIFICAR_MARCAS}>
                   <FormularioMarca /> {/* Reutilizamos el formulario */}
+                </PermissionGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Seguridad"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                {/* TODO: Usar Permisos.MODIFICAR_MARCAS */}
+                <PermissionGuard requiredPermissions={[
+                    Permisos.VER_LOGS
+                  ]}>
+                  <HistorialTable /> {/* Reutilizamos el formulario */}
                 </PermissionGuard>
               </ProtectedRoute>
             }
