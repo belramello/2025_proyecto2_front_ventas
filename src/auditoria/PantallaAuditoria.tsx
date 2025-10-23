@@ -1,19 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { AuditoriaService } from "../services/auditoriaService";
 import type { Historial } from "./interfaces/HistorialActividades.dto";
-import "./Auditoria.css"; // Asegúrate de que este path sea correcto
+import "./Auditoria.css"; // Ensure this path is correct
+import { debounce } from "lodash"; // Import lodash for debouncing
 
 // Función utilitaria para generar nombres de clases CSS a partir de strings
 const slugify = (text: string | undefined): string => {
   if (!text) return "";
   return text
     .toLowerCase()
-    .replace(/ /g, '-') // Reemplaza espacios por guiones
-    .replace(/[^\w-]+/g, '') // Elimina caracteres no alfanuméricos
-    .replace(/--+/g, '-') // Reemplaza múltiples guiones por uno solo
-    .replace(/^-+/, '') // Elimina guiones al inicio
-    .replace(/-+$/, ''); // Elimina guiones al final
+    .replace(/ /g, "-") // Reemplaza espacios por guiones
+    .replace(/[^\w-]+/g, "") // Elimina caracteres no alfanuméricos
+    .replace(/--+/g, "-") // Reemplaza múltiples guiones por uno solo
+    .replace(/^-+/, "") // Elimina guiones al inicio
+    .replace(/-+$/, ""); // Elimina guiones al final
 };
+
+// Lista de acciones posibles (basada en tu lista)
+const actions = [
+  "Iniciar sesion",
+  "Cerrar sesion",
+  "Cambiar contraseña",
+  "Actualizar perfil",
+  "Recuperar contraseña",
+  "Acceso denegado",
+  "Creación de producto",
+  "Modificacion de producto",
+  "Eliminacion de producto",
+  "Creación de marca",
+  "Modificacion de marca",
+  "Eliminacion de marca",
+  "Creación de línea",
+  "Modificacion de línea",
+  "Eliminacion de línea",
+  "Registro de venta",
+  "Registro nuevo usuario",
+];
 
 // Componente principal
 const HistorialTable: React.FC = () => {
@@ -21,15 +43,15 @@ const HistorialTable: React.FC = () => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  // Nuevo estado para el campo de búsqueda/filtro (solo para la estructura visual)
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAction, setSelectedAction] = useState<string>(""); // Estado para la acción seleccionada
 
-  const fetchHistorial = async (pageNumber: number) => {
+  // Función para buscar historial con filtros
+  const fetchHistorial = async (pageNumber: number, search: string, action: string) => {
     try {
       setLoading(true);
-      // Aquí se podría integrar el searchTerm en la llamada al servicio:
-      // const data = await AuditoriaService.getHistorial(pageNumber, searchTerm); 
-      const data = await AuditoriaService.getHistorial(pageNumber);
+      // Llamada al servicio con parámetros de búsqueda y filtro
+      const data = await AuditoriaService.getHistorial(pageNumber, search, action);
 
       if (data && Array.isArray(data.data)) {
         setHistorial(data.data);
@@ -47,16 +69,40 @@ const HistorialTable: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchHistorial(page);
-  }, [page]); // Dependencia: Recargar al cambiar de página
+  // Debounce para la búsqueda
+  const debouncedFetchHistorial = useCallback(
+    debounce((page: number, search: string, action: string) => {
+      fetchHistorial(page, search, action);
+    }, 500),
+    []
+  );
 
-  // Si tuvieras que recargar al buscar, añadirías searchTerm aquí también:
-  // }, [page, searchTerm]);
+  // Efecto para recargar datos cuando cambian página, búsqueda o acción
+  useEffect(() => {
+    debouncedFetchHistorial(page, searchTerm, selectedAction);
+  }, [page, searchTerm, selectedAction, debouncedFetchHistorial]);
+
+  // Manejar cambio en el input de búsqueda
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setPage(1); // Resetear a la primera página al cambiar la búsqueda
+  };
+
+  // Manejar cambio en el filtro de acción
+  const handleActionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedAction(e.target.value);
+    setPage(1); // Resetear a la primera página al cambiar el filtro
+  };
+
+  // Limpiar filtros y búsqueda
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedAction("");
+    setPage(1);
+  };
 
   if (loading) return <p className="loading-text">Cargando historial...</p>;
 
-  // Renderizado del componente
   return (
     <div className="auditoria-container">
       <h2 className="auditoria-titulo">Auditoría de Actividades</h2>
@@ -64,27 +110,36 @@ const HistorialTable: React.FC = () => {
         Consulta todas las actividades realizadas en el sistema y eventos sensibles.
       </p>
 
-      {/* Estructura de Filtros y Búsqueda (añadida del CSS) */}
+      {/* Filtros y Búsqueda */}
       <div className="auditoria-filtros">
         <span className="filtro-accion-label">FILTRAR POR ACCIÓN</span>
-        {/* Este botón podría abrir un modal de filtros, por ahora es solo visual */}
-        <button className="btn-filtro">
-          Todas
-        </button> 
+        <select
+          className="btn-filtro"
+          value={selectedAction}
+          onChange={handleActionChange}
+        >
+          <option value="">Todas</option>
+          {actions.map((action) => (
+            <option key={slugify(action)} value={action}>
+              {action}
+            </option>
+          ))}
+        </select>
         <input
           type="text"
           placeholder="Buscar por usuario..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
         />
-        <button className="btn-buscar" 
-                // Aquí podrías llamar a fetchHistorial(1) para empezar la búsqueda
-                onClick={() => setPage(1)}> 
+        <button className="btn-buscar" onClick={() => fetchHistorial(1, searchTerm, selectedAction)}>
           BUSCAR
         </button>
+        <button className="btn-filtro" onClick={handleClearFilters}>
+          LIMPIAR
+        </button>
       </div>
-      
-      {/* Mensaje de no hay registros, movido aquí para mostrarse después de los filtros */}
+
+      {/* Mensaje de no hay registros */}
       {(!historial || historial.length === 0) && (
         <p className="no-records-text">No hay registros en el historial.</p>
       )}
@@ -108,11 +163,10 @@ const HistorialTable: React.FC = () => {
                 <td>{item.usuario}</td>
                 <td>
                   <span className={`badge accion-${slugify(item.accion?.nombre)}`}>
-    {item.accion?.nombre}
-  </span>
+                    {item.accion?.nombre}
+                  </span>
                 </td>
                 <td>
-                  {/* Aplicando clase badge para Estado */}
                   <span className={`badge estado-${slugify(item.estado?.nombre)}`}>
                     {item.estado?.nombre}
                   </span>
@@ -121,13 +175,13 @@ const HistorialTable: React.FC = () => {
               </tr>
             ))}
           </tbody>
-        </table >
+        </table>
       )}
 
       {/* Paginación */}
       <div className="paginacion">
         <button
-          className="boton" // Usando la clase 'boton'
+          className="boton"
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
         >
@@ -137,7 +191,7 @@ const HistorialTable: React.FC = () => {
           Página {page} de {lastPage}
         </span>
         <button
-          className="boton" // Usando la clase 'boton'
+          className="boton"
           onClick={() => setPage((p) => Math.min(lastPage, p + 1))}
           disabled={page === lastPage}
         >
