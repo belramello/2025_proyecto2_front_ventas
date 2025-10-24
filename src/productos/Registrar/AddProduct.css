@@ -1,95 +1,51 @@
-/* ===== Reset ===== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  font-family: "Inter", sans-serif;
-  background-color: #fff;
-}
-
-/* ===== Página general ===== */
+/* ======= CONTENEDOR PRINCIPAL ======= */
 .add-product-page {
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100vh;
-  background-color: #f8f8f6;
-  color: #152536;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(180deg, #f5f7fa 0%, #e9eff5 100%);
+  min-height: 100vh;
+  padding: 40px 0;
 }
 
-/* ===== Navbar ===== */
-.navbar {
-  height: 60px;
-  background-color: #00c8b3;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 24px;
-}
-
-.navbar-logo {
-  background-color: #00c3d0;
-  color: #343a40;
-  font-weight: 600;
-  font-size: 20px;
-  padding: 8px 12px;
-  border-radius: 4px;
-}
-
-.navbar-links {
-  display: flex;
-  gap: 8px;
-}
-
-.navbar-links a {
-  color: #6c757d;
-  text-decoration: none;
-  font-size: 16px;
-  padding: 6px 16px;
-  border-radius: 4px;
-}
-
-.navbar-links a.active {
-  color: #5227cc;
-}
-
-.navbar-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-}
-
-/* ===== Contenedor principal ===== */
+/* ======= FORMULARIO ======= */
 .form-container {
-  flex: 1;
-  padding: 48px 80px;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
-  margin: 40px auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  padding: 48px 80px;
   width: 90%;
   max-width: 1300px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .form-container h1 {
   text-align: center;
   font-size: 32px;
   font-weight: 800;
-  margin-bottom: 32px;
+  color: #333;
+  margin-bottom: 20px;
 }
 
-/* ===== Formulario ===== */
+/* ======= GRUPOS Y FILAS ======= */
 .product-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .form-group {
@@ -97,19 +53,19 @@ html, body {
   flex-direction: column;
   gap: 8px;
   flex: 1;
-}
-
-.form-row {
-  display: flex;
-  gap: 32px;
+  min-width: 280px;
 }
 
 label {
-  font-weight: 800;
+  font-weight: 700;
   font-size: 16px;
+  color: #333;
 }
 
-input, textarea, select {
+/* ======= CAMPOS DE ENTRADA ======= */
+input,
+textarea,
+select {
   border: 1px solid #bfbfbf;
   border-radius: 6px;
   padding: 10px 12px;
@@ -117,6 +73,15 @@ input, textarea, select {
   color: #333;
   background-color: #fff;
   width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #00c3d0;
+  box-shadow: 0 0 4px rgba(0, 195, 208, 0.4);
+  outline: none;
 }
 
 textarea {
@@ -124,39 +89,65 @@ textarea {
   height: 80px;
 }
 
-/* ===== Botones ===== */
+/* ======= BOTONES ======= */
 .btn {
   border: none;
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   font-weight: 600;
   font-size: 14px;
   color: white;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: transform 0.1s ease, opacity 0.2s ease;
   width: fit-content;
 }
 
 .btn:hover {
   transform: scale(1.05);
+  opacity: 0.9;
 }
 
 .btn.green { background-color: #34c759; }
-.btn.pink { background-color: #efb8c8; }
-.btn.purple { background-color: #cb30e0; }
 .btn.teal { background-color: #00c3d0; }
-.btn.red { background-color: #b3261e; }
+.btn.pink { background-color: #ff2d55; }
+.btn.purple { background-color: #af52de; }
+.btn.red { background-color: #ff3b30; }
 
-/* ===== Acciones ===== */
+/* ======= ZONA DE ACCIONES ======= */
 .form-actions {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 1024px) {
+/* ======= INPUT DE ARCHIVO ======= */
+input[type="file"] {
+  padding: 6px 0;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-input-filename {
+  font-style: italic;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 32px 24px;
+  }
+
   .form-row {
     flex-direction: column;
+  }
+
+  .form-container h1 {
+    font-size: 26px;
   }
 }

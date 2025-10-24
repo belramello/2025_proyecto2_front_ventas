@@ -13,6 +13,7 @@ import ModificarPermisosScreen from "./roles/modificar-rol/ModificarPermisosScre
 import MarcasList from "./marcas/ListarMarcas/MarcasList"; 
 import FormularioMarca from "./marcas/FormularioMarca/FormularioMarca"; 
 import HistorialTable from "./auditoria/PantallaAuditoria";
+import AddProduct from "./productos/Registrar/AddProduct";
 
 function App() {
   return (
@@ -103,6 +104,24 @@ function App() {
                   ]}
                 >
                   <ProductsList />
+                </PermissionGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/registrar-producto"
+            element={
+              <ProtectedRoute> {/* Aseguramos ProtectedRoute */}
+                <NavBar />
+                <PermissionGuard
+                  requiredPermissions={[
+                    Permisos.VER_PRODUCTOS,
+                    Permisos.CREAR_PRODUCTO,
+                    Permisos.MODIFICAR_PRODUCTOS,
+                    Permisos.ELIMINAR_PRODUCTOS,
+                  ]}
+                >
+                  <AddProduct />
                 </PermissionGuard>
               </ProtectedRoute>
             }

@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AddProduct.css";
+import { MarcasService } from "../../services/marcasService";
+import type { Marca } from "../../marcas/interfaces/marca.interface";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -10,60 +12,62 @@ const AddProduct = () => {
     line: "",
     provider: "",
     code: "",
-    image: null,
+    image: null as File | null,
   });
 
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  if (e.target instanceof HTMLInputElement) {
-    const { name, value, files } = e.target;
-    setProduct({
-      ...product,
-      [name]: files ? files[0] : value,
-    });
-  } else if (e.target instanceof HTMLTextAreaElement) {
+  const [marcas, setMarcas] = useState<Marca[]>([]);
+  const [loadingMarcas, setLoadingMarcas] = useState(true);
+
+  // === Cargar marcas al montar el componente ===
+  useEffect(() => {
+    const fetchMarcas = async () => {
+      try {
+        const data = await MarcasService.getMarcas();
+        setMarcas(data);
+      } catch (error) {
+        console.error("Error al cargar las marcas:", error);
+      } finally {
+        setLoadingMarcas(false);
+      }
+    };
+    fetchMarcas();
+  }, []);
+
+  // === Manejadores ===
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (e.target instanceof HTMLInputElement) {
+      const { name, value, files } = e.target;
+      setProduct({
+        ...product,
+        [name]: files ? files[0] : value,
+      });
+    } else if (e.target instanceof HTMLTextAreaElement) {
+      const { name, value } = e.target;
+      setProduct({
+        ...product,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProduct({
       ...product,
       [name]: value,
     });
-  }
-};
+  };
 
-const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  const { name, value } = e.target;
-  setProduct({
-    ...product,
-    [name]: value,
-  });
-};
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Producto agregado:", product);
+  };
 
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("Producto agregado:", product);
-};
-
+  // === Render ===
   return (
     <div className="add-product-page">
-      {/* Navbar */}
-      <header className="navbar">
-        <div className="navbar-logo">Dauria</div>
-        <nav className="navbar-links">
-          <a href="#" className="active">Inicio</a>
-          <a href="#">Usuarios</a>
-          <a href="#">Productos</a>
-          <a href="#">Ventas</a>
-          <a href="#">Dashboard</a>
-          <a href="#">Marcas</a>
-          <a href="#">Proveedores</a>
-        </nav>
-        <img
-          src="https://placehold.co/44x44"
-          alt="User avatar"
-          className="navbar-avatar"
-        />
-      </header>
-
-      {/* Formulario */}
       <main className="form-container">
         <h1>AGREGAR PRODUCTO</h1>
 
@@ -107,12 +111,22 @@ const handleSubmit = (e: React.FormEvent) => {
                 name="brand"
                 value={product.brand}
                 onChange={handleSelectChange}
+                disabled={loadingMarcas}
               >
-                <option value="">Selecciona una marca</option>
-                <option value="Bic">Bic</option>
-                <option value="Faber Castell">Faber Castell</option>
+                <option value="">
+                  {loadingMarcas
+                    ? "Cargando marcas..."
+                    : "Selecciona una marca"}
+                </option>
+                {marcas.map((marca) => (
+                  <option key={marca.id} value={marca.nombre}>
+                    {marca.nombre}
+                  </option>
+                ))}
               </select>
-              <button type="button" className="btn teal">NUEVA MARCA</button>
+              <button type="button" className="btn teal">
+                NUEVA MARCA
+              </button>
             </div>
           </div>
 
@@ -128,7 +142,9 @@ const handleSubmit = (e: React.FormEvent) => {
                 <option value="Escolar">Escolar</option>
                 <option value="Oficina">Oficina</option>
               </select>
-              <button type="button" className="btn pink">NUEVA LÍNEA</button>
+              <button type="button" className="btn pink">
+                NUEVA LÍNEA
+              </button>
             </div>
 
             <div className="form-group">
@@ -139,7 +155,9 @@ const handleSubmit = (e: React.FormEvent) => {
                 accept="image/*"
                 onChange={handleInputChange}
               />
-              <button type="button" className="btn purple">AGREGAR IMAGEN</button>
+              <button type="button" className="btn purple">
+                AGREGAR IMAGEN
+              </button>
             </div>
           </div>
 
@@ -152,9 +170,13 @@ const handleSubmit = (e: React.FormEvent) => {
                 onChange={handleSelectChange}
               >
                 <option value="">Selecciona un proveedor</option>
-                <option value="Distribuidora Ermini">Distribuidora Ermini</option>
+                <option value="Distribuidora Ermini">
+                  Distribuidora Ermini
+                </option>
               </select>
-              <button type="button" className="btn red">AGREGAR PROVEEDOR +</button>
+              <button type="button" className="btn red">
+                AGREGAR PROVEEDOR +
+              </button>
             </div>
 
             <div className="form-group">
@@ -170,7 +192,9 @@ const handleSubmit = (e: React.FormEvent) => {
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="btn green">GUARDAR</button>
+            <button type="submit" className="btn green">
+              GUARDAR
+            </button>
           </div>
         </form>
       </main>
