@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./AddProduct.css";
 import { MarcasService } from "../../services/marcasService";
+import { ProductosService } from "../../services/productosService";
 import type { Marca } from "../../marcas/interfaces/marca.interface";
+import type { CreateProductoDto } from "../interfaces/Create-producto.dto";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -17,6 +19,7 @@ const AddProduct = () => {
 
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [loadingMarcas, setLoadingMarcas] = useState(true);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   // === Cargar marcas al montar el componente ===
   useEffect(() => {
@@ -60,9 +63,50 @@ const AddProduct = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // === Enviar formulario ===
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Producto agregado:", product);
+    setLoadingSubmit(true);
+
+    try {
+      const marcaSeleccionada = marcas.find(
+        (m) => m.nombre === product.brand
+      );
+
+      if (!marcaSeleccionada) {
+        alert("Debe seleccionar una marca válida.");
+        return;
+      }
+
+      const nuevoProducto: CreateProductoDto = {
+        nombre: product.name,
+        descripcion: product.description,
+        precio: Number(product.price),
+        codigo: product.code,
+        imagen: product.image,
+      };
+
+      const result = await ProductosService.crearProducto(nuevoProducto);
+      alert("✅ Producto creado correctamente");
+      console.log("Producto creado:", result);
+
+      // Limpiar formulario
+      setProduct({
+        name: "",
+        description: "",
+        price: "",
+        brand: "",
+        line: "",
+        provider: "",
+        code: "",
+        image: null,
+      });
+    } catch (error) {
+      alert("❌ Error al crear el producto");
+      console.error(error);
+    } finally {
+      setLoadingSubmit(false);
+    }
   };
 
   // === Render ===
@@ -192,8 +236,8 @@ const AddProduct = () => {
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="btn green">
-              GUARDAR
+            <button type="submit" className="btn green" disabled={loadingSubmit}>
+              {loadingSubmit ? "Guardando..." : "GUARDAR"}
             </button>
           </div>
         </form>

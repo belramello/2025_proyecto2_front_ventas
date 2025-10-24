@@ -3,5 +3,5 @@ export interface CreateProductoDto {
   descripcion: string;
   precio: number;
   codigo: string;
-  imagen?: File;
+  imagen?: File | null;
 }
