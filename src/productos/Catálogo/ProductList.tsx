@@ -56,7 +56,7 @@ const ProductsList = () => {
           label="Agregar Producto"
           icon={BsFillPlusCircleFill}
           variant="success"
-          onClick={() => navigate("/add-product")}
+          onClick={() => navigate("/registrar-producto")}
         />
       </PermissionGuard>
       <PermissionGuard requiredPermissions={Permisos.VER_PRODUCTOS}>
@@ -76,7 +76,6 @@ const ProductsList = () => {
                 <tr>
                   <th>Nombre</th>
                   <th>Código</th>
-                  <th>Marca</th>
                   <th>Stock</th>
                   <th>Precio</th>
                   <PermissionGuard
@@ -94,7 +93,6 @@ const ProductsList = () => {
                   <tr key={producto.id}>
                     <td>{producto.nombre}</td>
                     <td>{producto.codigo}</td>
-                    <td>{producto.marca}</td>
                     <td>
                       {producto.stock}
                       {producto.stock < 10 && (

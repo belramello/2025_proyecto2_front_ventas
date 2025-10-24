@@ -1,0 +1,399 @@
+/* Colores de referencia */
+:root {
+  --primary-blue: #007bff; /* Azul base */
+  --secondary-gray: #6c757d; /* Gris para textos secundarios */
+  --success-green: #28a745; /* Verde éxito */
+  --danger-red: #dc3545; /* Rojo fallo */
+  --warning-orange: #ffc107; /* Naranja advertencia */
+  --info-cyan: #17a2b8; /* Cyan información */
+  --light-gray-bg: #f8f9fa; /* Fondo claro para thead */
+  --white: #ffffff;
+  --dark-text: #343a40; /* Texto oscuro general */
+  --purple-login: #6f42c1; /* Púrpura para iniciar/cerrar sesión */
+  --teal-register: #20c997; /* Verde azulado para registros */
+  --orange-change: #fd7e14; /* Naranja para cambios */
+  --blue-dark-access: #004085; /* Azul oscuro para acceso denegado */
+  --indigo-create: #6610f2; /* Índigo para creación */
+  --pink-delete: #e83e8c; /* Rosa para eliminación */
+}
+
+/* --- Contenedor principal de la auditoría --- */
+.auditoria-container {
+  padding: 1.5rem 2.5rem;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 25px;
+}
+
+/* --- Título de la sección de auditoría --- */
+.auditoria-titulo {
+  font-size: 2rem;
+  color: var(--dark-text);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+/* --- Subtítulo/Descripción --- */
+.auditoria-descripcion {
+  font-size: 1rem;
+  color: var(--secondary-gray);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* --- Controles de filtro y búsqueda --- */
+.auditoria-filtros {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.auditoria-filtros .filtro-accion-label {
+  font-weight: 600;
+  color: var(--dark-text);
+  margin-right: 5px;
+}
+
+.auditoria-filtros input[type="text"] {
+  flex-grow: 1;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--dark-text);
+  max-width: 300px;
+}
+
+.auditoria-filtros .btn-filtro,
+.auditoria-filtros .btn-buscar {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auditoria-filtros .btn-filtro {
+  background-color: var(--info-cyan);
+  color: var(--white);
+}
+
+.auditoria-filtros .btn-filtro:hover {
+  background-color: #138496;
+}
+
+.auditoria-filtros .btn-buscar {
+  background-color: var(--primary-blue);
+  color: var(--white);
+}
+
+.auditoria-filtros .btn-buscar:hover {
+  background-color: #0056b3;
+}
+
+/* --- Mensajes de estado (Carga/No hay registros) --- */
+.loading-text,
+.no-records-text {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem;
+  color: var(--secondary-gray);
+  font-weight: 500;
+}
+
+.loading-text {
+  color: var(--primary-blue);
+}
+
+.no-records-text {
+  color: var(--danger-red);
+}
+
+/* --- Tabla de auditoría --- */
+.auditoria-tabla {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  text-align: left;
+  font-size: 15px;
+}
+
+/* Encabezados de la tabla */
+.auditoria-tabla thead th {
+  background-color: var(--light-gray-bg);
+  color: var(--dark-text);
+  font-weight: 600;
+  padding: 15px 20px;
+  border-bottom: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Ajuste de esquinas para el encabezado */
+.auditoria-tabla thead tr > th:first-child {
+  border-top-left-radius: 8px;
+}
+.auditoria-tabla thead tr > th:last-child {
+  border-top-right-radius: 8px;
+}
+
+/* Filas del cuerpo de la tabla */
+.auditoria-tabla tbody tr {
+  background-color: var(--white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.auditoria-tabla tbody tr:hover {
+  background-color: #f6f8fa;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Celdas de la tabla */
+.auditoria-tabla td {
+  padding: 15px 20px;
+  color: var(--dark-text);
+  vertical-align: middle;
+  border: none;
+}
+
+/* Borde izquierdo de color para destacar la fila */
+.auditoria-tabla tbody tr td:first-child {
+  border-left: 5px solid #e9ecef;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.auditoria-tabla tbody tr:nth-child(odd) td:first-child {
+  border-left-color: #d1e7dd;
+}
+.auditoria-tabla tbody tr:nth-child(even) td:first-child {
+  border-left-color: #cfe2ff;
+}
+
+.auditoria-tabla tbody tr td:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--white);
+  text-transform: capitalize;
+  min-width: 90px;
+  text-align: center;
+}
+
+/* Acciones */
+.badge.accion-iniciar-sesion {
+  background-color: var(--purple-login);
+}
+.badge.accion-cerrar-sesion {
+  background-color: var(--purple-login);
+}
+.badge.accion-cambiar-contrasena {
+  background-color: var(--orange-change);
+}
+.badge.accion-actualizar-perfil {
+  background-color: var(--info-cyan);
+}
+.badge.accion-recuperar-contrasena {
+  background-color: var(--orange-change);
+}
+.badge.accion-acceso-denegado {
+  background-color: var(--blue-dark-access);
+}
+.badge.accion-creacion-de-producto {
+  background-color: var(--indigo-create);
+}
+.badge.accion-modificacion-de-producto {
+  background-color: var(--info-cyan);
+}
+.badge.accion-eliminacion-de-producto {
+  background-color: var(--pink-delete);
+}
+.badge.accion-creacion-de-marca {
+  background-color: var(--indigo-create);
+}
+.badge.accion-modificacion-de-marca {
+  background-color: var(--info-cyan);
+}
+.badge.accion-eliminacion-de-marca {
+  background-color: var(--pink-delete);
+}
+.badge.accion-creacion-de-linea {
+  background-color: var(--indigo-create);
+}
+.badge.accion-modificacion-de-linea {
+  background-color: var(--info-cyan);
+}
+.badge.accion-eliminacion-de-linea {
+  background-color: var(--pink-delete);
+}
+.badge.accion-registro-de-venta {
+  background-color: var(--warning-orange);
+  color: var(--dark-text);
+}
+.badge.accion-registro-nuevo-usuario {
+  background-color: var(--teal-register);
+}
+
+/* Estados */
+.badge.estado-exitoso {
+  background-color: var(--success-green);
+}
+.badge.estado-fallido {
+  background-color: var(--danger-red);
+}
+.badge.estado-pendiente {
+  background-color: var(--warning-orange);
+  color: var(--dark-text);
+}
+
+/* Estilos de respaldo por tipo de acción */
+.badge[class*="iniciar"],
+.badge[class*="cerrar"] {
+  background-color: var(--purple-login);
+}
+.badge[class*="registro"] {
+  background-color: var(--teal-register);
+}
+.badge[class*="modific"] {
+  background-color: var(--info-cyan);
+}
+.badge[class*="cambiar"],
+.badge[class*="recuperar"] {
+  background-color: var(--orange-change);
+}
+.badge[class*="elimin"] {
+  background-color: var(--pink-delete);
+}
+.badge[class*="creacion"] {
+  background-color: var(--indigo-create);
+}
+.badge[class*="acceso"] {
+  background-color: var(--blue-dark-access);
+}
+.badge[class*="venta"] {
+  background-color: var(--warning-orange);
+  color: var(--dark-text);
+}
+
+/* --- Paginación --- */
+.paginacion {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.paginacion span {
+  font-size: 1rem;
+  color: var(--secondary-gray);
+  font-weight: 500;
+}
+
+.paginacion .boton {
+  background-color: var(--primary-blue);
+  color: var(--white);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+}
+
+.paginacion .boton:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.paginacion .boton:disabled {
+  background-color: #ced4da;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* --- Ajustes responsivos --- */
+@media (max-width: 992px) {
+  .auditoria-container {
+    padding: 1.5rem;
+    margin: 15px;
+  }
+
+  .auditoria-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .auditoria-filtros input[type="text"] {
+    max-width: 100%;
+  }
+
+  .auditoria-tabla {
+    font-size: 14px;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .auditoria-tabla thead,
+  .auditoria-tabla tbody,
+  .auditoria-tabla tr {
+    display: table;
+    width: 100%;
+  }
+
+  .auditoria-tabla th,
+  .auditoria-tabla td {
+    padding: 12px 15px;
+  }
+
+  .paginacion {
+    justify-content: center;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .auditoria-titulo {
+    font-size: 1.7rem;
+  }
+  .auditoria-filtros .btn-filtro,
+  .auditoria-filtros .btn-buscar {
+    width: 100%;
+  }
+  .paginacion {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .paginacion .boton {
+    width: 100%;
+  }
+  .auditoria-tabla td {
+    padding: 10px;
+  }
+  .badge {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    min-width: 70px;
+  }
+}
