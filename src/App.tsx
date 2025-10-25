@@ -129,13 +129,12 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* TODO: Usar permisos de Marcas */}
                 <PermissionGuard
                   requiredPermissions={[
-                    Permisos.VER_MARCAS, /* Cambiar */
-                    Permisos.CREAR_MARCAS, /* Cambiar */
-                    Permisos.MODIFICAR_MARCAS, /* Cambiar */
-                    Permisos.ELIMINAR_MARCAS, /* Cambiar */
+                    Permisos.VER_MARCAS, 
+                    Permisos.CREAR_MARCAS, 
+                    Permisos.MODIFICAR_MARCAS, 
+                    Permisos.ELIMINAR_MARCAS, 
                   ]}
                 >
                   <MarcasList />
@@ -148,7 +147,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* TODO: Usar Permisos.CREAR_MARCAS */}
                 <PermissionGuard requiredPermissions={Permisos.CREAR_MARCAS}>
                   <FormularioMarca />
                 </PermissionGuard>
@@ -160,7 +158,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* TODO: Usar Permisos.MODIFICAR_MARCAS */}
                 <PermissionGuard requiredPermissions={Permisos.MODIFICAR_MARCAS}>
                   <FormularioMarca /> {/* Reutilizamos el formulario */}
                 </PermissionGuard>

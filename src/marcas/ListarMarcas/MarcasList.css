@@ -42,8 +42,35 @@
   font-size: 0.85rem;
   color: #6c757d; 
   font-style: italic;
-  white-space: nowrap; 
+  display: inline-block; 
+  max-width: 150px;  
+  word-wrap: break-word; 
 }
+
+.table th:nth-child(2), /* Primera columna (Logo) - Encabezado */
+.table td:nth-child(2) { /* Primera columna (Logo) - Datos */
+  width: 15%; /* Ajusta este porcentaje según veas necesario */
+  min-width: 70px;
+}
+
+.table th:nth-child(4), /* Productos Asociados - Encabezado */
+.table td:nth-child(4), /* Productos Asociados - Datos */
+.table th:nth-child(5), /* Editar - Encabezado */
+.table td:nth-child(5), /* Editar - Datos */
+.table th:nth-child(6), /* Eliminar - Encabezado */
+.table td:nth-child(6) { /* Eliminar - Datos */
+  width: 12%; /* Ajusta este porcentaje */
+  min-width: 120px; /* Ancho mínimo para botones/texto */
+}
+
+/* Damos espacio flexible a Nombre y Descripción */
+.table th:nth-child(2), /* Nombre - Encabezado */
+.table td:nth-child(2), /* Nombre - Datos */
+.table th:nth-child(3), /* Descripción - Encabezado */
+.table td:nth-child(3) { /* Descripción - Datos */
+  width: auto; /* Ocupan el espacio restante */
+}
+
 .table td, .table th {
   height: 10px; /* Aumenta la altura para ver si centra */
 }
