@@ -88,3 +88,22 @@ textarea {
   color: #6c757d;
   font-size: 0.9rem;
 }
+.form-container > a.btn-link { 
+  color: #0d6efd !important; /* Color azul estándar de link Bootstrap, ¡importante! */
+  opacity: 1 !important;      /* Asegura que no sea transparente, ¡importante! */
+  text-decoration: none !important; /* Quita el subrayado si no lo querés */
+  /* Podés ajustar el color si querés otro */
+}
+
+.form-container > a.btn-link:hover {
+  color: #0a58ca !important; 
+  text-decoration: underline !important;
+}
+.logo-preview {
+  display: block; /* Para que ocupe su línea */
+  max-width: 100px; /* Tamaño máximo */
+  max-height: 100px;
+  object-fit: contain;
+  border: 1px solid #eee; /* Borde sutil */
+  border-radius: 4px;
+}
