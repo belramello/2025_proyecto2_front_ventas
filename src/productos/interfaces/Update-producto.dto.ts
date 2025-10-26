@@ -4,4 +4,7 @@ export interface UpdateProductoDto {
   precio?: number;
   codigo?: string;
   imagen?: File;
+  marcaId?: number;
+  lineaId?: number;
+  stock?: number;
 }
