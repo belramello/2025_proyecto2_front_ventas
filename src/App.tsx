@@ -17,6 +17,7 @@ import DashboardScreen from "./dashboard/DashboardScreen";
 import RecuperarContraseñaScreen from "./recuperar-contraseña/RecuperarContraseñaScreen";
 import ResetContraseñaScreen from "./recuperar-contraseña/ResetContraseñaScreen";
 import VentaDetalleScreen from "./ventas/VentaDetalleScreen";
+import AddProduct from "./productos/Registrar/AddProduct";
 import ProveedorScreen from "./proveedores/ProveedoresScreen";
 import AgregarProveedorScreen from "./proveedores/AgregarProveedorScreen";
 import LineasScreen from "./lineas/LineasScreen";
@@ -133,6 +134,26 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/registrar-producto"
+            element={
+              <ProtectedRoute>
+                {" "}
+                {/* Aseguramos ProtectedRoute */}
+                <NavBar />
+                <PermissionGuard
+                  requiredPermissions={[
+                    Permisos.VER_PRODUCTOS,
+                    Permisos.CREAR_PRODUCTO,
+                    Permisos.MODIFICAR_PRODUCTOS,
+                    Permisos.ELIMINAR_PRODUCTOS,
+                  ]}
+                >
+                  <AddProduct />
+                </PermissionGuard>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Ruta Modificar Permisos de Rol */}
           <Route
@@ -218,8 +239,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-     
-                  <AgregarProveedorScreen />
+                <AgregarProveedorScreen />
               </ProtectedRoute>
             }
           />
@@ -229,7 +249,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                <LineasScreen/>
+                <LineasScreen />
               </ProtectedRoute>
             }
           />
@@ -238,8 +258,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-     
-                  <LineasMarcas />
+                <LineasMarcas />
               </ProtectedRoute>
             }
           />
@@ -249,13 +268,10 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-     
-                  <CrearLinea />
+                <CrearLinea />
               </ProtectedRoute>
             }
           />
-
-          
         </Routes>
       </BrowserRouter>
     </AuthProvider>
