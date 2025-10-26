@@ -24,15 +24,15 @@ const AddProduct = () => {
   // === Cargar marcas al montar el componente ===
   useEffect(() => {
     const fetchMarcas = async () => {
-      try {
-        const data = await MarcasService.getMarcas();
-        setMarcas(data);
-      } catch (error) {
-        console.error("Error al cargar las marcas:", error);
-      } finally {
-        setLoadingMarcas(false);
-      }
-    };
+  try {
+    const data = await MarcasService.getMarcas();
+    setMarcas(data.marcas); // Extract the 'marcas' array from the response
+  } catch (error) {
+    console.error("Error al cargar las marcas:", error);
+  } finally {
+    setLoadingMarcas(false);
+  }
+};
     fetchMarcas();
   }, []);
 

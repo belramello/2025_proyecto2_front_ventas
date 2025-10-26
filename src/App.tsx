@@ -10,9 +10,10 @@ import ProductsList from "./productos/Catálogo/ProductList";
 import { PermissionGuard } from "./auth/guards/permisos-guard";
 import { Permisos } from "./auth/enums/permisos";
 import ModificarPermisosScreen from "./roles/modificar-rol/ModificarPermisosScreen";
-import MarcasList from "./marcas/ListarMarcas/MarcasList"; 
-import FormularioMarca from "./marcas/FormularioMarca/FormularioMarca"; 
+import MarcasList from "./marcas/ListarMarcas/MarcasList";
+import FormularioMarca from "./marcas/FormularioMarca/FormularioMarca";
 import HistorialTable from "./auditoria/PantallaAuditoria";
+import DashboardScreen from "./dashboard/DashboardScreen";
 import AddProduct from "./productos/Registrar/AddProduct";
 
 function App() {
@@ -31,17 +32,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* Aquí podrías agregar un componente de bienvenida si quisieras */}
+                <DashboardScreen />
               </ProtectedRoute>
             }
           />
 
-          {/* Ruta Ventas */}
           <Route
             path="/ventas"
             element={
               <ProtectedRoute>
-                <NavBar /> {/* NavBar se renderiza una vez */}
+                <NavBar />
                 <PermissionGuard
                   requiredPermissions={[
                     Permisos.VER_HISTORIAL_VENTAS,
@@ -89,11 +89,11 @@ function App() {
             }
           />
 
-          {/* Ruta Productos */}
           <Route
             path="/productos"
             element={
-              <ProtectedRoute> {/* Aseguramos ProtectedRoute */}
+              <ProtectedRoute>
+                {" "}
                 <NavBar />
                 <PermissionGuard
                   requiredPermissions={[
@@ -142,19 +142,17 @@ function App() {
             }
           />
 
-          {/* --- RUTAS DE MARCAS (AHORA SÍ, SIGUIENDO EL PATRÓN) --- */}
           <Route
             path="/marcas"
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* TODO: Usar permisos de Marcas */}
                 <PermissionGuard
                   requiredPermissions={[
-                    Permisos.VER_MARCAS, /* Cambiar */
-                    Permisos.CREAR_MARCAS, /* Cambiar */
-                    Permisos.MODIFICAR_MARCAS, /* Cambiar */
-                    Permisos.ELIMINAR_MARCAS, /* Cambiar */
+                    Permisos.VER_MARCAS,
+                    Permisos.CREAR_MARCAS,
+                    Permisos.MODIFICAR_MARCAS,
+                    Permisos.ELIMINAR_MARCAS,
                   ]}
                 >
                   <MarcasList />
@@ -167,7 +165,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* TODO: Usar Permisos.CREAR_MARCAS */}
                 <PermissionGuard requiredPermissions={Permisos.CREAR_MARCAS}>
                   <FormularioMarca />
                 </PermissionGuard>
@@ -179,8 +176,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* TODO: Usar Permisos.MODIFICAR_MARCAS */}
-                <PermissionGuard requiredPermissions={Permisos.MODIFICAR_MARCAS}>
+                <PermissionGuard
+                  requiredPermissions={Permisos.MODIFICAR_MARCAS}
+                >
                   <FormularioMarca /> {/* Reutilizamos el formulario */}
                 </PermissionGuard>
               </ProtectedRoute>
@@ -191,17 +189,12 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                {/* TODO: Usar Permisos.MODIFICAR_MARCAS */}
-                <PermissionGuard requiredPermissions={[
-                    Permisos.VER_LOGS
-                  ]}>
-                  <HistorialTable /> {/* Reutilizamos el formulario */}
+                <PermissionGuard requiredPermissions={[Permisos.VER_LOGS]}>
+                  <HistorialTable />
                 </PermissionGuard>
               </ProtectedRoute>
             }
           />
-
-
         </Routes>
       </BrowserRouter>
     </AuthProvider>

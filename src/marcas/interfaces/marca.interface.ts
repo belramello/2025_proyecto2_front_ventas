@@ -1,8 +1,8 @@
 export interface Marca {
   id: number;
   nombre: string;
-  descripcion: string;
-  logo: string; // Esto será el nombre del archivo (ej: "1761156544098.webp")
+  descripcion: string | null;
+  logoUrl: string | null; // Esto será el nombre del archivo (ej: "1761156544098.webp")
   deletedAt: Date | null;
   productosAsociados: number;
 }

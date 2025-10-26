@@ -94,12 +94,6 @@ function NavBarComponent() {
               </li>
             </PermissionGuard>
 
-            <li className="nav-item">
-              <a className="nav-link" href="/dashboard">
-                Dashboard
-              </a>
-            </li>
-
             <PermissionGuard
               requiredPermissions={[
                 Permisos.CREAR_MARCAS,
