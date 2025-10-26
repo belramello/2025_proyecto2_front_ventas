@@ -92,9 +92,11 @@ const LoginPage = () => {
             />
           </form>
 
-          <p className="mt-4 text-muted small mb-0">
-            ¿Olvidaste tu contraseña?
-          </p>
+          <div className="mt-4">
+            <a href="/forgot-password" className="text-muted small mb-0">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
         </div>
       </div>
     </div>

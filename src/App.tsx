@@ -14,6 +14,8 @@ import MarcasList from "./marcas/ListarMarcas/MarcasList";
 import FormularioMarca from "./marcas/FormularioMarca/FormularioMarca";
 import HistorialTable from "./auditoria/PantallaAuditoria";
 import DashboardScreen from "./dashboard/DashboardScreen";
+import RecuperarContraseñaScreen from "./recuperar-contraseña/RecuperarContraseñaScreen";
+import ResetContraseñaScreen from "./recuperar-contraseña/ResetContraseñaScreen";
 
 function App() {
   return (
@@ -23,6 +25,11 @@ function App() {
           {/* --- RUTAS PÚBLICAS --- */}
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/" element={<Navigate to="/inicio" replace />} />
+          <Route
+            path="/forgot-password"
+            element={<RecuperarContraseñaScreen />}
+          />
+          <Route path="/reset-password" element={<ResetContraseñaScreen />} />
 
           {/* --- RUTAS PROTEGIDAS (Requieren Login y tienen NavBar) --- */}
           {/* Ruta Inicio (solo Navbar) */}

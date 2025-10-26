@@ -1,3 +1,5 @@
+import type { ForgotPasswordDto } from "../recuperar-contraseña/interfaces/forgot-password.dto";
+import type { ResetPasswordDto } from "../recuperar-contraseña/interfaces/reset-password.dto";
 import type { UpdateUsuarioDto } from "../roles/interfaces/update-usuario.interface";
 import type { Usuario } from "../roles/interfaces/usuario-interface";
 import type { UsuariosPaginatedResponse } from "../roles/interfaces/usuarios-paginated-response.interface";
@@ -52,6 +54,29 @@ export const UsuariosService = {
     } catch (error) {
       console.error("Error al actualizar usuario:", error);
       throw error;
+    }
+  },
+
+  async forgotPassword(payload: ForgotPasswordDto) {
+    try {
+      return await api.post(`/usuarios/forgot-password`, payload);
+    } catch (error: any) {
+      const msg =
+        error.response?.data?.message ||
+        "Error al solicitar recuperación de contraseña";
+      throw new Error(msg);
+    }
+  },
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    try {
+      return await api.post<void>(`/usuarios/reset-password`, {
+        token: resetPasswordDto.token,
+        newPassword: resetPasswordDto.newPassword,
+      });
+    } catch (error: any) {
+      const msg =
+        error.response?.data?.message || "Error al restablecer contraseña";
+      throw new Error(msg);
     }
   },
 };
