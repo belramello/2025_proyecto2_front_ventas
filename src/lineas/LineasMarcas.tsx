@@ -3,9 +3,10 @@ import { BsArrowLeft } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { MarcasService } from "../services/marcasService";
 import { LineasService } from "../services/lineasService";
-import type { Marca } from "../marcas/interfaces/marca.interface";
+import type { Marca, MarcasPaginatedResponse } from "../marcas/interfaces/marca.interface";
 import type { Linea } from "./interfaces/lineas-interface";
 import "./LineasScreen.css"; // ✅ Importa tu archivo de estilos
+import type { LineaPaginatedResponse } from "./interfaces/lineas-paginated-response.interface";
 
 const LineasPorMarcaScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -23,17 +24,40 @@ const LineasPorMarcaScreen: React.FC = () => {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const [marcasRes, lineasRes] = await Promise.all([
-          MarcasService.getMarcas(),
-          LineasService.getLineas(),
-        ]);
-        setMarcas(marcasRes.marcas ?? []);
-        setTodasLineas(lineasRes.lineas ?? []);
+        // 1️⃣ Traer todas las marcas (paginadas)
+        let pageMarcas = 1;
+        let todasMarcas: Marca[] = [];
+        let lastPageMarcas = 1;
+
+        do {
+          const marcasRes: MarcasPaginatedResponse = await MarcasService.getMarcas(pageMarcas);
+          todasMarcas = [...todasMarcas, ...(marcasRes.marcas || [])];
+          lastPageMarcas = marcasRes.lastPage;
+          pageMarcas++;
+        } while (pageMarcas <= lastPageMarcas);
+
+        setMarcas(todasMarcas);
+
+        // 2️⃣ Traer todas las líneas (paginadas)
+        let pageLineas = 1;
+        let todasLineasArr: Linea[] = [];
+        let lastPageLineas = 1;
+
+        do {
+          const lineasRes: LineaPaginatedResponse = await LineasService.getLineas(pageLineas);
+          todasLineasArr = [...todasLineasArr, ...(lineasRes.lineas || [])];
+          lastPageLineas = lineasRes.lastPage;
+          pageLineas++;
+        } while (pageLineas <= lastPageLineas);
+
+        setTodasLineas(todasLineasArr);
+
       } catch (err) {
-        console.error("Error inicial:", err);
+        console.error("Error cargando marcas o líneas:", err);
         setError("No se pudieron cargar los datos.");
       }
     };
+
     cargarDatos();
   }, []);
 
