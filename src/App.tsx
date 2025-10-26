@@ -17,6 +17,11 @@ import DashboardScreen from "./dashboard/DashboardScreen";
 import RecuperarContraseñaScreen from "./recuperar-contraseña/RecuperarContraseñaScreen";
 import ResetContraseñaScreen from "./recuperar-contraseña/ResetContraseñaScreen";
 import VentaDetalleScreen from "./ventas/VentaDetalleScreen";
+import ProveedorScreen from "./proveedores/ProveedoresScreen";
+import AgregarProveedorScreen from "./proveedores/AgregarProveedorScreen";
+import LineasScreen from "./lineas/LineasScreen";
+import LineasMarcas from "./lineas/LineasMarcas";
+import CrearLinea from "./lineas/CrearLinea";
 
 function App() {
   return (
@@ -197,6 +202,60 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/proveedores"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                <ProveedorScreen />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/nuevo-proveedor"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+     
+                  <AgregarProveedorScreen />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/lineas"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                <LineasScreen/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/obtener-lineasmarcas"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+     
+                  <LineasMarcas />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/nueva-linea"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+     
+                  <CrearLinea />
+              </ProtectedRoute>
+            }
+          />
+
+          
         </Routes>
       </BrowserRouter>
     </AuthProvider>

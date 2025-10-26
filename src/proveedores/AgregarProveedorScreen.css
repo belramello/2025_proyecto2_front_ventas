@@ -1,0 +1,132 @@
+.form-container {
+  flex: 1;
+  padding: 48px 80px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h1 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 32px;
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+label {
+  font-weight: 800;
+  font-size: 16px;
+}
+
+input, textarea {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  width: 100%;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  width: fit-content;
+}
+
+.btn:hover { transform: scale(1.05); }
+.btn.green { background-color: #34c759; }
+.btn.teal { background-color: #00c3d0; }
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* ===== NUEVOS ESTILOS (para el input de archivo) ===== */
+.file-input-hidden {
+  display: none;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-input-filename {
+  font-style: italic;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+.form-container > a.btn-link { 
+  color: #0d6efd !important; /* Color azul estándar de link Bootstrap, ¡importante! */
+  opacity: 1 !important;      /* Asegura que no sea transparente, ¡importante! */
+  text-decoration: none !important; /* Quita el subrayado si no lo querés */
+  /* Podés ajustar el color si querés otro */
+}
+
+.form-container > a.btn-link:hover {
+  color: #0a58ca !important; 
+  text-decoration: underline !important;
+}
+.logo-preview {
+  display: block; /* Para que ocupe su línea */
+  max-width: 100px; /* Tamaño máximo */
+  max-height: 100px;
+  object-fit: contain;
+  border: 1px solid #eee; /* Borde sutil */
+  border-radius: 4px;
+}
+
+/* Igualar tamaño y fuente a Bootstrap */
+.react-select__control {
+  height: 200px;
+  font-size: 1rem;
+  padding: 0;
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+}
+
+.react-select__control--is-focused {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  border-color: #86b7fe;
+}
+
+.react-select__value-container {
+  padding: 0 0.75rem;
+}
+
+.react-select__input {
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,114 @@
+/* 1. Contenedor para el título y el botón */
+.proveedores-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 1.5rem 2rem;
+}
+
+.proveedores-header-container h1 {
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+}
+
+.proveedores-header-container p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* 2. Botón rosa pastel más visible */
+.btn-purple-pastel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f48fb1; /* rosa pastel */
+  color: #ffffff; /* letra blanca */
+  border: none;
+  font-weight: 600;
+  font-size: 1rem; /* más grande */
+  padding: 0.5rem 1rem; /* más alto y ancho */
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.btn-purple-pastel:hover {
+  background-color: #ec407a;
+}
+
+/* 3. Tabla con estilo similar a Marcas */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+  text-align: center;
+  height: 52px;
+  padding: 0.65rem;
+  font-size: 0.95rem;
+  border: 1px solid #dee2e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 4. Encabezado y hover */
+.table thead {
+  background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* 5. Columnas específicas con mejor proporción */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 18%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 16%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width:25%;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4),
+.table th:nth-child(5),
+.table td:nth-child(5),
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  width: 12%;
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  width: 12%;
+}
+
+/* 6. Responsive */
+.table-responsive {
+  overflow-x: auto;
+  margin: 1.5rem 2rem;
+}
+
+/* 7. Texto de advertencia */
+.text-eliminar-advertencia {
+  font-size: 0.85rem;
+  color: #dd2a2a;
+  font-style: italic;
+  display: inline-block;
+  max-width: 140px;
+  word-wrap: break-word;
+}

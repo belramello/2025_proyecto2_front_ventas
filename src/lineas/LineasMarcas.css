@@ -1,0 +1,253 @@
+/* === CONTENEDOR GENERAL === */
+.lineas-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 1.5rem 2rem;
+}
+
+.lineas-header-container h1 {
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+}
+
+.lineas-header-container p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* === BOTÓN ROSA PASTEL === */
+.btn-purple-pastel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f48fb1;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.btn-purple-pastel:hover {
+  background-color: #ec407a;
+}
+
+/* === TABLA ESTILO MARCAS === */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+  text-align: center;
+  height: 52px;
+  padding: 0.65rem;
+  font-size: 0.95rem;
+  border: 1px solid #dee2e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 18%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 16%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 25%;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4),
+.table th:nth-child(5),
+.table td:nth-child(5),
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  width: 12%;
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  width: 12%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  margin: 1.5rem 2rem;
+}
+
+.text-eliminar-advertencia {
+  font-size: 0.85rem;
+  color: #dd2a2a;
+  font-style: italic;
+  display: inline-block;
+  max-width: 140px;
+  word-wrap: break-word;
+}
+
+/* === FORMULARIO Y DROPDOWNS COQUETOS === */
+.form-container {
+  flex: 1;
+  padding: 48px 80px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h1 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 32px;
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+label {
+  font-weight: 800;
+  font-size: 16px;
+}
+
+select,
+input,
+textarea {
+  border: 1px solid #bfbfbf;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  width: 100%;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  width: fit-content;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn.green {
+  background-color: #34c759;
+}
+
+.btn.teal {
+  background-color: #00c3d0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* === INPUT DE ARCHIVO === */
+.file-input-hidden {
+  display: none;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-input-filename {
+  font-style: italic;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.form-container > a.btn-link {
+  color: #0d6efd !important;
+  opacity: 1 !important;
+  text-decoration: none !important;
+}
+
+.form-container > a.btn-link:hover {
+  color: #0a58ca !important;
+  text-decoration: underline !important;
+}
+
+.logo-preview {
+  display: block;
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+/* === REACT-SELECT COMPATIBLE CON BOOTSTRAP === */
+.react-select__control {
+  font-size: 1rem;
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+}
+
+.react-select__control--is-focused {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  border-color: #86b7fe;
+}
+
+.react-select__value-container {
+  padding: 0 0.75rem;
+}
+
+.react-select__input {
+  margin: 0;
+  padding: 0;
+}
