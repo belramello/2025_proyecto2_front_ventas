@@ -16,6 +16,7 @@ import HistorialTable from "./auditoria/PantallaAuditoria";
 import DashboardScreen from "./dashboard/DashboardScreen";
 import RecuperarContraseñaScreen from "./recuperar-contraseña/RecuperarContraseñaScreen";
 import ResetContraseñaScreen from "./recuperar-contraseña/ResetContraseñaScreen";
+import VentaDetalleScreen from "./ventas/VentaDetalleScreen";
 
 function App() {
   return (
@@ -68,6 +69,19 @@ function App() {
                 <NavBar />
                 <PermissionGuard requiredPermissions={Permisos.CREAR_VENTA}>
                   <NuevaVentaScreen />
+                </PermissionGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ventas/:id"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                <PermissionGuard
+                  requiredPermissions={[Permisos.VER_HISTORIAL_VENTAS]}
+                >
+                  <VentaDetalleScreen />
                 </PermissionGuard>
               </ProtectedRoute>
             }

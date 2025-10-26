@@ -99,7 +99,7 @@ const VentasScreen = () => {
                     <td>
                       <PrimaryButton
                         label="VER DETALLE"
-                        onClick={() => console.log("VER DETALLE")}
+                        onClick={() => navigate(`/ventas/${venta.id}`)}
                       />
                     </td>
                   </tr>

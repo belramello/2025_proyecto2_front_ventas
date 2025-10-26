@@ -1,6 +1,7 @@
 import type { VentasPaginatedResponse } from "../ventas/interfaces/ventas-paginated-response.interface";
 import api from "../utils/api";
 import type { CreateVentaDto } from "../ventas/interfaces/create-venta.interface";
+import type { VerDetalleVentaResponse } from "../ventas/interfaces/ver-detalle-venta.interface";
 
 export const VentasService = {
   async getVentas(page: number = 1): Promise<VentasPaginatedResponse> {
@@ -17,11 +18,20 @@ export const VentasService = {
 
   async registrarVenta(createVentaDto: CreateVentaDto): Promise<void> {
     try {
-      console.log("createVentaDto", createVentaDto);
       await api.post(`/ventas`, createVentaDto);
       return;
     } catch (error) {
       console.error("Error al registrar venta:", error);
+      throw error;
+    }
+  },
+
+  async getVentaById(id: number): Promise<VerDetalleVentaResponse> {
+    try {
+      const { data } = await api<VerDetalleVentaResponse>(`/ventas/${id}`);
+      return data;
+    } catch (error) {
+      console.error("Error al obtener la venta:", error);
       throw error;
     }
   },

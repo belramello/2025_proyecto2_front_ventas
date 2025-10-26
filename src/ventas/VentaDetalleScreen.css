@@ -1,0 +1,60 @@
+/* Animación de entrada */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Contenedor principal */
+.venta-detalle-container {
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+/* Tarjetas */
+.venta-card {
+  border: none;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease-in-out;
+}
+
+.venta-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Iconos */
+.icon {
+  color: #0d6efd;
+}
+
+/* Tabla */
+.table th {
+  font-weight: 600;
+  color: #495057;
+}
+
+.table-striped tbody tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+/* Botón volver */
+.hover-raise {
+  transition: all 0.2s ease-in-out;
+}
+
+.hover-raise:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
