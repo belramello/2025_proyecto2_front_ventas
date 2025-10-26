@@ -4,6 +4,10 @@ import { MarcasService } from "../../services/marcasService";
 import { ProductosService } from "../../services/productosService";
 import type { Marca } from "../../marcas/interfaces/marca.interface";
 import type { CreateProductoDto } from "../interfaces/Create-producto.dto";
+import type { Linea } from "../../lineas/interfaces/lineas-interface";
+import type { Proveedor } from "../../proveedores/interfaces/proveedores-interface";
+import { LineasService } from "../../services/lineasService";
+import { ProveedoresService } from "../../services/proveedoresService";
 
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -16,24 +20,34 @@ const AddProduct = () => {
     code: "",
     image: null as File | null,
   });
-
+  const [lineas, setLineas] = useState<Linea[]>([]);
+  const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [loadingLineas, setLoadingLineas] = useState(true);
+  const [loadingProveedores, setLoadingProveedores] = useState(true);
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [loadingMarcas, setLoadingMarcas] = useState(true);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   // === Cargar marcas al montar el componente ===
   useEffect(() => {
-    const fetchMarcas = async () => {
+    const fetchMarcasLineasProveedores = async () => {
   try {
     const data = await MarcasService.getMarcas();
-    setMarcas(data.marcas); // Extract the 'marcas' array from the response
+    setMarcas(data.marcas);
+    const linea = await LineasService.getLineas();
+    setLineas(linea.lineas);
+    const prov = await ProveedoresService.getProveedor();
+    setProveedores(prov.proveedores);
   } catch (error) {
     console.error("Error al cargar las marcas:", error);
   } finally {
     setLoadingMarcas(false);
+    setLoadingLineas(false);
+    setLoadingProveedores(false);
   }
 };
-    fetchMarcas();
+    fetchMarcasLineasProveedores();
+
   }, []);
 
   // === Manejadores ===
@@ -78,12 +92,32 @@ const AddProduct = () => {
         return;
       }
 
+      const lineaSeleccionada = lineas.find(
+        (m) => m.nombre === product.brand
+      );
+
+      if (!lineaSeleccionada) {
+        alert("Debe seleccionar una linea válida.");
+        return;
+      }
+
+      const proveedorSeleccionado = proveedores.find(
+        (m) => m.nombre === product.provider
+      );
+
+      if (!proveedorSeleccionado) {
+        alert("Debe seleccionar un proveedor válido.");
+        return;
+      }
+
       const nuevoProducto: CreateProductoDto = {
         nombre: product.name,
         descripcion: product.description,
         precio: Number(product.price),
         codigo: product.code,
         imagen: product.image,
+        marca: marcaSeleccionada.id,
+        linea: lineaSeleccionada.id,
       };
 
       const result = await ProductosService.crearProducto(nuevoProducto);
@@ -174,20 +208,27 @@ const AddProduct = () => {
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Línea</label>
+             <div className="form-group">
+              <label>Linea</label>
               <select
                 name="line"
                 value={product.line}
                 onChange={handleSelectChange}
+                disabled={loadingLineas}
               >
-                <option value="">Selecciona una línea</option>
-                <option value="Escolar">Escolar</option>
-                <option value="Oficina">Oficina</option>
+                <option value="">
+                  {loadingLineas
+                    ? "Cargando lineas..."
+                    : "Selecciona una linea"}
+                </option>
+                {lineas.map((linea) => (
+                  <option key={linea.id} value={linea.nombre}>
+                    {linea.nombre}
+                  </option>
+                ))}
               </select>
-              <button type="button" className="btn pink">
-                NUEVA LÍNEA
+              <button type="button" className="btn teal">
+                NUEVA LINEA
               </button>
             </div>
 
@@ -203,23 +244,29 @@ const AddProduct = () => {
                 AGREGAR IMAGEN
               </button>
             </div>
-          </div>
 
-          <div className="form-row">
-            <div className="form-group">
+
+          <div className="form-group">
               <label>Proveedor</label>
               <select
                 name="provider"
-                value={product.provider}
+                value={product.brand}
                 onChange={handleSelectChange}
+                disabled={loadingProveedores}
               >
-                <option value="">Selecciona un proveedor</option>
-                <option value="Distribuidora Ermini">
-                  Distribuidora Ermini
+                <option value="">
+                  {loadingProveedores
+                    ? "Cargando proveedores..."
+                    : "Selecciona un proveedor"}
                 </option>
+                {proveedores.map((prov) => (
+                  <option key={prov.id} value={prov.nombre}>
+                    {prov.nombre}
+                  </option>
+                ))}
               </select>
-              <button type="button" className="btn red">
-                AGREGAR PROVEEDOR +
+              <button type="button" className="btn teal">
+                NUEVA MARCA
               </button>
             </div>
 
@@ -233,7 +280,6 @@ const AddProduct = () => {
                 onChange={handleInputChange}
               />
             </div>
-          </div>
 
           <div className="form-actions">
             <button type="submit" className="btn green" disabled={loadingSubmit}>

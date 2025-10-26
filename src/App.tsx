@@ -15,6 +15,12 @@ import FormularioMarca from "./marcas/FormularioMarca/FormularioMarca";
 import HistorialTable from "./auditoria/PantallaAuditoria";
 import DashboardScreen from "./dashboard/DashboardScreen";
 import AddProduct from "./productos/Registrar/AddProduct";
+import ProveedorScreen from "./proveedores/ProveedoresScreen";
+import AgregarProveedorScreen from "./proveedores/AgregarProveedorScreen";
+import LineasScreen from "./lineas/LineasScreen";
+import LineasMarcas from "./lineas/LineasMarcas";
+import CrearLinea from "./lineas/CrearLinea";
+
 
 function App() {
   return (
@@ -192,6 +198,55 @@ function App() {
                 <PermissionGuard requiredPermissions={[Permisos.VER_LOGS]}>
                   <HistorialTable />
                 </PermissionGuard>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/proveedores"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                <ProveedorScreen />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/nuevo-proveedor"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                  <AgregarProveedorScreen />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/lineas"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                <LineasScreen/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/obtener-lineasmarcas"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                  <LineasMarcas />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/nueva-linea"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                  <CrearLinea />
               </ProtectedRoute>
             }
           />

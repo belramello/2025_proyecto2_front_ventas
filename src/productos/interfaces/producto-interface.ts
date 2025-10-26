@@ -2,6 +2,16 @@
 export interface Producto {
   id: number;
   codigo: string;
+  marca: {
+        id:number,
+        nombre:string,
+        descripcion:string,
+        logoUrl: string | null
+      },
+      linea: {
+        id: number,
+        nombre: string,
+      },
   nombre: string;
   precio: number;
   stock: number;

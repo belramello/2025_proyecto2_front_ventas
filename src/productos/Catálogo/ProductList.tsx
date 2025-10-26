@@ -75,6 +75,8 @@ const ProductsList = () => {
               <thead className="table-light">
                 <tr>
                   <th>Nombre</th>
+                  <th>Marca</th>
+                  <th>Linea</th>
                   <th>Código</th>
                   <th>Stock</th>
                   <th>Precio</th>
@@ -92,6 +94,8 @@ const ProductsList = () => {
                 {productos.map((producto) => (
                   <tr key={producto.id}>
                     <td>{producto.nombre}</td>
+                    <td>{producto.marca.nombre}</td>
+                    <td>{producto.linea.nombre}</td>
                     <td>{producto.codigo}</td>
                     <td>
                       {producto.stock}
