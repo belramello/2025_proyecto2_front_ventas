@@ -9,6 +9,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import { ProductosService } from "../../services/productosService";
 import type { Producto } from "../interfaces/producto-interface";
 import type { ProductosPaginatedResponse } from "../interfaces/productos-paginated-response.interface";
+import api from "../../utils/api";
 import "./ProductsList.css";
 import { PermissionGuard } from "../../auth/guards/permisos-guard";
 import { Permisos } from "../../auth/enums/permisos";
@@ -22,6 +23,8 @@ const ProductsList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const backendUrl = api.defaults.baseURL;
+
   const fetchProductos = useCallback(async (pageNumber: number) => {
     setLoading(true);
     setError(null);
@@ -32,7 +35,6 @@ const ProductsList = () => {
       setLastPage(data.lastPage);
       setPage(data.page);
     } catch (err) {
-      console.error("Error cargando productos:", err);
       setError("Error cargando productos. Intentá de nuevo.");
     } finally {
       setLoading(false);
@@ -71,10 +73,11 @@ const ProductsList = () => {
           ) : productos.length === 0 ? (
             <p className="text-center mt-4">No hay productos registrados.</p>
           ) : (
-            <table className="table table-striped table-bordered text-center">
+            <table className="table table-striped table-bordered text-center align-middle">
               <thead className="table-light">
                 <tr>
-                  <th>Nombre</th>
+                  <th className="col-foto">Foto</th> {/* <-- 1. CLASE AÑADIDA */}
+                  <th className="col-nombre">Nombre</th> {/* <-- 2. CLASE AÑADIDA */}
                   <th>Marca</th>
                   <th>Linea</th>
                   <th>Código</th>
@@ -86,14 +89,25 @@ const ProductsList = () => {
                       Permisos.ELIMINAR_PRODUCTOS,
                     ]}
                   >
-                    <th>Opciones</th>
+                    <th className="col-opciones">Opciones</th> {/* <-- 3. CLASE AÑADIDA */}
                   </PermissionGuard>
                 </tr>
               </thead>
               <tbody>
                 {productos.map((producto) => (
                   <tr key={producto.id}>
-                    <td>{producto.nombre}</td>
+                    <td className="col-foto"> {/* <-- 1. CLASE AÑADIDA */}
+                      {producto.fotoUrl ? (
+                        <img
+                          src={`${backendUrl}/${producto.fotoUrl}`}
+                          alt={producto.nombre}
+                          className="product-image"
+                        />
+                      ) : (
+                        <div className="product-image-placeholder">Sin foto</div>
+                      )}
+                    </td>
+                    <td className="col-nombre">{producto.nombre}</td> {/* <-- 2. CLASE AÑADIDA */}
                     <td>{producto.marca.nombre}</td>
                     <td>{producto.linea.nombre}</td>
                     <td>{producto.codigo}</td>
@@ -110,7 +124,7 @@ const ProductsList = () => {
                         Permisos.ELIMINAR_PRODUCTOS,
                       ]}
                     >
-                      <td>
+                      <td className="col-opciones"> {/* <-- 3. CLASE AÑADIDA */}
                         <div className="d-flex justify-content-center gap-2">
                           <PermissionGuard
                             requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}

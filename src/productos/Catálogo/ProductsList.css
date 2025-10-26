@@ -146,3 +146,58 @@
     padding: 8px;
   }
 }
+
+/* Estilos para la imagen del producto en la tabla */
+.product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+/* Estilos para el placeholder (si no hay foto) */
+.product-image-placeholder {
+  width: 60px;
+  height: 60px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #888;
+  text-align: center;
+  line-height: 1.2;
+  border: 1px solid #ddd;
+}
+
+/* Centrar verticalmente el contenido de la tabla */
+.table.align-middle {
+  vertical-align: middle;
+}
+
+/* --- REGLAS DE LAYOUT DE TABLA CORREGIDAS --- */
+
+/* Regla general: Dejar que el texto se parta (comportamiento normal) */
+.table th,
+.table td {
+  white-space: normal;
+}
+
+/* Columna Opciones: Ancho mínimo para que quepan botones */
+.col-opciones {
+  min-width: 190px;
+  white-space: nowrap;
+}
+
+/* Columna Nombre: Ancho máximo para forzarla a partirse */
+.col-nombre {
+  max-width: 250px;
+  overflow-wrap: break-word;
+}
+
+/* Columna Foto: Que ocupe el menor espacio posible */
+.col-foto {
+  width: 1%;
+}
