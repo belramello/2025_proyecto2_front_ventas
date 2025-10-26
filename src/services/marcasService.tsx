@@ -61,6 +61,7 @@ export const MarcasService = {
       console.log("[MarcasService] Aplicando simulación (findOne):", data);
       // Asegurarse que la interfaz Marca tenga productosAsociados
       if (data) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (data as any).productosAsociados = [0, 1, 5][Math.floor(Math.random() * 3)];
       }
       // --- FIN SIMULACIÓN ---
@@ -99,7 +100,7 @@ export const MarcasService = {
   async updateMarca(id: number, marcaData: UpdateMarcaData): Promise<Marca> {
     const hasFile = marcaData.logo instanceof File;
     let requestData: FormData | { nombre?: string; descripcion?: string };
-    let headers: Record<string, string> = {}; // Objeto vacío por defecto
+    const headers: Record<string, string> = {}; // Objeto vacío por defecto
 
     if (hasFile && marcaData.logo) {
       // Si hay archivo, preparamos FormData
