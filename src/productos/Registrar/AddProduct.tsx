@@ -290,6 +290,17 @@ const AddProduct = () => {
             />
           </div>
           <div className="form-group">
+            <label>Código del producto</label>
+            <input
+              type="text"
+              name="code"
+              placeholder="Escribe el código del producto"
+              value={product.code}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
             <label>Descripción</label>
             <textarea
               name="description"
