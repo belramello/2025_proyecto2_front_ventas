@@ -9,8 +9,10 @@ const slugify = (text: string | undefined): string => {
   if (!text) return "";
   return text
     .toLowerCase()
+    .normalize("NFD") // Separa los caracteres de sus acentos (ej: "ó" -> "o" + "´")
+    .replace(/[\u0300-\u036f]/g, "") // Elimina solo los acentos
     .replace(/ /g, "-") // Reemplaza espacios por guiones
-    .replace(/[^\w-]+/g, "") // Elimina caracteres no alfanuméricos
+    .replace(/[^\w-]+/g, "") // Elimina caracteres no alfanuméricos (ahora sí funciona)
     .replace(/--+/g, "-") // Reemplaza múltiples guiones por uno solo
     .replace(/^-+/, "") // Elimina guiones al inicio
     .replace(/-+$/, ""); // Elimina guiones al final
