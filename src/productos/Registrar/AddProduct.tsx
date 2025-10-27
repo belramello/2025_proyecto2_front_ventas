@@ -47,6 +47,8 @@ const AddProduct = () => {
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchMarcasYProveedores = async () => {
       try {
@@ -104,6 +106,7 @@ const AddProduct = () => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    setValidationError(null);
     if (e.target instanceof HTMLTextAreaElement) {
       const { name, value } = e.target;
       setProduct({ ...product, [name]: value });
@@ -129,6 +132,7 @@ const AddProduct = () => {
   };
 
   const handleCodigoProveedorChange = (proveedorId: number, value: string) => {
+    setValidationError(null);
     setCodigosProveedores((prev) => ({
       ...prev,
       [proveedorId]: value,
@@ -137,6 +141,7 @@ const AddProduct = () => {
 
   // Manejador de Selects
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValidationError(null);
     const { name, value } = e.target;
     setProduct((prevProduct) => {
       const newProduct = { ...prevProduct, [name]: value };
@@ -218,6 +223,7 @@ const AddProduct = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingSubmit(true);
+    setValidationError(null);
 
     try {
       const marcaSeleccionada = marcas.find((m) => m.nombre === product.brand);
@@ -322,8 +328,8 @@ const AddProduct = () => {
                 value={product.price}
                 onChange={handleInputChange}
                 required
-                min="0.01"
-                step="0.01"
+                min="1"
+                step="1"
               />
             </div>
             <div className="form-group">
