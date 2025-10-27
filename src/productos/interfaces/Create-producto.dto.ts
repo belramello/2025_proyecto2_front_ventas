@@ -6,5 +6,9 @@ export interface CreateProductoDto {
   imagen?: File | null;
   marcaId: number;
   lineaId: number;
-  stock:number;
+  stock: number;
+  detalleProveedores: Array<{
+    proveedorId: number;
+    codigo: string;
+  }>;
 }

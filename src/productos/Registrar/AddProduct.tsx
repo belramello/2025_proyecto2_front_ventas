@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useRef } from "react";
-import "./AddProduct.css"; // Asegúrate de que esta ruta es correcta
+import React, { useState, useEffect } from "react";
+import "./AddProduct.css";
 import { MarcasService } from "../../services/marcasService";
 import { ProductosService } from "../../services/productosService";
 import { LineasService } from "../../services/lineasService";
@@ -11,21 +10,9 @@ import type { Linea } from "../../lineas/interfaces/lineas-interface";
 import type { Proveedor } from "../../proveedores/interfaces/proveedores-interface";
 import { useNavigate } from "react-router-dom";
 
-// Importar Modales
 import AddMarcaModal from "./MarcaModal";
 import AddLineaModal from "./LineaModal";
 import AddProveedorModal from "./ProveedorModal";
-
-// Imports para nuevas funcionalidades
-import Select from "react-select";
-import { BsTrash } from "react-icons/bs";
-import { Button } from "react-bootstrap"; // Asumo que usas react-bootstrap para el botón 'Quitar'
-
-// Interfaz para las opciones de react-select
-interface SelectOption {
-  value: number;
-  label: string;
-}
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -33,48 +20,37 @@ const AddProduct = () => {
     name: "",
     description: "",
     price: "",
-    brand: "", // Sigue siendo string (del <select>)
-    line: "", // Sigue siendo string (del <select>)
+    brand: "",
+    line: "",
+    provider: "",
     code: "",
     stock: "",
     image: null as File | null,
   });
 
-  // Listas de datos
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [lineas, setLineas] = useState<Linea[]>([]);
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [codigosProveedores, setCodigosProveedores] = useState<
+    Record<number, string>
+  >({});
 
-  // Estado para proveedores múltiples
-  const [proveedoresSeleccionados, setProveedoresSeleccionados] = useState<
-    SelectOption[]
-  >([]);
-
-  // Estados de carga
   const [loadingMarcas, setLoadingMarcas] = useState(true);
   const [loadingLineas, setLoadingLineas] = useState(false);
   const [loadingProveedores, setLoadingProveedores] = useState(true);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
-  // Estados de modales
   const [showMarcaModal, setShowMarcaModal] = useState(false);
   const [showLineaModal, setShowLineaModal] = useState(false);
-  const [showProveedorModal, setShowProveedorModal] = useState(false);
+  const [showProveedorModal, setShowProveedorModal] = useState(false); // <-- NUEVO
 
-  // --- Estados de Imagen (como en el modal) ---
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [imageFileName, setImageFileName] = useState(
-    "Ningún archivo seleccionado"
-  );
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Carga inicial de Marcas y Proveedores
   useEffect(() => {
     const fetchMarcasYProveedores = async () => {
       try {
         const dataMarcas = await MarcasService.getMarcas();
         setMarcas(dataMarcas.marcas);
-        // Cargar también los proveedores
         const dataProv = await ProveedoresService.getProveedor();
         setProveedores(dataProv.proveedores);
       } catch (error) {
@@ -87,7 +63,6 @@ const AddProduct = () => {
     fetchMarcasYProveedores();
   }, []);
 
-  // Carga de Líneas
   useEffect(() => {
     const fetchLineasPorMarca = async () => {
       if (!product.brand) {
@@ -117,7 +92,6 @@ const AddProduct = () => {
     }
   }, [product.brand, marcas]);
 
-  // Limpieza de URL de previsualización
   useEffect(() => {
     return () => {
       if (previewUrl) {
@@ -126,61 +100,41 @@ const AddProduct = () => {
     };
   }, [previewUrl]);
 
-  // Manejador de Inputs (excepto imagen)
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    // La lógica de 'image' se movió a handleFileChange
-    if (e.target.name === "image") return;
-
     if (e.target instanceof HTMLTextAreaElement) {
       const { name, value } = e.target;
       setProduct({ ...product, [name]: value });
       return;
     }
 
-    const { name, value } = e.target;
-    setProduct({ ...product, [name]: value });
-  };
+    const { name, value, files } = e.target;
 
-  // --- Nuevos handlers para la imagen (del modal) ---
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+    if (name === "image") {
+      const file = files && files[0] ? files[0] : null;
       setProduct({ ...product, image: file });
-      setImageFileName(file.name);
-
-      // Revocar la URL anterior si existe
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
-      // Crear y setear la nueva URL de previsualización
-      setPreviewUrl(URL.createObjectURL(file));
+      if (file) {
+        setPreviewUrl(URL.createObjectURL(file));
+      } else {
+        setPreviewUrl(null);
+      }
     } else {
-      // Si el usuario cancela, limpiar
-      handleRemoveImage();
+      setProduct({ ...product, [name]: value });
     }
   };
 
-  const handleRemoveImage = () => {
-    setProduct({ ...product, image: null });
-    setImageFileName("Ningún archivo seleccionado");
-
-    // Revocar y limpiar la URL
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    setPreviewUrl(null);
-
-    // Resetear el input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+  const handleCodigoProveedorChange = (proveedorId: number, value: string) => {
+    setCodigosProveedores((prev) => ({
+      ...prev,
+      [proveedorId]: value,
+    }));
   };
-  // --------------------------------------------------------
 
-  // Manejador de Selects (Marca y Linea)
+  // Manejador de Selects
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProduct((prevProduct) => {
@@ -192,24 +146,17 @@ const AddProduct = () => {
     });
   };
 
-  // Handler para el multi-select de proveedores
-  const handleProveedoresChange = (
-    selectedOptions: readonly SelectOption[] | null
-  ) => {
-    setProveedoresSeleccionados(selectedOptions ? [...selectedOptions] : []);
-  };
-
-  // --- Callbacks de Modales ---
-
-  // (Tu lógica de recarga de marcas ya es correcta)
-  const handleMarcaCreated = async (nuevaMarca: Marca) => {
+  const handleMarcaCreated = async (nombreNuevaMarca: string) => {
     try {
       setLoadingMarcas(true);
       const dataMarcas = await MarcasService.getMarcas();
       setMarcas(dataMarcas.marcas);
+
+      // Auto-seleccionar la marca nueva y reiniciar línea
       setProduct((prevProduct) => ({
         ...prevProduct,
-        brand: nuevaMarca.nombre,
+        brand: nombreNuevaMarca,
+        line: "",
       }));
     } catch (error) {
       console.error("Error recargando marcas:", error);
@@ -221,21 +168,21 @@ const AddProduct = () => {
     }
   };
 
-  const handleLineaCreated = async (nuevaLinea: Linea) => {
+  const handleLineaCreated = async (nombreNuevaLinea: string) => {
     try {
       setLoadingLineas(true);
-      const marcaSeleccionada = marcas.find(
-        (m) => m.nombre === product.brand
-      );
+      const marcaSeleccionada = marcas.find((m) => m.nombre === product.brand);
       if (marcaSeleccionada) {
         const dataLineas = await LineasService.getLineasPorMarca(
           marcaSeleccionada.id
         );
         setLineas(dataLineas.lineas);
       }
+
+      // Auto-seleccionar la línea nueva
       setProduct((prevProduct) => ({
         ...prevProduct,
-        line: nuevaLinea.nombre,
+        line: nombreNuevaLinea,
       }));
     } catch (error) {
       console.error("Error recargando líneas:", error);
@@ -246,31 +193,17 @@ const AddProduct = () => {
       setLoadingLineas(false);
     }
   };
-
-  // Actualizado para el multi-select
-  const handleProveedorCreated = async (nuevoProveedor: Proveedor) => {
+  const handleProveedorCreated = async (nombreNuevoProveedor: string) => {
     try {
-      setLoadingProveedores(true);
-      const dataProv = await ProveedoresService.getProveedor();
-      setProveedores(dataProv.proveedores); // Actualizar la lista completa
+      setLoadingProveedores(true); // Poner "Cargando..." en el select
+      const dataProv = await ProveedoresService.getProveedor(); // Volver a pedirlos
+      setProveedores(dataProv.proveedores); // Actualizar la lista
 
-      // Buscar el proveedor recién creado en la lista actualizada
-      const nuevoProv = dataProv.proveedores.find(
-        (p) => p.nombre === nuevoProveedor.nombre
-      );
-
-      if (nuevoProv) {
-        // Convertirlo a SelectOption
-        const newProvOption: SelectOption = {
-          value: nuevoProv.id,
-          label: nuevoProv.nombre,
-        };
-        // Añadirlo a la lista de seleccionados (en vez de reemplazar)
-        setProveedoresSeleccionados((prevSelected) => [
-          ...prevSelected,
-          newProvOption,
-        ]);
-      }
+      // Auto-seleccionar el proveedor nuevo
+      setProduct((prev) => ({
+        ...prev,
+        provider: nombreNuevoProveedor,
+      }));
     } catch (error) {
       console.error("Error recargando proveedores:", error);
       alert(
@@ -280,47 +213,48 @@ const AddProduct = () => {
       setLoadingProveedores(false);
     }
   };
-
   // Submit del Formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingSubmit(true);
 
     try {
-      const marcaSeleccionada = marcas.find(
-        (m) => m.nombre === product.brand
-      );
-      const lineaSeleccionada = lineas.find(
-        (l) => l.nombre === product.line
-      );
-
-      // Validación de proveedores
-      if (proveedoresSeleccionados.length === 0)
-        throw new Error("Debe seleccionar al menos un proveedor.");
+      const marcaSeleccionada = marcas.find((m) => m.nombre === product.brand);
+      const lineaSeleccionada = lineas.find((l) => l.nombre === product.line);
 
       // Validaciones
       if (!marcaSeleccionada)
         throw new Error("Debe seleccionar una marca válida.");
       if (!lineaSeleccionada)
         throw new Error("Debe seleccionar una linea válida.");
+      if (!lineaSeleccionada)
+        throw new Error("Debe seleccionar una línea válida.");
+      if (Object.values(codigosProveedores).every((codigo) => !codigo.trim()))
+        throw new Error(
+          "Debe ingresar al menos un código de proveedor para el producto."
+        );
       if (!product.stock || Number(product.stock) < 0)
         throw new Error("Debe ingresar un stock válido (0 o más).");
       if (!product.price || Number(product.price) <= 0)
         throw new Error("Debe ingresar un precio válido (mayor a 0).");
 
-      // Obtener IDs de proveedores
-      const proveedoresId = proveedoresSeleccionados.map((opt) => opt.value);
+      const detalleProveedores = Object.entries(codigosProveedores)
+        .filter(([_, codigo]) => codigo.trim() !== "")
+        .map(([id, codigo]) => ({
+          proveedorId: Number(id),
+          codigo: codigo.trim(),
+        }));
 
       const nuevoProducto: CreateProductoDto = {
         nombre: product.name,
         descripcion: product.description,
         precio: Number(product.price),
         codigo: product.code,
-        imagen: product.image, // El estado 'image' (File) es correcto
+        imagen: product.image,
         marcaId: marcaSeleccionada.id,
         lineaId: lineaSeleccionada.id,
         stock: Number(product.stock),
-        detalleProveedores: proveedoresId, // Enviar array de IDs
+        detalleProveedores,
       };
 
       await ProductosService.crearProducto(nuevoProducto);
@@ -337,77 +271,13 @@ const AddProduct = () => {
   const selectedMarcaId =
     marcas.find((m) => m.nombre === product.brand)?.id || null;
 
-  // Opciones para el select de proveedores
-  const allProveedoresOptions: SelectOption[] = proveedores.map((p) => ({
-    value: p.id,
-    label: p.nombre,
-  }));
-
   return (
     <div className="add-product-page">
-      {/* Estilos del modal añadidos aquí (puedes moverlos a AddProduct.css) */}
-      <style>{`
-        .file-input-hidden { display: none; }
-        .logo-preview-container {
-          width: 150px;
-          height: 150px;
-          border: 2px dashed #ccc;
-          border-radius: 8px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-          background-color: #f8f9fa;
-          margin: 0 auto; /* Centrar el contenedor */
-        }
-        .logo-preview-image {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-        }
-        .logo-placeholder {
-          color: #6c757d;
-          font-style: italic;
-          text-align: center;
-          padding: 10px;
-        }
-        .file-input-filename {
-          font-size: 0.875rem;
-          color: #6c757d;
-          margin-top: 5px;
-          word-break: break-all;
-          display: block; /* Asegurar que esté en su propia línea */
-        }
-        .image-upload-section {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          padding: 10px;
-          border-radius: 8px;
-        }
-        /* Estilos para el botón de quitar (si no usas Bootstrap) */
-        .btn-outline-danger {
-          color: #dc3545;
-          border-color: #dc3545;
-          background-color: transparent;
-          padding: 0.25rem 0.5rem;
-          font-size: 0.875rem;
-          border-radius: 0.2rem;
-          cursor: pointer;
-        }
-        .btn-outline-danger:hover {
-          color: #fff;
-          background-color: #dc3545;
-          border-color: #dc3545;
-        }
-      `}</style>
-
       <main className="form-container">
         <h1>AGREGAR PRODUCTO</h1>
 
         <form className="product-form" onSubmit={handleSubmit}>
-          {/* Nombre del producto */}
+          {/* ... (Nombre, Descripción) ... */}
           <div className="form-group">
             <label>Nombre del producto</label>
             <input
@@ -419,8 +289,6 @@ const AddProduct = () => {
               required
             />
           </div>
-
-          {/* Descripción */}
           <div className="form-group">
             <label>Descripción</label>
             <textarea
@@ -431,7 +299,7 @@ const AddProduct = () => {
             ></textarea>
           </div>
 
-          {/* Precio y Marca */}
+          {/* ... (Precio, Marca) ... */}
           <div className="form-row">
             <div className="form-group">
               <label>Precio</label>
@@ -444,6 +312,18 @@ const AddProduct = () => {
                 required
                 min="0.01"
                 step="0.01"
+              />
+            </div>
+            <div className="form-group">
+              <label>Stock</label>
+              <input
+                type="number"
+                name="stock"
+                placeholder="Ingresa el stock inicial"
+                value={product.stock}
+                onChange={handleInputChange}
+                required
+                min="0"
               />
             </div>
             <div className="form-group">
@@ -476,7 +356,7 @@ const AddProduct = () => {
             </div>
           </div>
 
-          {/* Linea */}
+          {/* ... (Linea) ... */}
           <div className="form-group">
             <label>Linea</label>
             <select
@@ -511,111 +391,75 @@ const AddProduct = () => {
             </button>
           </div>
 
-          {/* --- CAMPO PROVEEDOR (react-select) --- */}
+          {/* --- TABLA DE PROVEEDORES Y CÓDIGOS --- */}
           <div className="form-group">
-            <label>Proveedores</label>
-            <Select
-              id="proveedores"
-              isMulti
-              name="proveedores"
-              options={allProveedoresOptions}
-              classNamePrefix="select"
-              placeholder="Selecciona uno o más proveedores..."
-              value={proveedoresSeleccionados}
-              onChange={handleProveedoresChange}
-              isLoading={loadingProveedores}
-              closeMenuOnSelect={false}
-              noOptionsMessage={() => "No hay proveedores disponibles"}
-              required // React-select no usa 'required', la validación se hace en handleSubmit
-            />
-            <button
-              type="button"
-              className="btn teal"
-              onClick={() => setShowProveedorModal(true)}
-            >
-              NUEVO PROVEEDOR
-            </button>
-          </div>
-          {/* ---------------------------------- */}
+            <label>Proveedores y códigos del producto</label>
+            {loadingProveedores ? (
+              <p>Cargando proveedores...</p>
+            ) : proveedores.length === 0 ? (
+              <p>No hay proveedores registrados.</p>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn teal"
+                  onClick={() => setShowProveedorModal(true)}
+                >
+                  NUEVO PROVEEDOR
+                </button>
 
-          {/* Código */}
-          <div className="form-group">
-            <label>Código</label>
-            <input
-              type="text"
-              name="code"
-              placeholder="Ingresa el código vinculado al proveedor"
-              value={product.code}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-
-          {/* Stock */}
-          <div className="form-group">
-            <label>Stock</label>
-            <input
-              type="number"
-              name="stock"
-              placeholder="Ingresa el stock inicial"
-              value={product.stock}
-              onChange={handleInputChange}
-              required
-              min="0"
-            />
-          </div>
-
-          {/* --- Nueva sección de carga de imagen --- */}
-          <div className="form-group image-upload-section">
-            <label className="fw-bold mb-2">Foto</label>
-
-            <div className="logo-preview-container mb-3">
-              {previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Previsualización"
-                  className="logo-preview-image"
-                />
-              ) : (
-                <div className="logo-placeholder">Sin imagen seleccionada</div>
-              )}
-            </div>
-
-            <input
-              type="file"
-              id="product-image-input" // ID único
-              name="image"
-              accept="image/*"
-              className="file-input-hidden"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              disabled={loadingSubmit}
-            />
-
-            <label htmlFor="product-image-input" className="btn teal mb-2">
-              Agregar Imagen
-            </label>
-
-            <span className="file-input-filename mb-2">
-              {imageFileName}
-            </span>
-
-            {/* Mostrar "Quitar" solo si hay una imagen cargada */}
-            {product.image && (
-              <Button // Botón de React-Bootstrap
-                type="button"
-                variant="outline-danger"
-                size="sm"
-                onClick={handleRemoveImage}
-                disabled={loadingSubmit}
-              >
-                <BsTrash className="me-1" /> Quitar Imagen
-              </Button>
+                <table className="tabla-proveedores">
+                  <thead>
+                    <tr>
+                      <th>Proveedor</th>
+                      <th>Código del producto (según proveedor)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {proveedores.map((prov) => (
+                      <tr key={prov.id}>
+                        <td>{prov.nombre}</td>
+                        <td>
+                          <input
+                            type="text"
+                            placeholder={`Código para ${prov.nombre}`}
+                            value={codigosProveedores[prov.id] || ""}
+                            onChange={(e) =>
+                              handleCodigoProveedorChange(
+                                prov.id,
+                                e.target.value
+                              )
+                            }
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
             )}
           </div>
-          {/* ----------------------------------------------- */}
 
-          {/* Botón Guardar */}
+          {/* ... (Foto y Previsualización) ... */}
+          <div className="form-group">
+            <label>Foto</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleInputChange}
+            />
+          </div>
+          {previewUrl && (
+            <div className="form-group image-preview-container">
+              <label>Vista Previa:</label>
+              <img
+                src={previewUrl}
+                alt="Vista previa"
+                className="image-preview"
+              />
+            </div>
+          )}
           <div className="form-actions">
             <button
               type="submit"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Button, Alert, Spinner } from "react-bootstrap";
 import { LineasService } from "../../services/lineasService"; // Ajusta la ruta
 import type { Linea } from "../../lineas/interfaces/lineas-interface";
@@ -53,16 +53,16 @@ const AddLineaModal = ({
       const lineaDto = {
         nombre,
         descripcion,
-        marcaId, // ¡Importante!
+        marcaId,
       };
 
       // Usamos el servicio para crear la línea
-      const nuevaLinea = await LineasService.registrarLineas(lineaDto);
+      const nuevaLinea = await LineasService.registrarLineasParaMarca(lineaDto);
 
       alert("¡Línea creada con éxito!");
       onLineaCreated(nuevaLinea); // 1. Devolver la línea al padre
       onHide(); // 2. Cerrar el modal
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
       const errorMsg =
@@ -88,7 +88,8 @@ const AddLineaModal = ({
           {/* Alerta si no hay marca seleccionada */}
           {!marcaId && (
             <Alert variant="warning">
-              Por favor, selecciona una marca en el formulario principal primero.
+              Por favor, selecciona una marca en el formulario principal
+              primero.
             </Alert>
           )}
 
@@ -124,7 +125,11 @@ const AddLineaModal = ({
           </div>
 
           {/* Error general */}
-          {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+          {error && (
+            <Alert variant="danger" className="mt-3">
+              {error}
+            </Alert>
+          )}
         </div>
       </Modal.Body>
 

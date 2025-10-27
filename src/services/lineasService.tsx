@@ -2,6 +2,7 @@ import type { LineaPaginatedResponse } from "../lineas/interfaces/lineas-paginat
 import api from "../utils/api";
 import type { CreateLinea } from "../lineas/interfaces/create-linea.interface";
 import type { Linea } from "../lineas/interfaces/lineas-interface";
+import type { CreateLineaParaMarca } from "../lineas/interfaces/create-linea-para-marca.interface";
 
 export const LineasService = {
   async getLineas(page: number = 1): Promise<LineaPaginatedResponse> {
@@ -32,10 +33,24 @@ export const LineasService = {
 
   async registrarLineas(CreateLinea: CreateLinea): Promise<void> {
     try {
-      console.log("createLineaDto", CreateLinea);
       await api.post(`/lineas`, CreateLinea);
     } catch (error) {
       console.error("Error al registrar linea:", error);
+      throw error;
+    }
+  },
+
+  async registrarLineasParaMarca(
+    createLineaParaMarca: CreateLineaParaMarca
+  ): Promise<Linea> {
+    try {
+      const { data } = await api.post<Linea>(
+        `/lineas/registrar-para-marca`,
+        createLineaParaMarca
+      );
+      return data;
+    } catch (error) {
+      console.error("Error al registrar linea para marca:", error);
       throw error;
     }
   },

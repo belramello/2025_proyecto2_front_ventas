@@ -40,27 +40,31 @@ export const ProductosService = {
   async crearProducto(productoData: CreateProductoDto): Promise<Producto> {
     try {
       const formData = new FormData();
-      
+
       formData.append("nombre", productoData.nombre);
       formData.append("descripcion", productoData.descripcion);
       formData.append("precio", productoData.precio.toString());
-      formData.append("codigo", productoData.codigo);
-      
-      // --- CAMPOS CORREGIDOS ---
+      formData.append("codigo", productoData.codigo || "");
       formData.append("marcaId", productoData.marcaId.toString());
       formData.append("lineaId", productoData.lineaId.toString());
       formData.append("stock", productoData.stock.toString());
 
-      productoData.detalleProveedores.forEach((id) => formData.append("detalleProveedore", String(id)));
-      // -------------------------
+      if (productoData.detalleProveedores?.length > 0) {
+        formData.append(
+          "detalleProveedores",
+          JSON.stringify(productoData.detalleProveedores)
+        );
+      }
 
       if (productoData.imagen) {
         formData.append("imagen", productoData.imagen);
       }
+      console.log("formData", formData);
 
       const { data } = await api.post<Producto>("/productos", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
       return data;
     } catch (error) {
       console.error("Error al crear producto:", error);
@@ -82,15 +86,16 @@ export const ProductosService = {
       if (updateData.precio)
         formData.append("precio", updateData.precio.toString());
       if (updateData.codigo) formData.append("codigo", updateData.codigo);
-      if (updateData.stock) // <-- AÑADIDO
+      if (updateData.stock)
+        // <-- AÑADIDO
         formData.append("stock", updateData.stock.toString());
-      if (updateData.marcaId) // <-- AÑADIDO
+      if (updateData.marcaId)
+        // <-- AÑADIDO
         formData.append("marcaId", updateData.marcaId.toString());
-      if (updateData.lineaId) // <-- AÑADIDO
+      if (updateData.lineaId)
+        // <-- AÑADIDO
         formData.append("lineaId", updateData.lineaId.toString());
-      if (updateData.imagen) 
-        formData.append("imagen", updateData.imagen);
-
+      if (updateData.imagen) formData.append("imagen", updateData.imagen);
 
       const { data } = await api.patch<Producto>(`/productos/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },

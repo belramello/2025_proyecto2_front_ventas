@@ -8,6 +8,29 @@
   padding: 40px 0;
 }
 
+.tabla-proveedores {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.tabla-proveedores th,
+.tabla-proveedores td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.tabla-proveedores th {
+  background-color: #f0f0f0;
+}
+
+.tabla-proveedores input {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
 /* ======= FORMULARIO ======= */
 .form-container {
   background: #ffffff;
@@ -23,8 +46,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-container h1 {
@@ -107,11 +136,21 @@ textarea {
   opacity: 0.9;
 }
 
-.btn.green { background-color: #34c759; }
-.btn.teal { background-color: #00c3d0; }
-.btn.pink { background-color: #ff2d55; }
-.btn.purple { background-color: #af52de; }
-.btn.red { background-color: #ff3b30; }
+.btn.green {
+  background-color: #34c759;
+}
+.btn.teal {
+  background-color: #00c3d0;
+}
+.btn.pink {
+  background-color: #ff2d55;
+}
+.btn.purple {
+  background-color: #af52de;
+}
+.btn.red {
+  background-color: #ff3b30;
+}
 
 /* ======= ZONA DE ACCIONES ======= */
 .form-actions {
