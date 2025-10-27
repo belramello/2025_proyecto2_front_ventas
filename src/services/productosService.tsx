@@ -57,10 +57,10 @@ export const ProductosService = {
       // En lugar de "aplanar" el array, lo convertimos en un string JSON.
       // El backend ahora solo debe hacer JSON.parse() a este campo.
       // Esto es mucho más robusto que el formato "aplanado".
-      formData.append(
-        "detalleProveedores",
-        JSON.stringify(productoData.detalleProveedores)
-      );
+     // formData.append(
+    //    "detalleProveedores",
+    //    JSON.stringify(productoData.detalleProveedores)
+   //   );
       // -----------------------------------------------------------
 
       if (productoData.imagen) {

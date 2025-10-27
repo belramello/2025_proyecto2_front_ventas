@@ -10,7 +10,6 @@ import ErrorMessage from "../../components/ErrorMessage";
 import { ProductosService } from "../../services/productosService";
 import type { Producto } from "../interfaces/producto-interface";
 import type { ProductosPaginatedResponse } from "../interfaces/productos-paginated-response.interface";
-// import api from "../../utils/api"; // <-- Ya no necesitamos esto para la URL
 import "./ProductsList.css";
 import { PermissionGuard } from "../../auth/guards/permisos-guard";
 import { Permisos } from "../../auth/enums/permisos";
@@ -55,7 +54,7 @@ const ProductsList = () => {
       setProductos(data.productos);
       setLastPage(data.lastPage);
       setPage(data.page);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Error cargando productos. Intentá de nuevo.");
     } finally {
@@ -71,14 +70,14 @@ const ProductsList = () => {
     fetchProductos(page);
   };
 
-  // --- Handlers para el modal Stock (sin cambios) ---
+  // --- Handlers para el modal Stock ---
   const handleOpenStockModal = (producto: Producto) => {
     setSelectedProducto(producto);
     setShowStockModal(true);
   };
 
   const handleCloseStockModal = () => {
-    setSelectedProducto(null); // Limpiamos el producto al cerrar
+    setSelectedProducto(null);
     setShowStockModal(false);
   };
 
@@ -102,12 +101,12 @@ const ProductsList = () => {
 
   // --- CAMBIO 3: Implementar Handlers para Modal Proveedores ---
   const handleOpenProveedoresModal = (producto: Producto) => {
-    setSelectedProducto(producto); // Reusamos el estado del producto
-    setShowProveedoresModal(true); // Mostramos el modal de proveedores
+    setSelectedProducto(producto);
+    setShowProveedoresModal(true);
   };
 
   const handleCloseProveedoresModal = () => {
-    setSelectedProducto(null); // Limpiamos el producto al cerrar
+    setSelectedProducto(null);
     setShowProveedoresModal(false);
   };
   // ----------------------------------------------------------
@@ -127,7 +126,7 @@ const ProductsList = () => {
       <PermissionGuard requiredPermissions={Permisos.VER_PRODUCTOS}>
         <div
           className="products-container table-responsive ms-4 me-4"
-          style={{ marginTop: "10px" }}
+          style={{ width: "100%", maxWidth: "100vw", overflowX: "auto" }}
         >
           {error ? (
             <ErrorMessage message={error} onRetry={handleRetry} />
@@ -136,132 +135,117 @@ const ProductsList = () => {
           ) : productos.length === 0 ? (
             <p className="text-center mt-4">No hay productos registrados.</p>
           ) : (
-            <>
-              <table className="products-table table table-striped table-bordered text-center align-middle">
-                <thead className="table-light">
-                  <tr>
-                    <th className="col-foto">Foto</th>
-                    <th className="col-nombre">Nombre</th>
-                    <th>Descripcion</th>
-                    <th>Linea</th>
-                    <th>Código</th>
-                    <th>Stock</th>
-                    <th>Precio</th>
-                    <th>Proveedores</th>
+            <table className="products-table table table-striped table-bordered text-center align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th className="col-foto">Foto</th>
+                  <th className="col-nombre">Nombre</th>
+                  <th className="col-descripcion">Descripción</th>
+                  <th className="col-linea">Línea</th>
+                  <th className="col-codigo">Código</th>
+                  <th className="col-stock">Stock</th>
+                  <th className="col-precio">Precio</th>
+                  <th className="col-proveedores">Proveedores</th>
+                  <PermissionGuard
+                    requiredPermissions={[
+                      Permisos.MODIFICAR_PRODUCTOS,
+                      Permisos.ELIMINAR_PRODUCTOS,
+                    ]}
+                  >
+                    <th className="col-opciones">Opciones</th>
+                  </PermissionGuard>
+                </tr>
+              </thead>
+              <tbody>
+                {productos.map((producto) => (
+                  <tr
+                    key={producto.id}
+                    className={producto.stock < 10 ? "low-stock-row" : ""}
+                  >
+                    <td className="col-foto">
+                      {producto.fotoUrl ? (
+                        <img
+                          src={`${API_URL}/${producto.fotoUrl}`}
+                          alt={producto.nombre}
+                          className="product-image"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder-logo.jpg";
+                          }}
+                        />
+                      ) : (
+                        <div className="product-image-placeholder">
+                          Sin foto
+                        </div>
+                      )}
+                    </td>
+                    <td className="col-nombre">{producto.nombre}</td>
+                    <td className="col-descripcion">{producto.descripcion}</td>
+                    <td className="col-linea">{producto.linea.nombre}</td>
+                    <td className="col-codigo">{producto.codigo}</td>
+                    <td className="col-stock">
+                      <div className="stock-cell-top">
+                        <span>{producto.stock}</span>
+                        <PermissionGuard
+                          requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
+                        >
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            title="Actualizar Stock"
+                            onClick={() => handleOpenStockModal(producto)}
+                          >
+                            <BsFillPlusCircleFill />
+                          </button>
+                        </PermissionGuard>
+                      </div>
+                      {producto.stock < 10 && (
+                        <span className="badge bg-warning text-dark">
+                          POCO STOCK
+                        </span>
+                      )}
+                    </td>
+                    <td className="col-precio">${producto.precio}</td>
+                    <td className="col-proveedores">
+                      <button
+                        className="btn btn-sm btn-outline-info"
+                        title="Ver Proveedores"
+                        onClick={() => handleOpenProveedoresModal(producto)}
+                      >
+                        <BsTruck />
+                      </button>
+                    </td>
                     <PermissionGuard
                       requiredPermissions={[
                         Permisos.MODIFICAR_PRODUCTOS,
                         Permisos.ELIMINAR_PRODUCTOS,
                       ]}
                     >
-                      <th className="col-opciones">Opciones</th>
-                    </PermissionGuard>
-                  </tr>
-                </thead>
-                <tbody>
-                  {productos.map((producto) => (
-                    <tr
-                      key={producto.id}
-                      className={
-                        producto.stock < 10 ? "low-stock-row" : ""
-                      }
-                    >
-                      <td className="col-foto">
-                        {producto.fotoUrl ? (
-                          <img
-                            src={`${API_URL}/${producto.fotoUrl}`}
-                            alt={producto.nombre}
-                            className="product-image"
-                            onError={(e) => {
-                              e.currentTarget.src = "/placeholder-logo.jpg";
-                            }}
-                          />
-                        ) : (
-                          <div className="product-image-placeholder">
-                            Sin foto
-                          </div>
-                        )}
-                      </td>
-                      <td className="col-nombre">{producto.nombre}</td>
-                      <td>{producto.descripcion}</td>
-                      <td>{producto.linea.nombre}</td>
-                      <td>{producto.codigo}</td>
-                      {/* --- CELDA DE STOCK (Versión 2 pisos) --- */}
-                      <td className="stock-cell">
-                        
-                        {/* 1. Fila de Arriba (Número + Botón) */}
-                        <div className="stock-cell-top">
-                          <span>{producto.stock}</span>
+                      <td className="col-opciones">
+                        <div className="d-flex justify-content-center gap-2">
                           <PermissionGuard
                             requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
                           >
-                            <button
-                              className="btn btn-sm btn-outline-primary"
-                              title="Actualizar Stock"
-                              onClick={() => handleOpenStockModal(producto)}
-                            >
-                              <BsFillPlusCircleFill />
-                            </button>
+                            <PrimaryButton
+                              label="EDITAR"
+                              variant="warning"
+                              onClick={() => console.log("Editar", producto.id)}
+                            />
+                          </PermissionGuard>
+                          <PermissionGuard
+                            requiredPermissions={Permisos.ELIMINAR_PRODUCTOS}
+                          >
+                            <PrimaryButton
+                              label="ELIMINAR"
+                              variant="danger"
+                              onClick={() => console.log("Eliminar", producto.id)}
+                            />
                           </PermissionGuard>
                         </div>
-
-                        {/* 2. Fila de Abajo (Badge condicional) */}
-                        {producto.stock < 10 && (
-                          <span className="badge bg-warning text-dark">
-                            POCO STOCK
-                          </span>
-                        )}
                       </td>
-                      {/* --- FIN CELDA DE STOCK --- */}
-                      <td>${producto.precio}</td>
-                      <td>
-                        <button
-                          className="btn btn-sm btn-outline-info"
-                          title="Ver Proveedores"
-                          // Aquí se usa el nuevo handler
-                          onClick={() => handleOpenProveedoresModal(producto)}
-                        >
-                          <BsTruck />
-                        </button>
-                      </td>
-                      <PermissionGuard
-                        requiredPermissions={[
-                          Permisos.MODIFICAR_PRODUCTOS,
-                          Permisos.ELIMINAR_PRODUCTOS,
-                        ]}
-                      >
-                        <td className="col-opciones">
-                          <div className="d-flex justify-content-center gap-2">
-                            <PermissionGuard
-                              requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
-                            >
-                              <PrimaryButton
-                                label="EDITAR"
-                                variant="warning"
-                                onClick={() =>
-                                  console.log("Editar", producto.id)
-                                }
-                              />
-                            </PermissionGuard>
-                            <PermissionGuard
-                              requiredPermissions={Permisos.ELIMINAR_PRODUCTOS}
-                            >
-                              <PrimaryButton
-                                label="ELIMINAR"
-                                variant="danger"
-                                onClick={() =>
-                                  console.log("Eliminar", producto.id)
-                                }
-                              />
-                            </PermissionGuard>
-                          </div>
-                        </td>
-                      </PermissionGuard>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
+                    </PermissionGuard>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
 
@@ -272,7 +256,7 @@ const ProductsList = () => {
         />
       </PermissionGuard>
 
-      {/* --- Renderizado del Modal Stock (sin cambios) --- */}
+      {/* --- Renderizado del Modal Stock --- */}
       <UpdateStockModal
         show={showStockModal}
         onHide={handleCloseStockModal}
