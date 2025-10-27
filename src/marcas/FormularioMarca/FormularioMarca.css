@@ -61,10 +61,12 @@ textarea {
   cursor: pointer;
   transition: transform 0.1s ease;
   width: fit-content;
+
 }
 
 .btn:hover {
   transform: scale(1.05);
+
 }
 
 .btn.green {
@@ -123,12 +125,13 @@ textarea {
 /* ===== NUEVO: Sección del Logo en la Columna Derecha ===== */
 .logo-section {
   text-align: center;
+  opacity: 4;
 }
 
 .logo-preview-container {
   width: 180px;
   height: 180px;
-  border: 2px dashed #ccc;
+  border: 2px dashed #802121;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -139,7 +142,7 @@ textarea {
 }
 
 .logo-preview-container:hover {
-  border-color: #00c3d0;
+  border-color: #05abb7;
   background-color: #f1f1f1;
 }
 
@@ -166,6 +169,6 @@ textarea {
 }
 
 .basic-multi-select .select__control--is-focused {
-  border-color: #00c3d0;
+  border-color: #01181a;
   box-shadow: 0 0 0 2px rgb
 }
