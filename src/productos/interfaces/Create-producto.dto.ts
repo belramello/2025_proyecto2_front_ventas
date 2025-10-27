@@ -7,8 +7,8 @@ export interface CreateProductoDto {
   marcaId: number;
   lineaId: number;
   stock: number;
- // detalleProveedores: Array<{
- //   proveedorId: number;
- //   codigo: string;
-//}>;
+  detalleProveedores: Array<{
+    proveedorId: number;
+    codigo: string;
+}>;
 }

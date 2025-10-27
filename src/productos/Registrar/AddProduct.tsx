@@ -230,21 +230,21 @@ const AddProduct = () => {
         throw new Error("Debe seleccionar una linea válida.");
       if (!lineaSeleccionada)
         throw new Error("Debe seleccionar una línea válida.");
-      //if (Object.values(codigosProveedores).every((codigo) => !codigo.trim()))
-     //   throw new Error(
-     //     "Debe ingresar al menos un código de proveedor para el producto."
-    //    );
+      if (Object.values(codigosProveedores).every((codigo) => !codigo.trim()))
+        throw new Error(
+          "Debe ingresar al menos un código de proveedor para el producto."
+        );
       if (!product.stock || Number(product.stock) < 0)
         throw new Error("Debe ingresar un stock válido (0 o más).");
       if (!product.price || Number(product.price) <= 0)
         throw new Error("Debe ingresar un precio válido (mayor a 0).");
 
-     // const detalleProveedores = Object.entries(codigosProveedores)
-     //   .filter(([_, codigo]) => codigo.trim() !== "")
-     //   .map(([id, codigo]) => ({
-     //     proveedorId: Number(id),
-    //      codigo: codigo.trim(),
-    //    }));
+      const detalleProveedores = Object.entries(codigosProveedores)
+       .filter(([_, codigo]) => codigo.trim() !== "")
+        .map(([id, codigo]) => ({
+          proveedorId: Number(id),
+          codigo: codigo.trim(),
+        }));
 
       const nuevoProducto: CreateProductoDto = {
         nombre: product.name,
@@ -255,7 +255,7 @@ const AddProduct = () => {
         marcaId: marcaSeleccionada.id,
         lineaId: lineaSeleccionada.id,
         stock: Number(product.stock),
-        //detalleProveedores,
+        detalleProveedores,
       };
 
       await ProductosService.crearProducto(nuevoProducto);

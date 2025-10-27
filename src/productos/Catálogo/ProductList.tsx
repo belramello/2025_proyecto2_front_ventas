@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-irregular-whitespace */
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BsFillPlusCircleFill, BsTruck } from "react-icons/bs";
+import { BsFillPlusCircleFill, BsTruck, BsPencil, BsTrash } from "react-icons/bs";
 import FullWidthButton from "../../components/FullWidthButton";
 import PrimaryButton from "../../components/Button";
 import Pagination from "../../components/Pagination";
@@ -18,13 +19,15 @@ import { Permisos } from "../../auth/enums/permisos";
 import UpdateStockModal from "../Stock/UpdateStock";
 import type { UpdateProductoDto } from "../interfaces/Update-producto.dto";
 
-// --- CAMBIO 1: Importar el modal de proveedores ---
+// --- Imports para el modal de Proveedores ---
 import ProveedoresModal from "./ProveedoresModal";
-// --------------------------------------------------
+
+// --- Imports para los modals de Editar y Eliminar ---
+import EditProductModal from "./EditModal";
+import DeleteProductModal from "./DeleteModal";
 
 // --- Usar VITE_API_URL para la URL raíz del servidor ---
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-// ---------------------------------------------------------
 
 const ProductsList = () => {
   const navigate = useNavigate();
@@ -37,13 +40,15 @@ const ProductsList = () => {
 
   // --- Estado para el modal Stock ---
   const [showStockModal, setShowStockModal] = useState(false);
-  const [selectedProducto, setSelectedProducto] = useState<Producto | null>(
-    null
-  );
+  const [selectedProducto, setSelectedProducto] = useState<Producto | null>(null);
 
-  // --- CAMBIO 2: Agregar estado para el modal de proveedores ---
+  // --- Estado para el modal Proveedores ---
   const [showProveedoresModal, setShowProveedoresModal] = useState(false);
-  // -----------------------------------------------------------
+
+  // --- Estados para los modals de Editar y Eliminar ---
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
 
   const fetchProductos = useCallback(async (pageNumber: number) => {
     setLoading(true);
@@ -54,7 +59,6 @@ const ProductsList = () => {
       setProductos(data.productos);
       setLastPage(data.lastPage);
       setPage(data.page);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Error cargando productos. Intentá de nuevo.");
     } finally {
@@ -90,16 +94,13 @@ const ProductsList = () => {
     }
     const stockActual = selectedProducto.stock;
     const nuevoStockTotal = stockActual + cantidadIngresada;
-    const updateDto: UpdateProductoDto = {
-      stock: nuevoStockTotal,
-    };
+    const updateDto: UpdateProductoDto = { stock: nuevoStockTotal };
     await ProductosService.actualizarProducto(productoId, updateDto);
     handleCloseStockModal();
     fetchProductos(page);
   };
-  // --- Fin Handlers Modal Stock ---
 
-  // --- CAMBIO 3: Implementar Handlers para Modal Proveedores ---
+  // --- Handlers para el modal Proveedores ---
   const handleOpenProveedoresModal = (producto: Producto) => {
     setSelectedProducto(producto);
     setShowProveedoresModal(true);
@@ -109,7 +110,36 @@ const ProductsList = () => {
     setSelectedProducto(null);
     setShowProveedoresModal(false);
   };
-  // ----------------------------------------------------------
+
+  // --- Handlers para el modal Editar ---
+  const handleOpenEditModal = (producto: Producto) => {
+    setSelectedProducto(producto);
+    setShowEditModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedProducto(null);
+    setShowEditModal(false);
+  };
+
+  const handleEditUpdateSuccess = () => {
+    fetchProductos(page);
+  };
+
+  // --- Handlers para el modal Eliminar ---
+  const handleOpenDeleteModal = (id: number) => {
+    setDeleteProductId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteProductId(null);
+    setShowDeleteModal(false);
+  };
+
+  const handleDeleteSuccess = () => {
+    fetchProductos(page);
+  };
 
   return (
     <div className="products-page">
@@ -225,18 +255,18 @@ const ProductsList = () => {
                             requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
                           >
                             <PrimaryButton
-                              label="EDITAR"
+                              label={(<BsPencil />).toString()}
                               variant="warning"
-                              onClick={() => console.log("Editar", producto.id)}
+                              onClick={() => handleOpenEditModal(producto)}
                             />
                           </PermissionGuard>
                           <PermissionGuard
                             requiredPermissions={Permisos.ELIMINAR_PRODUCTOS}
                           >
                             <PrimaryButton
-                              label="ELIMINAR"
+                              label={(<BsTrash />).toString()}
                               variant="danger"
-                              onClick={() => console.log("Eliminar", producto.id)}
+                              onClick={() => handleOpenDeleteModal(producto.id)}
                             />
                           </PermissionGuard>
                         </div>
@@ -263,15 +293,29 @@ const ProductsList = () => {
         producto={selectedProducto}
         onStockUpdate={handleStockUpdate}
       />
-      {/* ----------------------------- */}
 
-      {/* --- CAMBIO 4: Renderizado del Modal Proveedores --- */}
+      {/* --- Renderizado del Modal Proveedores --- */}
       <ProveedoresModal
         show={showProveedoresModal}
         onHide={handleCloseProveedoresModal}
         producto={selectedProducto}
       />
-      {/* ------------------------------------------------- */}
+
+      {/* --- Renderizado del Modal Editar --- */}
+      <EditProductModal
+        show={showEditModal}
+        onHide={handleCloseEditModal}
+        producto={selectedProducto}
+        onUpdateSuccess={handleEditUpdateSuccess}
+      />
+
+      {/* --- Renderizado del Modal Eliminar --- */}
+      <DeleteProductModal
+        show={showDeleteModal}
+        onHide={handleCloseDeleteModal}
+        productId={deleteProductId}
+        onDeleteSuccess={handleDeleteSuccess}
+      />
     </div>
   );
 };
