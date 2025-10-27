@@ -31,6 +31,11 @@ function ResetContraseñaScreen() {
       return;
     }
 
+    if (newPassword.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
     if (newPassword !== confirmarContraseña) {
       setError("Las contraseñas no coinciden.");
       return;
