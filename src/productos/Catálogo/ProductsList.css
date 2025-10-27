@@ -2,7 +2,7 @@
 .products-container {
   /* --- ESTAS SON LAS LÍNEAS NUEVAS --- */
   /* Define un ancho máximo para el contenedor de la tabla */
-  max-width: 1400px; /* Podés achicar esto (ej: 1200px) si querés */
+  max-width: 1600px; /* Podés achicar esto (ej: 1200px) si querés */
   /* Centra el contenedor horizontalmente */
   margin-left: auto;
   margin-right: auto;
@@ -250,6 +250,70 @@
 }
 
 /* Alinear la celda de stock */
+/* Alinear la celda de stock (Contenedor principal) */
 .stock-cell {
   position: relative;
+  
+  /* --- ESTO ES LO NUEVO --- */
+  flex-direction: column; /* Apila los hijos verticalmente */
+  justify-content: center; /* Centra verticalmente */
+  align-items: center; /* Centra horizontalmente */
+  gap: 0.25rem; /* Espacio pequeño entre la fila de arriba y el badge */
+}
+
+/* Fila superior (para [Stock] + [Botón]) */
+.stock-cell-top {
+ justify-content: center;
+  flex-direction: row; /* Hijos en horizontal */
+  align-items: center;
+  gap: 0.5rem; /* Espacio entre el número y el botón */
+}
+
+/* --- Tabla principal: Distribución fija de anchos (nueva sección) --- */
+.products-table {
+  table-layout: fixed !important;
+}
+
+.products-table th,
+.products-table td {
+  padding: 0.5rem 0.25rem !important; /* Menos padding horizontal */
+  vertical-align: middle !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Anchos optimizados (suman ~100%, ajustados a tu diseño) */
+.col-foto       { width:  6% !important; min-width: 60px;  }
+.col-nombre     { width: 14% !important; min-width: 150px; max-width: 250px; overflow-wrap: break-word; }
+.col-descripcion{ width: 18% !important; min-width: 180px; }
+.col-linea      { width: 11% !important; min-width: 110px; }
+.col-codigo     { width:  8% !important; min-width: 80px;  }
+.col-stock      { width:  9% !important; min-width: 90px;  }
+.col-precio     { width:  8% !important; min-width: 80px;  }
+.col-proveedores{ width:  7% !important; min-width: 70px; }
+.col-opciones   { width: 13% !important; min-width: 190px; }
+
+/* Ajustes específicos para compatibilidad */
+.col-stock {
+  white-space: normal !important; /* Permite wrap en badge */
+  text-align: center;
+}
+
+.stock-cell-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+/* Responsive: Scroll siempre visible en móviles */
+@media (max-width: 1200px) {
+  .products-container.table-responsive {
+    overflow-x: auto !important;
+  }
+  
+  .products-table {
+    min-width: 1200px; /* Fuerza scroll horizontal */
+  }
 }

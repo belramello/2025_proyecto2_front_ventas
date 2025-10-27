@@ -10,5 +10,5 @@ export interface CreateProductoDto {
   detalleProveedores: Array<{
     proveedorId: number;
     codigo: string;
-  }>;
+}>;
 }

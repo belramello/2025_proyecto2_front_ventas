@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import "./AddProduct.css";
 import { MarcasService } from "../../services/marcasService";
@@ -146,7 +147,7 @@ const AddProduct = () => {
     });
   };
 
-  const handleMarcaCreated = async (nombreNuevaMarca: string) => {
+  const handleMarcaCreated = async (nuevaMarca: Marca) => {
     try {
       setLoadingMarcas(true);
       const dataMarcas = await MarcasService.getMarcas();
@@ -155,7 +156,7 @@ const AddProduct = () => {
       // Auto-seleccionar la marca nueva y reiniciar línea
       setProduct((prevProduct) => ({
         ...prevProduct,
-        brand: nombreNuevaMarca,
+        brand: nuevaMarca.nombre,
         line: "",
       }));
     } catch (error) {
@@ -168,7 +169,7 @@ const AddProduct = () => {
     }
   };
 
-  const handleLineaCreated = async (nombreNuevaLinea: string) => {
+  const handleLineaCreated = async (nuevaLinea: Linea) => {
     try {
       setLoadingLineas(true);
       const marcaSeleccionada = marcas.find((m) => m.nombre === product.brand);
@@ -182,7 +183,7 @@ const AddProduct = () => {
       // Auto-seleccionar la línea nueva
       setProduct((prevProduct) => ({
         ...prevProduct,
-        line: nombreNuevaLinea,
+        line: nuevaLinea.nombre,
       }));
     } catch (error) {
       console.error("Error recargando líneas:", error);
@@ -193,7 +194,7 @@ const AddProduct = () => {
       setLoadingLineas(false);
     }
   };
-  const handleProveedorCreated = async (nombreNuevoProveedor: string) => {
+  const handleProveedorCreated = async (nuevoProveedor: Proveedor) => {
     try {
       setLoadingProveedores(true); // Poner "Cargando..." en el select
       const dataProv = await ProveedoresService.getProveedor(); // Volver a pedirlos
@@ -202,7 +203,7 @@ const AddProduct = () => {
       // Auto-seleccionar el proveedor nuevo
       setProduct((prev) => ({
         ...prev,
-        provider: nombreNuevoProveedor,
+        provider: nuevoProveedor.nombre,
       }));
     } catch (error) {
       console.error("Error recargando proveedores:", error);
@@ -239,7 +240,7 @@ const AddProduct = () => {
         throw new Error("Debe ingresar un precio válido (mayor a 0).");
 
       const detalleProveedores = Object.entries(codigosProveedores)
-        .filter(([_, codigo]) => codigo.trim() !== "")
+       .filter(([_, codigo]) => codigo.trim() !== "")
         .map(([id, codigo]) => ({
           proveedorId: Number(id),
           codigo: codigo.trim(),
