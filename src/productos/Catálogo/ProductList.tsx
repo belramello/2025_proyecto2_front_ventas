@@ -235,13 +235,12 @@ const ProductsList = () => {
                     </td>
                     <td className="col-precio">${producto.precio}</td>
                     <td className="col-proveedores">
-                      <button
-                        className="btn btn-sm btn-outline-info"
-                        title="Ver Proveedores"
-                        onClick={() => handleOpenProveedoresModal(producto)}
-                      >
-                        <BsTruck />
-                      </button>
+                      <PrimaryButton
+                      label={<BsTruck />}
+                      variant="info"
+                      title="Ver Proveedores"
+                      onClick={() => handleOpenProveedoresModal(producto)}
+                    />
                     </td>
                     <PermissionGuard
                       requiredPermissions={[
