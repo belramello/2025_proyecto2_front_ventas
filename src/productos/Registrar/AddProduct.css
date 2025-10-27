@@ -151,3 +151,17 @@ input[type="file"] {
     font-size: 26px;
   }
 }
+
+.image-preview-container {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.image-preview {
+  max-width: 200px; /* Ajusta el tamaño como prefieras */
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  object-fit: cover; /* Asegura que la imagen se vea bien */
+  margin-top: 5px;
+}

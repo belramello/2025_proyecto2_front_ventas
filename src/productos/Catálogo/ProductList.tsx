@@ -134,7 +134,7 @@ const ProductsList = () => {
                 <tr>
                   <th className="col-foto">Foto</th>
                   <th className="col-nombre">Nombre</th>
-                  <th>Marca</th>
+                  <th>Descripcion</th>
                   <th>Linea</th>
                   <th>Código</th>
                   <th>Stock</th>
@@ -164,7 +164,7 @@ const ProductsList = () => {
                       )}
                     </td>
                     <td className="col-nombre">{producto.nombre}</td>
-                    <td>{producto.marca.nombre}</td>
+                    <td>{producto.descripcion}</td>
                     <td>{producto.linea.nombre}</td>
                     <td>{producto.codigo}</td>
                     
