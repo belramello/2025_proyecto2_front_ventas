@@ -255,7 +255,7 @@ const ProductsList = () => {
                             requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
                           >
                             <PrimaryButton
-                              label={(<BsPencil />).toString()}
+                              label={<BsPencil />}
                               variant="warning"
                               onClick={() => handleOpenEditModal(producto)}
                             />
@@ -264,7 +264,7 @@ const ProductsList = () => {
                             requiredPermissions={Permisos.ELIMINAR_PRODUCTOS}
                           >
                             <PrimaryButton
-                              label={(<BsTrash />).toString()}
+                              label={<BsTrash />}
                               variant="danger"
                               onClick={() => handleOpenDeleteModal(producto.id)}
                             />
