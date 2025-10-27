@@ -50,6 +50,8 @@ export const ProductosService = {
       formData.append("marcaId", productoData.marcaId.toString());
       formData.append("lineaId", productoData.lineaId.toString());
       formData.append("stock", productoData.stock.toString());
+
+      productoData.detalleProveedores.forEach((id) => formData.append("detalleProveedore", String(id)));
       // -------------------------
 
       if (productoData.imagen) {
