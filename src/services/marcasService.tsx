@@ -1,71 +1,41 @@
-import type { Marca, MarcasPaginatedResponse } from "../marcas/interfaces/marca.interface";
+import type { CreateMarcaData } from "../marcas/interfaces/create-marca-data.interface";
+import type {
+  Marca,
+  MarcasPaginatedResponse,
+} from "../marcas/interfaces/marca.interface";
+import type { UpdateMarcaData } from "../marcas/interfaces/update-marca-data.interface";
 import api from "../utils/api";
 
-// Interface para datos al crear
-interface CreateMarcaData {
-  nombre: string;
-  descripcion: string;
-  logo: File;
-}
-
-// Interface para datos al actualizar (campos opcionales)
-interface UpdateMarcaData {
-  nombre?: string;
-  descripcion?: string;
-  logo?: File | null;
-}
-
 export const MarcasService = {
-
-  /**
-   * Obtiene la lista PAGINADA de marcas.
-   * Incluye simulación de 'productosAsociados'.
-   */
   async getMarcas(page: number = 1): Promise<MarcasPaginatedResponse> {
     try {
-      const { data } = await api.get<MarcasPaginatedResponse>(`/marcas?page=${page}`);
-      console.log("[MarcasService] Respuesta paginada recibida:", data); // Log para verificar
+      const { data } = await api.get<MarcasPaginatedResponse>(
+        `/marcas?page=${page}`
+      );
 
-      // -------------------------------------------------------------------
-      // TODO: INICIO DE SIMULACIÓN - ¡BORRAR ESTE BLOQUE CUANDO EL BACKEND ESTÉ LISTO!
-      console.log("[MarcasService] Aplicando simulación de productosAsociados...");
-      // Aplicamos .map() sobre data.marcas (el array dentro del objeto paginado)
-      const marcasSimuladas = data.marcas.map((marca: Marca) => ({ // Tipamos 'marca' aquí
+      if (!data || !Array.isArray(data.marcas)) {
+        console.error("[MarcasService] Formato de respuesta inesperado:", data);
+        return { marcas: [], total: 0, page: 1, lastPage: 1 };
+      }
+      const marcasSimuladas = data.marcas.map((marca: Marca) => ({
         ...marca,
         productosAsociados: [0, 1, 5][Math.floor(Math.random() * 3)],
       }));
-
-      // Devolvemos el objeto paginado completo, reemplazando el array original por el simulado
       return { ...data, marcas: marcasSimuladas };
-      // -------------------------------------------------------------------
-      // TODO: FIN DE SIMULACIÓN.
-      // La línea original es: return data;
-      // -------------------------------------------------------------------
-
     } catch (error) {
       console.error("Error al obtener las marcas:", error);
       throw error;
     }
   },
 
-  /**
-   * Obtiene una marca específica por su ID.
-   */
-  async getMarcaById(id: number): Promise<Marca> { // Devuelve la interfaz Marca
+  async getMarcaById(id: number): Promise<Marca> {
     try {
-      // Pedimos la marca al backend (que devolverá MarcaResponseDto mapeado)
-      // Lo tipamos como Marca en el frontend por ahora
       const { data } = await api.get<Marca>(`/marcas/${id}`);
-
-      // --- SIMULACIÓN (También al buscar una) ---
-      console.log("[MarcasService] Aplicando simulación (findOne):", data);
-      // Asegurarse que la interfaz Marca tenga productosAsociados
       if (data) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (data as any).productosAsociados = [0, 1, 5][Math.floor(Math.random() * 3)];
+        (data as any).productosAsociados = [0, 1, 5][
+          Math.floor(Math.random() * 3)
+        ];
       }
-      // --- FIN SIMULACIÓN ---
-
       return data;
     } catch (error) {
       console.error(`Error al obtener la marca ${id}:`, error);
@@ -73,17 +43,13 @@ export const MarcasService = {
     }
   },
 
-  /**
-   * Crea una nueva marca enviando FormData.
-   */
-  async createMarca(marcaData: CreateMarcaData): Promise<Marca> { // Devuelve Marca simple
+  async createMarca(marcaData: CreateMarcaData): Promise<Marca> {
     const formData = new FormData();
     formData.append("nombre", marcaData.nombre);
     formData.append("descripcion", marcaData.descripcion);
     formData.append("logo", marcaData.logo);
-
+    marcaData.lineasId.forEach((id) => formData.append("lineasId", String(id)));
     try {
-      // El backend devuelve MarcaResponseDto, lo tipamos como Marca por simplicidad
       const { data } = await api.post<Marca>("/marcas", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -94,44 +60,29 @@ export const MarcasService = {
     }
   },
 
-  /**
-   * Actualiza una marca existente. Envía FormData si hay logo.
-   */
   async updateMarca(id: number, marcaData: UpdateMarcaData): Promise<Marca> {
-    const hasFile = marcaData.logo instanceof File;
-    let requestData: FormData | { nombre?: string; descripcion?: string };
-    const headers: Record<string, string> = {}; // Objeto vacío por defecto
-
-    if (hasFile && marcaData.logo) {
-      // Si hay archivo, preparamos FormData
-      requestData = new FormData();
-      if (marcaData.nombre !== undefined) requestData.append('nombre', marcaData.nombre);
-      if (marcaData.descripcion !== undefined) requestData.append('descripcion', marcaData.descripcion);
-      requestData.append('logo', marcaData.logo);
-      // Axios seteará 'multipart/form-data' automáticamente
-    } else {
-      // Si NO hay archivo, preparamos un objeto JSON simple
-      requestData = {};
-      if (marcaData.nombre !== undefined) requestData.nombre = marcaData.nombre;
-      if (marcaData.descripcion !== undefined) requestData.descripcion = marcaData.descripcion;
-      // Forzamos el Content-Type a JSON
-      headers['Content-Type'] = 'application/json';
+    const formData = new FormData();
+    if (marcaData.nombre) formData.append("nombre", marcaData.nombre);
+    if (marcaData.descripcion)
+      formData.append("descripcion", marcaData.descripcion);
+    if (marcaData.logo instanceof File) {
+      formData.append("logo", marcaData.logo);
     }
-
+    if (marcaData.lineasId && marcaData.lineasId.length > 0) {
+      marcaData.lineasId.forEach((id) =>
+        formData.append("lineasId", String(id))
+      );
+    }
     try {
-      // Hacemos la petición PATCH
-      const { data } = await api.patch<Marca>(`/marcas/${id}`, requestData, { headers });
+      const { data } = await api.patch<Marca>(`/marcas/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return data;
     } catch (error) {
       console.error(`Error al actualizar la marca ${id}:`, error);
-      // Re-lanzamos el error para que el componente lo maneje
       throw error;
     }
   },
-
-
-  
-   // Elimina (soft delete) una marca por su ID.
 
   async deleteMarca(id: number): Promise<void> {
     try {

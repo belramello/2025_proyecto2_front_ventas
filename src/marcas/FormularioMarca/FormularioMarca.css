@@ -35,7 +35,8 @@ label {
   font-size: 16px;
 }
 
-input, textarea {
+input,
+textarea {
   border: 1px solid #bfbfbf;
   border-radius: 6px;
   padding: 10px 12px;
@@ -60,11 +61,21 @@ textarea {
   cursor: pointer;
   transition: transform 0.1s ease;
   width: fit-content;
+
 }
 
-.btn:hover { transform: scale(1.05); }
-.btn.green { background-color: #34c759; }
-.btn.teal { background-color: #00c3d0; }
+.btn:hover {
+  transform: scale(1.05);
+
+}
+
+.btn.green {
+  background-color: #34c759;
+}
+
+.btn.teal {
+  background-color: #00c3d0;
+}
 
 .form-actions {
   display: flex;
@@ -88,22 +99,76 @@ textarea {
   color: #6c757d;
   font-size: 0.9rem;
 }
-.form-container > a.btn-link { 
-  color: #0d6efd !important; /* Color azul estándar de link Bootstrap, ¡importante! */
-  opacity: 1 !important;      /* Asegura que no sea transparente, ¡importante! */
-  text-decoration: none !important; /* Quita el subrayado si no lo querés */
-  /* Podés ajustar el color si querés otro */
+
+/* ===== Enlace Volver (btn-link) ===== */
+.form-container > a.btn-link {
+  color: #0d6efd !important;
+  opacity: 1 !important;
+  text-decoration: none !important;
 }
 
 .form-container > a.btn-link:hover {
-  color: #0a58ca !important; 
+  color: #0a58ca !important;
   text-decoration: underline !important;
 }
+
+/* ===== Previsualización del Logo ===== */
 .logo-preview {
-  display: block; /* Para que ocupe su línea */
-  max-width: 100px; /* Tamaño máximo */
+  display: block;
+  max-width: 100px;
   max-height: 100px;
   object-fit: contain;
-  border: 1px solid #eee; /* Borde sutil */
+  border: 1px solid #eee;
   border-radius: 4px;
+}
+
+/* ===== NUEVO: Sección del Logo en la Columna Derecha ===== */
+.logo-section {
+  text-align: center;
+  opacity: 4;
+}
+
+.logo-preview-container {
+  width: 180px;
+  height: 180px;
+  border: 2px dashed #802121;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.logo-preview-container:hover {
+  border-color: #05abb7;
+  background-color: #f1f1f1;
+}
+
+.logo-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logo-placeholder {
+  color: #999;
+  font-size: 0.95rem;
+}
+
+/* ===== NUEVO: React-Select ===== */
+.basic-multi-select {
+  width: 100%;
+}
+
+.basic-multi-select .select__control {
+  border-radius: 6px;
+  border: 1px solid #bfbfbf;
+  min-height: 42px;
+}
+
+.basic-multi-select .select__control--is-focused {
+  border-color: #01181a;
+  box-shadow: 0 0 0 2px rgb
 }

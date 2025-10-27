@@ -45,6 +45,8 @@
   display: inline-block; 
   max-width: 150px;  
   word-wrap: break-word; 
+  white-space: normal;
+  line-height: 1.2;
 }
 
 .table th:nth-child(2), /* Primera columna (Logo) - Encabezado */
