@@ -1,55 +1,97 @@
-/* Fondo oscuro detrás del modal */
+/* --- Fondo oscuro --- */
 .custom-modal-backdrop {
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 1040;
 }
 
-/* Contenedor general del modal */
+/* --- Contenedor general del modal --- */
 .custom-modal-container {
-  display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1050;
-}
-
-/* Centrado del modal */
-.custom-modal {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  padding: 0;
 }
 
-/* Estilo del título */
-.custom-modal-title {
-  font-size: 24px;
+/* --- Modal ancho y centrado --- */
+.custom-modal-dialog {
+  width: 95vw !important; /* 🔹 muy ancho, casi toda la pantalla */
+  max-width: none !important;
+  margin: 0 !important;
+  display: flex;
+  justify-content: center;
 }
 
-/* Estilos de la tabla */
-.custom-table-container {
-  text-align: center;
-  margin-left: 3rem; /* equivale a ms-5 */
-  margin-right: 3rem; /* equivale a me-5 */
-}
-
-/* Anchos de columnas */
-.custom-col-small {
-  width: 5%;
-}
-
-.custom-col-medium {
-  width: 25%;
-}
-
-.custom-col-large {
-  width: 45%;
-  text-align: left;
-}
-
-/* Sombra del contenido */
+/* --- Contenido del modal --- */
 .custom-modal-content {
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
   border: none;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Cabecera --- */
+.custom-modal-header {
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.custom-modal-title {
+  font-size: 1.9rem;
+  color: #333;
+  margin: 0;
+}
+
+/* --- Tabla responsive --- */
+.custom-table-container {
+  margin: 1rem 2rem;
+  overflow-x: auto; /* 🔹 agrega scroll horizontal en pantallas pequeñas */
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.custom-table {
+  width: 100%;
+  min-width: 700px; /* 🔹 evita que se colapse demasiado en pantallas chicas */
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap; /* 🔹 mantiene texto en una sola línea */
+}
+
+.custom-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+/* --- Hover --- */
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* --- Responsive: pantallas chicas --- */
+@media (max-width: 992px) {
+  .custom-modal-dialog {
+    width: 98vw !important;
+  }
+
+  .custom-table-container {
+    margin: 0 1rem;
+  }
+
+  .custom-table {
+    min-width: 600px;
+  }
 }

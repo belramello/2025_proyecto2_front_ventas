@@ -1,36 +1,127 @@
-.custom-modal-container {
-  z-index: 1050;
+/* ====== MODALES ANCHOS ====== */
+
+/* 🔹 Para pantallas de creación de usuario, permisos, etc. */
+.modal-wide-container {
+  width: 95vw !important; /* ocupa casi todo el ancho visible */
+  max-width: 1800px !important; /* límite superior en pantallas grandes */
+  margin: 0 auto !important;
 }
 
-.registrar-card {
-  width: 800px;
-  min-height: 380px;
+/* 🔹 Si hay un "container" de Bootstrap dentro, que no limite el ancho */
+.modal-wide-container.container {
+  max-width: 95vw !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+}
+
+/* 🔹 Cartas internas en modales amplios */
+.modal-wide-card {
+  width: 100%;
   border-radius: 1rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 2rem;
 }
 
+/* 🔹 Cabeceras */
+.modal-wide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* 🔹 Título principal */
+.modal-wide-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* 🔹 Responsive */
 @media (max-width: 992px) {
-  .registrar-card {
-    width: 95%;
-    min-height: auto;
+  .modal-wide-container {
+    width: 98vw !important;
+    max-width: 98vw !important;
   }
 }
 
-.custom-modal-backdrop {
+/* --- Contenedor general --- */
+.create-user-modal-container {
+  z-index: 1050;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+/* --- Fondo oscuro --- */
+.create-user-modal-backdrop {
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px); /* 🔹 sutil difuminado para modernidad */
 }
 
-.custom-modal-content {
-  border-radius: 16px;
+/* --- Diálogo (ajuste del tamaño del modal) --- */
+.create-user-modal {
+  width: 95vw !important; /* 🔹 casi todo el viewport */
+  max-width: 1700px !important; /* 🔹 mucho más ancho */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.modal-title {
-  font-size: 1.5rem;
+/* --- Centrado vertical y horizontal --- */
+.create-user-modal .modal-content {
+  margin: auto;
 }
 
-.card {
-  border-radius: 20px;
+/* --- Contenido del modal --- */
+.create-user-modal-content {
+  border-radius: 24px;
+  padding: 3rem !important;
+  background-color: #fff;
+  max-height: 92vh; /* 🔹 evita que se desborde verticalmente */
+  overflow-y: auto;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-.card-body {
-  padding: 1rem;
+/* --- Tarjeta interna --- */
+.create-user-card {
+  width: 100%;
+  min-height: 520px;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Título del modal --- */
+.create-user-modal-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Cuerpo de la tarjeta --- */
+.create-user-card-body {
+  padding: 1.75rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1200px) {
+  .create-user-modal {
+    width: 95vw !important;
+    max-width: 95vw !important;
+  }
+
+  .create-user-modal-content {
+    padding: 1.5rem !important;
+  }
 }

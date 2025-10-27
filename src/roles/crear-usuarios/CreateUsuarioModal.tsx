@@ -74,7 +74,8 @@ function CreateUsuarioModal({
       setError("Las contraseñas no coinciden.");
       return;
     }
-    if (form.email) setLoading(true);
+
+    setLoading(true);
     try {
       await registrarUsuario({
         nombre: form.nombre,
@@ -98,21 +99,23 @@ function CreateUsuarioModal({
 
   return (
     <>
-      <div className="modal-backdrop fade show custom-modal-backdrop"></div>
+      <div className="modal-backdrop fade show create-user-modal-backdrop"></div>
 
       <div
-        className="modal fade show d-flex align-items-center justify-content-center custom-modal-container"
+        className="modal fade show d-flex align-items-center justify-content-center create-user-modal-container"
         tabIndex={-1}
         role="dialog"
         onClick={onClose}
       >
         <div
-          className="modal-dialog modal-xl modal-dialog-centered custom-modal"
+          className="modal-dialog modal-dialog-centered create-user-modal"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="modal-content custom-modal-content p-4">
+          <div className="modal-content create-user-modal-content">
             <div className="modal-header border-0 pb-0">
-              <h5 className="modal-title fw-bold ">Registrar Nuevo Usuario</h5>
+              <h5 className="create-user-modal-title">
+                Registrar Nuevo Usuario
+              </h5>
               <button
                 type="button"
                 className="btn-close"
@@ -132,71 +135,71 @@ function CreateUsuarioModal({
               {loading && <LoadingSpinner />}
 
               {!loading && (
-                <div className="card shadow-sm border-0 registrar-card">
-                  <div className="card-body px-4 py-3">
+                <div className="card border-0 create-user-card">
+                  <div className="create-user-card-body">
                     <form onSubmit={handleSubmit}>
                       <div className="row g-3">
-                        <div className="row g-3">
-                          <div className="col-md-6">
-                            <FormInput
-                              label="Nombre"
-                              name="nombre"
-                              value={form.nombre}
-                              onChange={handleChange}
-                              placeholder="Ej: Alejo"
-                              required
-                            />
-                          </div>
-
-                          <div className="col-md-6">
-                            <FormInput
-                              label="Apellido"
-                              name="apellido"
-                              value={form.apellido}
-                              onChange={handleChange}
-                              placeholder="Ej: De Miguel"
-                              required
-                            />
-                          </div>
-
-                          <div className="col-md-6">
-                            <FormInput
-                              label="Email"
-                              name="email"
-                              type="email"
-                              value={form.email}
-                              onChange={handleChange}
-                              placeholder="Ej: alejodm@gmail.com"
-                              required
-                              minLength={6}
-                            />
-                          </div>
-
-                          <div className="col-md-6">
-                            <FormInput
-                              label="Contraseña"
-                              name="password"
-                              type="password"
-                              value={form.password}
-                              onChange={handleChange}
-                              placeholder="Mínimo 6 caracteres"
-                              required
-                              minLength={6}
-                            />
-                          </div>
-                          <div className="col-md-6">
-                            <FormInput
-                              label="Repetir contraseña"
-                              name="confirmPassword"
-                              type="password"
-                              value={form.confirmPassword}
-                              onChange={handleChange}
-                              placeholder="Mínimo 6 caracteres"
-                              required
-                              minLength={6}
-                            />
-                          </div>
+                        <div className="col-md-6">
+                          <FormInput
+                            label="Nombre"
+                            name="nombre"
+                            value={form.nombre}
+                            onChange={handleChange}
+                            placeholder="Ej: Alejo"
+                            required
+                          />
                         </div>
+
+                        <div className="col-md-6">
+                          <FormInput
+                            label="Apellido"
+                            name="apellido"
+                            value={form.apellido}
+                            onChange={handleChange}
+                            placeholder="Ej: De Miguel"
+                            required
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <FormInput
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={form.email}
+                            onChange={handleChange}
+                            placeholder="Ej: alejodm@gmail.com"
+                            required
+                            minLength={6}
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <FormInput
+                            label="Contraseña"
+                            name="password"
+                            type="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder="Mínimo 6 caracteres"
+                            required
+                            minLength={6}
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <FormInput
+                            label="Repetir contraseña"
+                            name="confirmPassword"
+                            type="password"
+                            value={form.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="Mínimo 6 caracteres"
+                            required
+                            minLength={6}
+                          />
+                        </div>
+
                         <div className="col-md-12">
                           <label className="form-label fw-bold">Rol</label>
                           <select

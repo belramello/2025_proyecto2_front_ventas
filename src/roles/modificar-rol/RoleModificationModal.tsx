@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 interface RoleModificationModalProps {
   show: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
   roles: Rol[];
 }
 
@@ -23,13 +22,13 @@ function RoleModificationModal({
       <div className="modal-backdrop fade show custom-modal-backdrop"></div>
 
       <div
-        className="modal fade show d-flex align-items-center justify-content-center custom-modal-container"
+        className="modal fade show custom-modal-container"
         tabIndex={-1}
         role="dialog"
         onClick={onClose}
       >
         <div
-          className="modal-dialog modal-lg modal-dialog-centered custom-modal"
+          className="modal-dialog custom-modal-dialog"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="modal-content custom-modal-content">
@@ -46,14 +45,14 @@ function RoleModificationModal({
             </div>
 
             <div className="modal-body pt-1 pb-4">
-              <div className="table-responsive custom-table-container">
-                <table className="table table-hover align-middle">
+              <div className="custom-table-container">
+                <table className="table table-hover align-middle custom-table">
                   <thead>
                     <tr>
-                      <th className="custom-col-small">#</th>
-                      <th className="custom-col-medium">Rol</th>
-                      <th className="custom-col-large">Descripción</th>
-                      <th className="custom-col-medium">Acción</th>
+                      <th>#</th>
+                      <th>Rol</th>
+                      <th>Descripción</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
                   <tbody>
