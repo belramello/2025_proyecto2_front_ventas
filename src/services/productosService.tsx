@@ -1,6 +1,8 @@
 import type { CreateProductoDto } from "../productos/interfaces/Create-producto.dto";
+
 import type { Producto } from "../productos/interfaces/producto-interface";
 import type { ProductosPaginatedResponse } from "../productos/interfaces/productos-paginated-response.interface";
+import type { DetalleProductoResponse } from "../productos/interfaces/respuesta-detalle-producto.interface";
 import type { UpdateProductoDto } from "../productos/interfaces/Update-producto.dto";
 import api from "../utils/api";
 
@@ -199,4 +201,15 @@ export const ProductosService = {
       throw error;
     }
   },
+  async obtenerDetallesProveedorPorProductoId(id: number): Promise<DetalleProductoResponse> {
+    try {
+      
+      const { data } = await api.get<DetalleProductoResponse>(`productos/detalle/${id}`);
+      console.log(data)
+      return data;
+    } catch (error) {
+      console.error("Error al obtener detalles del producto:", error);
+      throw error;
+    }
+  }
 };

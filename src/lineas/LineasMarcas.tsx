@@ -5,7 +5,7 @@ import { MarcasService } from "../services/marcasService";
 import { LineasService } from "../services/lineasService";
 import type { Marca, MarcasPaginatedResponse } from "../marcas/interfaces/marca.interface";
 import type { Linea } from "./interfaces/lineas-interface";
-import "./LineasScreen.css"; // ✅ Importa tu archivo de estilos
+import "./LineasScreen.css"; 
 import type { LineaPaginatedResponse } from "./interfaces/lineas-paginated-response.interface";
 
 const LineasPorMarcaScreen: React.FC = () => {
