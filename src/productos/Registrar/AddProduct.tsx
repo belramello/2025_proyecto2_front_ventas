@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import "./AddProduct.css"; // Asegúrate de que esta ruta es correcta
 import { MarcasService } from "../../services/marcasService";
 import { ProductosService } from "../../services/productosService";
+import { LineasService } from "../../services/lineasService";
+import { ProveedoresService } from "../../services/proveedoresService"; // <-- NUEVO
 import type { Marca } from "../../marcas/interfaces/marca.interface";
 import type { CreateProductoDto } from "../interfaces/Create-producto.dto";
 import type { Linea } from "../../lineas/interfaces/lineas-interface";
-import type { Proveedor } from "../../proveedores/interfaces/proveedores-interface";
-import { LineasService } from "../../services/lineasService";
-import { ProveedoresService } from "../../services/proveedoresService";
+import type { Proveedor } from "../../proveedores/interfaces/proveedores-interface"; // <-- NUEVO
 import { useNavigate } from "react-router-dom";
 
 // Importar Modales
 import AddMarcaModal from "./MarcaModal";
-import AddLineaModal from "./LineaModal"; // Ajusta esta ruta
+import AddLineaModal from "./LineaModal";
+import AddProveedorModal from "./ProveedorModal";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const AddProduct = () => {
 
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [lineas, setLineas] = useState<Linea[]>([]);
-  const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [proveedores, setProveedores] = useState<Proveedor[]>([]); // <-- NUEVO
 
   const [loadingMarcas, setLoadingMarcas] = useState(true);
   const [loadingLineas, setLoadingLineas] = useState(false);
@@ -40,17 +41,18 @@ const AddProduct = () => {
   // Estados para modales
   const [showMarcaModal, setShowMarcaModal] = useState(false);
   const [showLineaModal, setShowLineaModal] = useState(false);
+  const [showProveedorModal, setShowProveedorModal] = useState(false); // <-- NUEVO
 
-  // --- NUEVO (Paso 1): Estado para la URL de previsualización ---
+  // Estado para previsualización
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  // -------------------------------------------------------------
 
-  // Carga inicial
+  // Carga inicial de Marcas y Proveedores
   useEffect(() => {
     const fetchMarcasYProveedores = async () => {
       try {
         const dataMarcas = await MarcasService.getMarcas();
         setMarcas(dataMarcas.marcas);
+        // Cargar también los proveedores
         const dataProv = await ProveedoresService.getProveedor();
         setProveedores(dataProv.proveedores);
       } catch (error) {
@@ -93,58 +95,44 @@ const AddProduct = () => {
     }
   }, [product.brand, marcas]);
 
-  // --- NUEVO (Paso 2): Efecto para limpiar la URL y evitar memory leaks ---
-  // Esto es importante. URL.createObjectURL() reserva memoria.
-  // Este efecto limpia la URL anterior cada vez que cambia o cuando el componente se desmonta.
+  // Limpieza de URL de previsualización
   useEffect(() => {
-    // Retorna una función de "limpieza"
     return () => {
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
     };
-  }, [previewUrl]); // Se ejecuta cada vez que previewUrl cambia
-  // ---------------------------------------------------------------------
+  }, [previewUrl]);
 
-  // --- MODIFICADO (Paso 3): Manejador de inputs ---
+  // Manejador de Inputs
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    // --- Manejo de Textareas (descripción) ---
     if (e.target instanceof HTMLTextAreaElement) {
       const { name, value } = e.target;
       setProduct({ ...product, [name]: value });
       return;
     }
 
-    // --- Manejo de Inputs (texto, número, archivo) ---
     const { name, value, files } = e.target;
 
-    // Lógica específica para el input de la imagen
     if (name === "image") {
       const file = files && files[0] ? files[0] : null;
-
-      // 1. Guardar el objeto File en el estado del producto
       setProduct({ ...product, image: file });
-
-      // 2. Limpiar la preview anterior si existe
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
-
-      // 3. Crear y guardar la nueva URL de previsualización
       if (file) {
         setPreviewUrl(URL.createObjectURL(file));
       } else {
-        setPreviewUrl(null); // Limpiar si el usuario cancela
+        setPreviewUrl(null);
       }
     } else {
-      // Lógica para todos los demás inputs (name, price, stock, code)
       setProduct({ ...product, [name]: value });
     }
   };
-  // --------------------------------------------------
 
+  // Manejador de Selects
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProduct((prevProduct) => {
@@ -156,24 +144,69 @@ const AddProduct = () => {
     });
   };
 
-  // Callbacks de los modales
-  const handleMarcaCreated = (nuevaMarca: Marca) => {
-    setMarcas((prevMarcas) => [...prevMarcas, nuevaMarca]);
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      brand: nuevaMarca.nombre,
-    }));
+  // --- Callbacks de Modales ---
+  const handleMarcaCreated = async (nombreNuevaMarca: string) => {
+    try {
+      setLoadingMarcas(true); // Poner "Cargando..." en el select
+      const dataMarcas = await MarcasService.getMarcas(); // Volver a pedirlos
+      setMarcas(dataMarcas.marcas); // Actualizar la lista
+      
+      // Auto-seleccionar la marca nueva
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        brand: nombreNuevaMarca,
+      }));
+    } catch (error) {
+      console.error("Error recargando marcas:", error);
+      alert("Marca creada, pero no se pudo recargar la lista. Por favor, selecciónela manualmente.");
+    } finally {
+      setLoadingMarcas(false);
+    }
   };
 
-  const handleLineaCreated = (nuevaLinea: Linea) => {
-    setLineas((prevLineas) => [...prevLineas, nuevaLinea]);
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      line: nuevaLinea.nombre,
-    }));
+  const handleLineaCreated = async (nombreNuevaLinea: string) => {
+    try {
+      setLoadingLineas(true); // Poner "Cargando..." en el select
+      
+      // Volver a pedir las líneas DE ESA MARCA
+      const marcaSeleccionada = marcas.find(m => m.nombre === product.brand);
+      if (marcaSeleccionada) {
+        const dataLineas = await LineasService.getLineasPorMarca(marcaSeleccionada.id);
+        setLineas(dataLineas.lineas); // Actualizar la lista
+      }
+      
+      // Auto-seleccionar la línea nueva
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        line: nombreNuevaLinea,
+      }));
+    } catch (error) {
+      console.error("Error recargando líneas:", error);
+      alert("Línea creada, pero no se pudo recargar la lista. Por favor, selecciónela manualmente.");
+    } finally {
+      setLoadingLineas(false);
+    }
   };
 
-  // Submit del formulario
+  const handleProveedorCreated = async (nombreNuevoProveedor: string) => {
+    try {
+      setLoadingProveedores(true); // Poner "Cargando..." en el select
+      const dataProv = await ProveedoresService.getProveedor(); // Volver a pedirlos
+      setProveedores(dataProv.proveedores); // Actualizar la lista
+      
+      // Auto-seleccionar el proveedor nuevo
+      setProduct((prev) => ({
+        ...prev,
+        provider: nombreNuevoProveedor,
+      }));
+    } catch (error) {
+      console.error("Error recargando proveedores:", error);
+      alert("Proveedor creado, pero no se pudo recargar la lista. Por favor, selecciónelo manualmente.");
+    } finally {
+      setLoadingProveedores(false);
+    }
+  };
+  // Submit del Formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingSubmit(true);
@@ -190,11 +223,16 @@ const AddProduct = () => {
       );
 
       // Validaciones
-      if (!marcaSeleccionada) throw new Error("Debe seleccionar una marca válida.");
-      if (!lineaSeleccionada) throw new Error("Debe seleccionar una linea válida.");
-      if (!proveedorSeleccionado) throw new Error("Debe seleccionar un proveedor válido.");
-      if (Number(product.stock) < 0) throw new Error("El stock no puede ser negativo.");
-      if (Number(product.price) <= 0) throw new Error("El precio debe ser mayor a 0.");
+      if (!marcaSeleccionada)
+        throw new Error("Debe seleccionar una marca válida.");
+      if (!lineaSeleccionada)
+        throw new Error("Debe seleccionar una linea válida.");
+      if (!proveedorSeleccionado)
+        throw new Error("Debe seleccionar un proveedor válido.");
+      if (!product.stock || Number(product.stock) < 0)
+        throw new Error("Debe ingresar un stock válido (0 o más).");
+      if (!product.price || Number(product.price) <= 0)
+        throw new Error("Debe ingresar un precio válido (mayor a 0).");
 
       const nuevoProducto: CreateProductoDto = {
         nombre: product.name,
@@ -210,7 +248,6 @@ const AddProduct = () => {
       await ProductosService.crearProducto(nuevoProducto);
       alert("✅ Producto creado correctamente");
       navigate("/productos");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       alert(`❌ Error al crear el producto: ${error.message}`);
       console.error(error);
@@ -219,9 +256,8 @@ const AddProduct = () => {
     }
   };
 
-  const selectedMarcaId = marcas.find(
-    (m) => m.nombre === product.brand
-  )?.id || null;
+  const selectedMarcaId =
+    marcas.find((m) => m.nombre === product.brand)?.id || null;
 
   return (
     <div className="add-product-page">
@@ -229,7 +265,7 @@ const AddProduct = () => {
         <h1>AGREGAR PRODUCTO</h1>
 
         <form className="product-form" onSubmit={handleSubmit}>
-          {/* ... (Campos Nombre, Descripción, Precio, Marca, Linea, Proveedor, Código, Stock) ... */}
+          {/* ... (Nombre, Descripción) ... */}
           <div className="form-group">
             <label>Nombre del producto</label>
             <input
@@ -241,7 +277,6 @@ const AddProduct = () => {
               required
             />
           </div>
-
           <div className="form-group">
             <label>Descripción</label>
             <textarea
@@ -252,6 +287,7 @@ const AddProduct = () => {
             ></textarea>
           </div>
 
+          {/* ... (Precio, Marca) ... */}
           <div className="form-row">
             <div className="form-group">
               <label>Precio</label>
@@ -266,7 +302,6 @@ const AddProduct = () => {
                 step="0.01"
               />
             </div>
-
             <div className="form-group">
               <label>Marca</label>
               <select
@@ -297,6 +332,7 @@ const AddProduct = () => {
             </div>
           </div>
 
+          {/* ... (Linea) ... */}
           <div className="form-group">
             <label>Linea</label>
             <select
@@ -331,6 +367,7 @@ const AddProduct = () => {
             </button>
           </div>
 
+          {/* --- CAMPO PROVEEDOR MODIFICADO --- */}
           <div className="form-group">
             <label>Proveedor</label>
             <select
@@ -351,11 +388,17 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-            <button type="button" className="btn teal">
+            <button
+              type="button"
+              className="btn teal"
+              onClick={() => setShowProveedorModal(true)} // <-- MODIFICADO
+            >
               NUEVO PROVEEDOR
             </button>
           </div>
+          {/* ---------------------------------- */}
 
+          {/* ... (Código, Stock) ... */}
           <div className="form-group">
             <label>Código</label>
             <input
@@ -367,7 +410,6 @@ const AddProduct = () => {
               required
             />
           </div>
-
           <div className="form-group">
             <label>Stock</label>
             <input
@@ -381,7 +423,7 @@ const AddProduct = () => {
             />
           </div>
 
-          {/* --- CAMPO DE IMAGEN Y PREVISUALIZACIÓN (Paso 4) --- */}
+          {/* ... (Foto y Previsualización) ... */}
           <div className="form-group">
             <label>Foto</label>
             <input
@@ -391,8 +433,6 @@ const AddProduct = () => {
               onChange={handleInputChange}
             />
           </div>
-
-          {/* Mostrar la previsualización si existe la URL */}
           {previewUrl && (
             <div className="form-group image-preview-container">
               <label>Vista Previa:</label>
@@ -403,8 +443,8 @@ const AddProduct = () => {
               />
             </div>
           )}
-          {/* ---------------------------------------------------- */}
 
+          {/* ... (Botón Guardar) ... */}
           <div className="form-actions">
             <button
               type="submit"
@@ -417,7 +457,7 @@ const AddProduct = () => {
         </form>
       </main>
 
-      {/* Renderizado de Modales */}
+      {/* --- RENDERIZADO DE TODOS LOS MODALES --- */}
       <AddMarcaModal
         show={showMarcaModal}
         onHide={() => setShowMarcaModal(false)}
@@ -430,6 +470,13 @@ const AddProduct = () => {
         onLineaCreated={handleLineaCreated}
         marcaId={selectedMarcaId}
       />
+
+      <AddProveedorModal
+        show={showProveedorModal}
+        onHide={() => setShowProveedorModal(false)}
+        onProveedorCreated={handleProveedorCreated}
+      />
+      {/* ------------------------------------- */}
     </div>
   );
 };
