@@ -14,6 +14,11 @@ import "./ProductsList.css";
 import { PermissionGuard } from "../../auth/guards/permisos-guard";
 import { Permisos } from "../../auth/enums/permisos";
 
+// --- Imports para el modal ---
+import UpdateStockModal from "../Stock/UpdateStock";
+import type { UpdateProductoDto } from "../interfaces/Update-producto.dto";
+// ------------------------------
+
 const ProductsList = () => {
   const navigate = useNavigate();
 
@@ -22,6 +27,13 @@ const ProductsList = () => {
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // --- Estado para el modal ---
+  const [showStockModal, setShowStockModal] = useState(false);
+  const [selectedProducto, setSelectedProducto] = useState<Producto | null>(
+    null
+  );
+  // --------------------------
 
   const backendUrl = api.defaults.baseURL;
 
@@ -34,6 +46,7 @@ const ProductsList = () => {
       setProductos(data.productos);
       setLastPage(data.lastPage);
       setPage(data.page);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Error cargando productos. Intentá de nuevo.");
     } finally {
@@ -48,6 +61,49 @@ const ProductsList = () => {
   const handleRetry = () => {
     fetchProductos(page);
   };
+
+  // --- Handlers para el modal ---
+  const handleOpenStockModal = (producto: Producto) => {
+    setSelectedProducto(producto);
+    setShowStockModal(true);
+  };
+
+  const handleCloseStockModal = () => {
+    setSelectedProducto(null);
+    setShowStockModal(false);
+  };
+
+  /**
+   * Maneja la lógica de actualización del stock.
+   * Es llamada por el componente Modal.
+   */
+  const handleStockUpdate = async (
+    productoId: number,
+    cantidadIngresada: number
+  ) => {
+    if (!selectedProducto) {
+      throw new Error("No hay un producto seleccionado para actualizar.");
+    }
+
+    // Calcular el nuevo stock total
+    const stockActual = selectedProducto.stock;
+    const nuevoStockTotal = stockActual + cantidadIngresada;
+
+    // Crear el DTO para el servicio
+    const updateDto: UpdateProductoDto = {
+      stock: nuevoStockTotal,
+    };
+
+    // Llamar al servicio.
+    // El try/catch lo maneja el componente Modal,
+    // que mostrará el error si algo falla.
+    await ProductosService.actualizarProducto(productoId, updateDto);
+
+    // Si tiene éxito, cerrar el modal y recargar la lista
+    handleCloseStockModal();
+    fetchProductos(page); // Recargar la lista para ver el stock actualizado
+  };
+  // --- Fin Handlers Modal ---
 
   return (
     <div className="products-page">
@@ -76,8 +132,8 @@ const ProductsList = () => {
             <table className="table table-striped table-bordered text-center align-middle">
               <thead className="table-light">
                 <tr>
-                  <th className="col-foto">Foto</th> {/* <-- 1. CLASE AÑADIDA */}
-                  <th className="col-nombre">Nombre</th> {/* <-- 2. CLASE AÑADIDA */}
+                  <th className="col-foto">Foto</th>
+                  <th className="col-nombre">Nombre</th>
                   <th>Marca</th>
                   <th>Linea</th>
                   <th>Código</th>
@@ -89,14 +145,14 @@ const ProductsList = () => {
                       Permisos.ELIMINAR_PRODUCTOS,
                     ]}
                   >
-                    <th className="col-opciones">Opciones</th> {/* <-- 3. CLASE AÑADIDA */}
+                    <th className="col-opciones">Opciones</th>
                   </PermissionGuard>
                 </tr>
               </thead>
               <tbody>
                 {productos.map((producto) => (
                   <tr key={producto.id}>
-                    <td className="col-foto"> {/* <-- 1. CLASE AÑADIDA */}
+                    <td className="col-foto">
                       {producto.fotoUrl ? (
                         <img
                           src={`${backendUrl}/${producto.fotoUrl}`}
@@ -107,16 +163,32 @@ const ProductsList = () => {
                         <div className="product-image-placeholder">Sin foto</div>
                       )}
                     </td>
-                    <td className="col-nombre">{producto.nombre}</td> {/* <-- 2. CLASE AÑADIDA */}
+                    <td className="col-nombre">{producto.nombre}</td>
                     <td>{producto.marca.nombre}</td>
                     <td>{producto.linea.nombre}</td>
                     <td>{producto.codigo}</td>
-                    <td>
-                      {producto.stock}
+                    
+                    {/* --- Celda de Stock con Botón --- */}
+                    <td className="stock-cell">
+                      <span>{producto.stock}</span>
                       {producto.stock < 10 && (
                         <span className="low-stock ms-2">POCO STOCK</span>
                       )}
+                      
+                      <PermissionGuard 
+                        requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
+                      >
+                        <button
+                          className="btn btn-sm btn-outline-primary ms-2 btn-update-stock"
+                          title="Actualizar Stock"
+                          onClick={() => handleOpenStockModal(producto)}
+                        >
+                          <BsFillPlusCircleFill />
+                        </button>
+                      </PermissionGuard>
                     </td>
+                    {/* ---------------------------------- */}
+                    
                     <td>${producto.precio}</td>
                     <PermissionGuard
                       requiredPermissions={[
@@ -124,7 +196,7 @@ const ProductsList = () => {
                         Permisos.ELIMINAR_PRODUCTOS,
                       ]}
                     >
-                      <td className="col-opciones"> {/* <-- 3. CLASE AÑADIDA */}
+                      <td className="col-opciones">
                         <div className="d-flex justify-content-center gap-2">
                           <PermissionGuard
                             requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
@@ -162,6 +234,16 @@ const ProductsList = () => {
           onPageChange={(newPage) => setPage(newPage)}
         />
       </PermissionGuard>
+
+      {/* --- Renderizado del Modal --- */}
+      <UpdateStockModal
+        show={showStockModal}
+        onHide={handleCloseStockModal}
+        producto={selectedProducto}
+        onStockUpdate={handleStockUpdate}
+      />
+      {/* ----------------------------- */}
+      
     </div>
   );
 };
