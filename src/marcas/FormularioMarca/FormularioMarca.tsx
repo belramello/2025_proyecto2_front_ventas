@@ -9,7 +9,7 @@ import "./FormularioMarca.css";
 import { BsArrowLeft, BsTrash } from "react-icons/bs";
 import type { Marca } from "../interfaces/marca.interface";
 import type { Linea } from "../../lineas/interfaces/lineas-interface";
-import type { UpdateMarcaData } from "../../services/marcasService";
+import type { UpdateMarcaData } from "../interfaces/update-marca-data.interface";
 
 interface SelectOption {
   value: number;
@@ -28,7 +28,9 @@ const FormularioMarca = () => {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoFileName, setLogoFileName] = useState("Ningún archivo seleccionado");
+  const [logoFileName, setLogoFileName] = useState(
+    "Ningún archivo seleccionado"
+  );
   const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,13 +42,18 @@ const FormularioMarca = () => {
     let isMounted = true;
     setLoadingInitialData(true);
     setError(null);
-
-    LineasService.getLineas()
+    LineasService.findAll()
       .then((lineasData) => {
         if (!isMounted) return;
         const options = Array.isArray(lineasData)
-          ? lineasData.map((linea: Linea) => ({ value: linea.id, label: linea.nombre }))
-          : lineasData.lineas.map((linea: Linea) => ({ value: linea.id, label: linea.nombre }));
+          ? lineasData.map((linea: Linea) => ({
+              value: linea.id,
+              label: linea.nombre,
+            }))
+          : lineasData.lineas.map((linea: Linea) => ({
+              value: linea.id,
+              label: linea.nombre,
+            }));
         setAllLineas(options);
         if (!isEditing) setLoadingInitialData(false);
       })
@@ -73,11 +80,17 @@ const FormularioMarca = () => {
           setDescripcion(marca.descripcion || "");
           setExistingLogoUrl(marca.logoUrl);
           setPreviewUrl(marca.logoUrl);
-          setLogoFileName(marca.logoUrl ? "Logo actual cargado" : "Ningún archivo seleccionado");
+          setLogoFileName(
+            marca.logoUrl
+              ? "Logo actual cargado"
+              : "Ningún archivo seleccionado"
+          );
 
           if (marca.lineas && Array.isArray(marca.lineas)) {
             const lineasSeleccionadas = allLineas.filter((option) =>
-              marca.lineas?.some((lineaAsociada) => lineaAsociada.id === option.value)
+              marca.lineas?.some(
+                (lineaAsociada) => lineaAsociada.id === option.value
+              )
             );
             setSelectedLineas(lineasSeleccionadas);
           }
@@ -96,7 +109,9 @@ const FormularioMarca = () => {
     };
   }, [id, isEditing, allLineas, loadingInitialData]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     if (name === "nombre") setNombre(value);
     if (name === "descripcion") setDescripcion(value);
@@ -117,11 +132,17 @@ const FormularioMarca = () => {
   const handleRemoveLogo = () => {
     setLogoFile(null);
     setPreviewUrl(isEditing ? existingLogoUrl : null);
-    setLogoFileName(isEditing && existingLogoUrl ? "Logo actual cargado" : "Ningún archivo seleccionado");
+    setLogoFileName(
+      isEditing && existingLogoUrl
+        ? "Logo actual cargado"
+        : "Ningún archivo seleccionado"
+    );
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleLineasChange = (selectedOptions: readonly SelectOption[] | null) => {
+  const handleLineasChange = (
+    selectedOptions: readonly SelectOption[] | null
+  ) => {
     setSelectedLineas(selectedOptions ? [...selectedOptions] : []);
   };
 
@@ -138,12 +159,17 @@ const FormularioMarca = () => {
       setError("Debes seleccionar al menos una línea.");
       return;
     }
+    console.log("selectedLineas", selectedLineas);
 
     setLoading(true);
     setError(null);
 
     const lineasIdSeleccionadas = selectedLineas.map((option) => option.value);
-    const dataToSend: UpdateMarcaData = { nombre, descripcion, lineasId: lineasIdSeleccionadas };
+    const dataToSend: UpdateMarcaData = {
+      nombre,
+      descripcion,
+      lineasId: lineasIdSeleccionadas,
+    };
     if (logoFile) dataToSend.logo = logoFile;
 
     try {
@@ -165,7 +191,8 @@ const FormularioMarca = () => {
       const responseError = err.response?.data?.message;
       const errorMsg = Array.isArray(responseError)
         ? responseError.join(", ")
-        : responseError || `Error al ${isEditing ? "actualizar" : "crear"} la marca.`;
+        : responseError ||
+          `Error al ${isEditing ? "actualizar" : "crear"} la marca.`;
       setError(errorMsg);
     } finally {
       setLoading(false);
@@ -185,7 +212,10 @@ const FormularioMarca = () => {
         <div className="col-lg-10 col-xl-8">
           <div className="card shadow-sm border-0 form-container-card">
             <div className="card-body p-4 p-md-5">
-              <Link to="/marcas" className="btn btn-link mb-3 ps-0 text-decoration-none d-inline-flex align-items-center">
+              <Link
+                to="/marcas"
+                className="btn btn-link mb-3 ps-0 text-decoration-none d-inline-flex align-items-center"
+              >
                 <BsArrowLeft className="me-2" /> Volver a Marcas
               </Link>
 
@@ -206,19 +236,29 @@ const FormularioMarca = () => {
                         name="nombre"
                         placeholder="Escribe el nombre"
                         className={`form-control ${
-                          error?.includes("nombre") || error?.includes("registrado") ? "is-invalid" : ""
+                          error?.includes("nombre") ||
+                          error?.includes("registrado")
+                            ? "is-invalid"
+                            : ""
                         }`}
                         value={nombre}
                         onChange={handleInputChange}
                         required
                       />
-                      {error && (error.includes("nombre") || error.includes("registrado")) && (
-                        <div className="invalid-feedback d-block">{error}</div>
-                      )}
+                      {error &&
+                        (error.includes("nombre") ||
+                          error.includes("registrado")) && (
+                          <div className="invalid-feedback d-block">
+                            {error}
+                          </div>
+                        )}
                     </div>
 
                     <div className="form-group mb-3 flex-grow-1">
-                      <label htmlFor="descripcion" className="form-label fw-bold">
+                      <label
+                        htmlFor="descripcion"
+                        className="form-label fw-bold"
+                      >
                         Descripción
                       </label>
                       <textarea
@@ -259,7 +299,11 @@ const FormularioMarca = () => {
                     <label className="fw-bold mb-2">Logo</label>
                     <div className="logo-preview-container mb-3">
                       {previewUrl ? (
-                        <img src={previewUrl} alt="Previsualización logo" className="logo-preview-image" />
+                        <img
+                          src={previewUrl}
+                          alt="Previsualización logo"
+                          className="logo-preview-image"
+                        />
                       ) : (
                         <div className="logo-placeholder">Sin logo</div>
                       )}
@@ -279,10 +323,16 @@ const FormularioMarca = () => {
                       {isEditing ? "Cambiar logo..." : "Agregar Imagen"}
                     </label>
 
-                    <span className="file-input-filename mb-2">{logoFileName}</span>
+                    <span className="file-input-filename mb-2">
+                      {logoFileName}
+                    </span>
 
                     {(logoFile || existingLogoUrl) && (
-                      <button type="button" onClick={handleRemoveLogo} className="btn btn-sm btn-outline-danger">
+                      <button
+                        type="button"
+                        onClick={handleRemoveLogo}
+                        className="btn btn-sm btn-outline-danger"
+                      >
                         <BsTrash className="me-1" /> Quitar Imagen
                       </button>
                     )}
@@ -303,11 +353,14 @@ const FormularioMarca = () => {
                   )}
                 </div>
 
-                {error && !error.includes("logo") && !error.includes("línea") && !error.includes("nombre") && (
-                  <div className="mt-3">
-                    <ErrorMessage message={error} onRetry={submitForm} />
-                  </div>
-                )}
+                {error &&
+                  !error.includes("logo") &&
+                  !error.includes("línea") &&
+                  !error.includes("nombre") && (
+                    <div className="mt-3">
+                      <ErrorMessage message={error} onRetry={submitForm} />
+                    </div>
+                  )}
               </form>
             </div>
           </div>
