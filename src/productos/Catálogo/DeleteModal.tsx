@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../../ventas/components/Modal";
 import PrimaryButton from "../../components/Button";
+import { ProductosService } from "../../services/productosService";
 
 interface DeleteProductModalProps {
   show: boolean;
@@ -25,9 +26,8 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
     setError(null);
 
     try {
-      await fetch(`/productos/${productId}`, {
-        method: "DELETE",
-      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const borrar = await ProductosService.eliminarProducto(productId);
       onDeleteSuccess();
       onHide();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
