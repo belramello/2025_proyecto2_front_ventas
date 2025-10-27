@@ -1,115 +1,124 @@
-/* --- Estilos generales para las tablas de NuevaVentaScreen --- */
-
-.table-main {
-  background-color: #ffffff; /* Fondo blanco para la tabla principal */
-  border-radius: 8px;
-  overflow: hidden;
+/* --- Contenedor --- */
+.nueva-venta-container {
+  all: revert-layer;
+  font-family: "Segoe UI", sans-serif !important;
 }
 
-/* --- Tablas dentro del resumen de venta (card) --- */
-.table-summary {
+/* --- Tabla principal --- */
+.nv-table-container {
+  width: 100% !important;
+  max-width: 95% !important; /* pequeño margen lateral */
+  margin: 0 auto !important;
+}
+
+.nv-table-main {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: fixed !important;
+  background-color: #ffffff !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.nv-table-main th,
+.nv-table-main td {
+  padding: 10px 12px !important; /* más compacto */
+  vertical-align: middle !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+.nv-table-main th {
+  background-color: #f8f9fa !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+.nv-table-main td {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* --- Columnas proporcionadas --- */
+.nv-table-main th:nth-child(1),
+.nv-table-main td:nth-child(1) {
+  width: 10% !important;
+}
+.nv-table-main th:nth-child(2),
+.nv-table-main td:nth-child(2) {
+  width: 28% !important;
+}
+.nv-table-main th:nth-child(3),
+.nv-table-main td:nth-child(3),
+.nv-table-main th:nth-child(4),
+.nv-table-main td:nth-child(4) {
+  width: 13% !important;
+}
+.nv-table-main th:nth-child(5),
+.nv-table-main td:nth-child(5) {
+  width: 14% !important;
+}
+.nv-table-main th:nth-child(6),
+.nv-table-main td:nth-child(6) {
+  width: 14% !important;
+}
+.nv-table-main th:nth-child(7),
+.nv-table-main td:nth-child(7) {
+  width: 8% !important;
+}
+
+/* --- Tarjeta de resumen --- */
+.nv-resumen-card {
+  border-radius: 10px !important;
+  background: #f8f9fa !important;
+  min-height: 300px !important;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08) !important;
+  margin-left: auto !important;
+}
+
+.nv-table-summary {
+  width: 100% !important;
   background-color: transparent !important;
-  border-collapse: separate;
-  border-spacing: 0 4px;
 }
 
-.table-summary th,
-.table-summary td {
+.nv-table-summary th,
+.nv-table-summary td {
+  padding: 6px 10px !important;
   background-color: transparent !important;
-  border: none;
-  padding: 6px 10px;
-  color: #333;
+  border: none !important;
+  color: #333 !important;
 }
 
-/* El encabezado más fuerte */
-.table-summary thead th {
-  font-weight: bold;
-  color: #222;
+.nv-table-summary thead th {
+  font-weight: bold !important;
+  color: #111 !important;
 }
 
-/* Total en negrita */
-.table-summary .fw-bold td {
-  border-top: 1px solid rgba(0, 0, 0, 0.15);
+.nv-table-summary .fw-bold td {
+  border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
 }
 
-/* --- Contenedor del input de búsqueda --- */
-.product-search {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
+/* --- Botones --- */
+.nv-btn-eliminar {
+  padding: 2px 6px !important;
+  font-size: 14px !important;
+  background: #dc3545 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  color: white !important;
+  cursor: pointer !important;
+}
+.nv-btn-eliminar:hover {
+  opacity: 0.8 !important;
 }
 
-.product-search input {
-  width: 25%;
-  min-width: 160px;
-}
-
-/* --- Ajustes de tabla principal --- */
-.table-main th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.table-main td,
-.table-main th {
-  vertical-align: middle;
-  text-align: center;
-}
-/* --- Título y descripción de la pantalla --- */
-.titulo-nueva-venta {
-  margin-left: 2rem;
-  margin-top: 0.5rem;
-}
-
-.descripcion-nueva-venta {
-  margin-left: 2rem;
-  color: #555;
-}
-
-/* --- Botón eliminar producto --- */
-.btn-eliminar-producto {
-  padding: 2px 6px;
-  font-size: 14px;
-}
-
-/* --- Contenedor del input de búsqueda --- */
-.contenedor-busqueda {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-
-.input-codigo {
-  width: 25%;
-  min-width: 160px;
-}
-
-.btn-buscar {
-  min-width: 100px;
-}
-
-/* --- Card del resumen --- */
-.resumen-venta-card {
-  border-radius: 10px;
-}
-
-.titulo-resumen {
-  text-align: center;
-}
-
-/* --- Select de medio de pago --- */
-.select-medio-pago {
-  cursor: pointer;
-}
-
-/* --- Botón principal --- */
-.btn-registrar-venta {
-  letter-spacing: 0.5px;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-registrar-venta:hover {
-  transform: scale(1.02);
+/* --- Responsive --- */
+@media (max-width: 992px) {
+  .nv-table-main {
+    display: block !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
 }

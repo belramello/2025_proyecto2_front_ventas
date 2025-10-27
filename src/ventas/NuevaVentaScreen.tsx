@@ -150,16 +150,11 @@ function NuevaVentaScreen() {
   };
   return (
     <>
-      <h1 className="titulo-nueva-venta">Nueva Venta</h1>
-      <p className="descripcion-nueva-venta">
-        Ingresá productos para registrar una nueva venta.
-      </p>
-
-      <div className="container mt-3">
+      <div className="container-fluid mt-3">
         <div className="row">
-          <div className="col-md-8">
-            <div className="table-responsive">
-              <table className="table align-middle text-center table-main">
+          <div className="col-lg-9 col-md-8 col-12">
+            <div className="table-responsive nv-table-container">
+              <table className="nv-table-main table align-middle text-center">
                 <thead>
                   <tr>
                     <th>Código</th>
@@ -175,7 +170,7 @@ function NuevaVentaScreen() {
                   {productos.map((p) => (
                     <tr key={p.codigo}>
                       <td>{p.codigo}</td>
-                      <td>{p.nombre}</td>
+                      <td className="text-start">{p.nombre}</td>
                       <td>${p.precio.toFixed(2)}</td>
                       <td>{p.stock}</td>
                       <td>
@@ -188,7 +183,7 @@ function NuevaVentaScreen() {
                       <td>${calcularSubtotal(p).toFixed(2)}</td>
                       <td>
                         <button
-                          className="btn btn-sm btn-danger btn-eliminar-producto"
+                          className="nv-btn-eliminar"
                           onClick={() => eliminarProducto(p.codigo)}
                         >
                           ❌
@@ -220,13 +215,14 @@ function NuevaVentaScreen() {
             </div>
           </div>
 
-          <div className="col-md-4">
-            <div className="card bg-light resumen-venta-card">
+          {/* Resumen de Venta */}
+          <div className="col-lg-3 col-md-4 col-12">
+            <div className="card nv-resumen-card">
               <div className="card-body">
                 <h4 className="fw-bold titulo-resumen">Resumen de Venta</h4>
 
                 <div className="table-responsive">
-                  <table className="table text-center table-summary">
+                  <table className="nv-table-summary table text-center">
                     <thead>
                       <tr>
                         <th>Producto</th>
@@ -266,12 +262,14 @@ function NuevaVentaScreen() {
                     <option value="debito">Débito</option>
                   </select>
                 </div>
+
                 {registroError && (
                   <ErrorMessage
                     message={registroError}
                     onRetry={registrarVenta}
                   />
                 )}
+
                 <button
                   className="btn btn-success w-100 fw-bold btn-registrar-venta"
                   type="submit"
