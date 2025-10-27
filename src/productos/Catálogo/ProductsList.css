@@ -1,12 +1,20 @@
 /* --- Contenedor principal de productos --- */
 .products-container {
+  /* --- ESTAS SON LAS LÍNEAS NUEVAS --- */
+  /* Define un ancho máximo para el contenedor de la tabla */
+  max-width: 1400px; /* Podés achicar esto (ej: 1200px) si querés */
+  /* Centra el contenedor horizontalmente */
+  margin-left: auto;
+  margin-right: auto;
+  /* ------------------------------------ */
+
   padding: 1.5rem 2rem;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Encabezado de la sección de productos --- */
+/* --- Encabezado de la sección de productos (No se usa en tu TSX, pero lo dejo) --- */
 .products-header {
   display: flex;
   justify-content: space-between;
@@ -20,13 +28,13 @@
   letter-spacing: 0.5px;
 }
 
-/* --- Contenedor de botones de acción --- */
+/* --- Contenedor de botones de acción (No se usa, pero lo dejo) --- */
 .actions {
   display: flex;
   gap: 0.8rem;
 }
 
-/* --- Botones de acción --- */
+/* --- Botones de acción (No se usa, pero lo dejo) --- */
 .btn {
   border: none;
   padding: 8px 14px;
@@ -115,14 +123,16 @@
 }
 
 /* --- Tabla de productos --- */
+/* Ahora esta clase SÍ existe en tu <table> */
 .products-table {
-  width: 100%;
+  width: 100%; /* Esto está bien, tomará el 100% del .products-container (que ya no es 100% de la pantalla) */
   border-collapse: separate;
   border-spacing: 0 6px;
   text-align: center;
   font-size: 15px;
 }
 
+/* Estas reglas ahora se aplicarán porque la tabla tiene la clase .products-table */
 .products-table thead th {
   background-color: #f8f9fa;
   color: #222;
@@ -147,6 +157,7 @@
 }
 
 /* --- REGLAS PARA "POCO STOCK" --- */
+/* Esto ya debería estar funcionando */
 .products-table tbody tr.low-stock-row td {
   background-color: #fffbe6 !important; /* Fondo amarillo suave */
 }
