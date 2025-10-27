@@ -27,6 +27,7 @@ function CreateUsuarioModal({
     email: "",
     password: "",
     rolId: 0,
+    confirmPassword: "",
   });
 
   useEffect(() => {
@@ -58,13 +59,22 @@ function CreateUsuarioModal({
       !form.apellido ||
       !form.email ||
       !form.password ||
-      !form.rolId
+      !form.rolId ||
+      !form.confirmPassword
     ) {
       setError("Todos los campos son obligatorios.");
       return;
     }
 
-    setLoading(true);
+    if (form.password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+    if (form.email) setLoading(true);
     try {
       await registrarUsuario({
         nombre: form.nombre,
@@ -158,6 +168,7 @@ function CreateUsuarioModal({
                               onChange={handleChange}
                               placeholder="Ej: alejodm@gmail.com"
                               required
+                              minLength={6}
                             />
                           </div>
 
@@ -168,9 +179,21 @@ function CreateUsuarioModal({
                               type="password"
                               value={form.password}
                               onChange={handleChange}
-                              placeholder="Mínimo 8 caracteres"
+                              placeholder="Mínimo 6 caracteres"
                               required
-                              minLength={8}
+                              minLength={6}
+                            />
+                          </div>
+                          <div className="col-md-6">
+                            <FormInput
+                              label="Repetir contraseña"
+                              name="confirmPassword"
+                              type="password"
+                              value={form.confirmPassword}
+                              onChange={handleChange}
+                              placeholder="Mínimo 6 caracteres"
+                              required
+                              minLength={6}
                             />
                           </div>
                         </div>
