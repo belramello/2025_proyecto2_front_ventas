@@ -1,10 +1,13 @@
+import type { Linea } from "../../lineas/interfaces/lineas-interface";
+
 export interface Marca {
   id: number;
   nombre: string;
   descripcion: string | null;
-  logoUrl: string | null; // Esto será el nombre del archivo (ej: "1761156544098.webp")
-  deletedAt: Date | null;
-  productosAsociados: number;
+  logoUrl: string | null; 
+  deletedAt?: Date | null;
+  productosAsociados?: number; 
+  lineas?: Linea[]; // Array de líneas asociadas (el backend debería enviarlo en getMarcaById)
 }
 
 // Interfaz para la respuesta paginada

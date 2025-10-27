@@ -1,117 +1,171 @@
-import React, { useState, useEffect } from "react"; // Importar useEffect
-import { useNavigate, useParams, Link } from "react-router-dom"; // Importar useParams y Link
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import Select from "react-select";
 import { MarcasService } from "../../services/marcasService";
+import { LineasService } from "../../services/lineasService";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import ErrorMessage from "../../components/ErrorMessage";
 import "./FormularioMarca.css";
-import { BsArrowLeft } from "react-icons/bs";
-import type { Marca } from "../interfaces/marca.interface"; // Importar interfaz Marca
+import { BsArrowLeft, BsTrash } from "react-icons/bs";
+import type { Marca } from "../interfaces/marca.interface";
+import type { Linea } from "../../lineas/interfaces/lineas-interface";
+import type { UpdateMarcaData } from "../../services/marcasService";
 
-// Interfaz para el estado de los datos de texto
-interface MarcaFormDataState {
-  nombre: string;
-  descripcion: string;
+interface SelectOption {
+  value: number;
+  label: string;
 }
 
 const FormularioMarca = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>(); // Obtener el ID de la URL
-  const isEditing = Boolean(id); // Determinar si estamos editando
+  const { id } = useParams<{ id: string }>();
+  const isEditing = Boolean(id);
 
   const [loading, setLoading] = useState(false);
+  const [loadingInitialData, setLoadingInitialData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Estado SOLO para nombre y descripción
-  const [marcaData, setMarcaData] = useState<MarcaFormDataState>({
-    nombre: "",
-    descripcion: "",
-  });
-
-  // Estados separados para el logo
-  const [logoFile, setLogoFile] = useState<File | null>(null); // Archivo nuevo seleccionado
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoFileName, setLogoFileName] = useState("Ningún archivo seleccionado");
-  const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null); // URL del logo actual al editar
+  const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- Cargar datos si estamos editando ---
+  const [allLineas, setAllLineas] = useState<SelectOption[]>([]);
+  const [selectedLineas, setSelectedLineas] = useState<SelectOption[]>([]);
+
   useEffect(() => {
-    if (isEditing && id) {
-      setLoading(true);
+    let isMounted = true;
+    setLoadingInitialData(true);
+    setError(null);
+
+    LineasService.getLineas()
+      .then((lineasData) => {
+        if (!isMounted) return;
+        const options = Array.isArray(lineasData)
+          ? lineasData.map((linea: Linea) => ({ value: linea.id, label: linea.nombre }))
+          : lineasData.lineas.map((linea: Linea) => ({ value: linea.id, label: linea.nombre }));
+        setAllLineas(options);
+        if (!isEditing) setLoadingInitialData(false);
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        console.error("Error al cargar líneas:", err);
+        setError("No se pudieron cargar las líneas disponibles.");
+        setLoadingInitialData(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isEditing]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (isEditing && id && allLineas.length > 0 && loadingInitialData) {
       MarcasService.getMarcaById(Number(id))
         .then((marca: Marca) => {
-          setMarcaData({
-            nombre: marca.nombre,
-            descripcion: marca.descripcion || "",
-          });
-          setExistingLogoUrl(marca.logoUrl); // Guardamos la URL del logo actual
+          if (!isMounted) return;
+          setNombre(marca.nombre);
+          setDescripcion(marca.descripcion || "");
+          setExistingLogoUrl(marca.logoUrl);
+          setPreviewUrl(marca.logoUrl);
           setLogoFileName(marca.logoUrl ? "Logo actual cargado" : "Ningún archivo seleccionado");
+
+          if (marca.lineas && Array.isArray(marca.lineas)) {
+            const lineasSeleccionadas = allLineas.filter((option) =>
+              marca.lineas?.some((lineaAsociada) => lineaAsociada.id === option.value)
+            );
+            setSelectedLineas(lineasSeleccionadas);
+          }
+          setLoadingInitialData(false);
         })
         .catch((err) => {
+          if (!isMounted) return;
           console.error("Error al cargar la marca para editar:", err);
-          setError("Error al cargar la marca para editar.");
-        })
-        .finally(() => setLoading(false));
+          setError("Error al cargar los datos de la marca para editar.");
+          setLoadingInitialData(false);
+        });
     }
-  }, [id, isEditing]);
-  // ----------------------------------------
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id, isEditing, allLineas, loadingInitialData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setMarcaData((prevData) => ({ ...prevData, [name]: value })); // Usar función para estado seguro
+    if (name === "nombre") setNombre(value);
+    if (name === "descripcion") setDescripcion(value);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setLogoFile(file); // Actualiza el estado del ARCHIVO NUEVO
+      setLogoFile(file);
       setLogoFileName(file.name);
-      setExistingLogoUrl(null); // Ocultamos el logo viejo si se selecciona uno nuevo
-    }
+      setExistingLogoUrl(null);
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviewUrl(reader.result as string);
+      reader.readAsDataURL(file);
+    } else handleRemoveLogo();
   };
 
-  // Lógica de envío (Crear o Actualizar)
+  const handleRemoveLogo = () => {
+    setLogoFile(null);
+    setPreviewUrl(isEditing ? existingLogoUrl : null);
+    setLogoFileName(isEditing && existingLogoUrl ? "Logo actual cargado" : "Ningún archivo seleccionado");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleLineasChange = (selectedOptions: readonly SelectOption[] | null) => {
+    setSelectedLineas(selectedOptions ? [...selectedOptions] : []);
+  };
+
   const submitForm = async () => {
-     if (!marcaData.nombre) {
-       setError("El nombre es requerido.");
-       return;
-     }
-     // Logo requerido solo al CREAR
-     if (!isEditing && !logoFile) {
-        setError("El logo es requerido.");
-        return;
-     }
+    if (!nombre) {
+      setError("El nombre es requerido.");
+      return;
+    }
+    if (!isEditing && !logoFile) {
+      setError("El logo es requerido.");
+      return;
+    }
+    if (selectedLineas.length === 0) {
+      setError("Debes seleccionar al menos una línea.");
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
-    // Datos a enviar (solo los que tienen valor)
-    const dataToSend: { nombre?: string; descripcion?: string; logo?: File | null } = {
-        nombre: marcaData.nombre,
-        descripcion: marcaData.descripcion,
-    };
-    // Agregamos el logo solo si se seleccionó uno nuevo
-    if (logoFile) {
-        dataToSend.logo = logoFile;
-    }
+    const lineasIdSeleccionadas = selectedLineas.map((option) => option.value);
+    const dataToSend: UpdateMarcaData = { nombre, descripcion, lineasId: lineasIdSeleccionadas };
+    if (logoFile) dataToSend.logo = logoFile;
 
     try {
       if (isEditing && id) {
-        // --- Llamada a Actualizar ---
         await MarcasService.updateMarca(Number(id), dataToSend);
         alert("¡Marca actualizada con éxito!");
       } else {
-        // --- Llamada a Crear ---
-        if (!logoFile) throw new Error("Logo no seleccionado para crear."); // Seguridad
         await MarcasService.createMarca({
-            nombre: marcaData.nombre,
-            descripcion: marcaData.descripcion,
-            logo: logoFile, // Usamos logoFile aquí
+          nombre,
+          descripcion,
+          logo: logoFile!,
+          lineasId: lineasIdSeleccionadas,
         });
         alert("¡Marca creada con éxito!");
       }
       navigate("/marcas");
     } catch (err: any) {
-      console.error(err);
-      const errorMsg = err.response?.data?.message || `Error al ${isEditing ? 'actualizar' : 'crear'} la marca. Verificá los datos.`;
+      console.error("Error al guardar:", err);
+      const responseError = err.response?.data?.message;
+      const errorMsg = Array.isArray(responseError)
+        ? responseError.join(", ")
+        : responseError || `Error al ${isEditing ? "actualizar" : "crear"} la marca.`;
       setError(errorMsg);
     } finally {
       setLoading(false);
@@ -123,106 +177,142 @@ const FormularioMarca = () => {
     submitForm();
   };
 
-  const handleRetry = () => {
-    submitForm();
-  };
-
-  // Muestra spinner si está cargando datos iniciales
-  if (loading && isEditing && !marcaData.nombre) {
-      return <LoadingSpinner />;
-  }
+  if (loadingInitialData) return <LoadingSpinner />;
 
   return (
-    <div className="form-container" style={{ margin: "40px auto" }}>
+    <div className="container mt-4 mb-5">
+      <div className="row justify-content-center">
+        <div className="col-lg-10 col-xl-8">
+          <div className="card shadow-sm border-0 form-container-card">
+            <div className="card-body p-4 p-md-5">
+              <Link to="/marcas" className="btn btn-link mb-3 ps-0 text-decoration-none d-inline-flex align-items-center">
+                <BsArrowLeft className="me-2" /> Volver a Marcas
+              </Link>
 
-      {/* Botón Volver (ya lo tenías) */}
-      <Link to="/marcas" className="btn btn-link mb-3 align-self-start ps-0 text-decoration-none">
-        <BsArrowLeft className="me-2" />
-        Volver a Marcas
-      </Link>
+              <h1 className="text-center fw-bold mb-4">
+                {isEditing ? "EDITAR MARCA" : "AGREGAR MARCA"}
+              </h1>
 
-      {/* Título dinámico */}
-      <h1>{isEditing ? "EDITAR MARCA" : "AGREGAR MARCA"}</h1>
-      <p className="text-center text-muted mb-4 mt-n3">
-        {isEditing ? "Modificá los datos de la marca." : "Completá los datos para registrar una nueva marca."}
-      </p>
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="row g-4">
+                  <div className="col-md-7 d-flex flex-column">
+                    <div className="form-group mb-3">
+                      <label htmlFor="nombre" className="form-label fw-bold">
+                        Nombre
+                      </label>
+                      <input
+                        id="nombre"
+                        type="text"
+                        name="nombre"
+                        placeholder="Escribe el nombre"
+                        className={`form-control ${
+                          error?.includes("nombre") || error?.includes("registrado") ? "is-invalid" : ""
+                        }`}
+                        value={nombre}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      {error && (error.includes("nombre") || error.includes("registrado")) && (
+                        <div className="invalid-feedback d-block">{error}</div>
+                      )}
+                    </div>
 
-      <form className="product-form" onSubmit={handleSubmit}>
+                    <div className="form-group mb-3 flex-grow-1">
+                      <label htmlFor="descripcion" className="form-label fw-bold">
+                        Descripción
+                      </label>
+                      <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        placeholder="Escribe la descripción"
+                        className="form-control"
+                        style={{ height: "100px", minHeight: "100px" }}
+                        value={descripcion}
+                        onChange={handleInputChange}
+                      ></textarea>
+                    </div>
 
-        {/* Nombre */}
-        <div className="form-group">
-          <label htmlFor="nombre">Nombre de la Marca</label>
-          <input
-            id="nombre"
-            type="text"
-            name="nombre"
-            placeholder="Escribe el nombre de la marca"
-            value={marcaData.nombre}
-            onChange={handleInputChange}
-            required
-            aria-invalid={error?.includes("nombre") ? "true" : "false"}
-          />
-        </div>
+                    <div className="form-group mb-3">
+                      <label htmlFor="lineas" className="form-label fw-bold">
+                        Líneas Asociadas
+                      </label>
+                      <Select
+                        id="lineas"
+                        isMulti
+                        name="lineas"
+                        options={allLineas}
+                        classNamePrefix="select"
+                        placeholder="Selecciona líneas..."
+                        value={selectedLineas}
+                        onChange={handleLineasChange}
+                        isLoading={loadingInitialData && allLineas.length === 0}
+                        closeMenuOnSelect={false}
+                        noOptionsMessage={() => "No hay líneas disponibles"}
+                      />
+                      {error && error.includes("línea") && (
+                        <div className="invalid-feedback d-block">{error}</div>
+                      )}
+                    </div>
+                  </div>
 
-        {/* Descripción */}
-        <div className="form-group">
-          <label htmlFor="descripcion">Descripción</label>
-          <textarea
-            id="descripcion"
-            name="descripcion"
-            placeholder="Escribe la descripción de la marca"
-            value={marcaData.descripcion}
-            onChange={handleInputChange}
-          ></textarea>
-        </div>
+                  <div className="col-md-5 d-flex flex-column align-items-center justify-content-center logo-section">
+                    <label className="fw-bold mb-2">Logo</label>
+                    <div className="logo-preview-container mb-3">
+                      {previewUrl ? (
+                        <img src={previewUrl} alt="Previsualización logo" className="logo-preview-image" />
+                      ) : (
+                        <div className="logo-placeholder">Sin logo</div>
+                      )}
+                    </div>
 
-        {/* Logo */}
-        <div className="form-group">
-          <label className="fw-bold" htmlFor="logo">Logo</label>
-          {/* Muestra logo actual si estamos editando y no se seleccionó uno nuevo */}
-          {isEditing && existingLogoUrl && (
-            <img src={existingLogoUrl} alt="Logo actual" className="logo-preview mb-2"/>
-          )}
-          <div className="file-input-wrapper">
-            <input
-              type="file"
-              id="logo"
-              name="logo"
-              accept="image/*" // Acepta cualquier imagen
-              className="file-input-hidden"
-              onChange={handleFileChange}
-              required={!isEditing} // Requerido solo al CREAR
-              aria-invalid={error?.includes("logo") ? "true" : "false"}
-            />
-            <label htmlFor="logo" className="btn teal m-0">
-              {/* Texto dinámico del botón */}
-              {isEditing ? (logoFile ? "Cambiar logo..." : "Mantener logo actual / Cambiar...") : "Seleccionar archivo..."}
-            </label>
-            <span className="file-input-filename">{logoFileName}</span>
+                    <input
+                      type="file"
+                      id="logo"
+                      name="logo"
+                      accept="image/*"
+                      className="file-input-hidden"
+                      onChange={handleFileChange}
+                      ref={fileInputRef}
+                    />
+
+                    <label htmlFor="logo" className="btn btn-teal mb-2">
+                      {isEditing ? "Cambiar logo..." : "Agregar Imagen"}
+                    </label>
+
+                    <span className="file-input-filename mb-2">{logoFileName}</span>
+
+                    {(logoFile || existingLogoUrl) && (
+                      <button type="button" onClick={handleRemoveLogo} className="btn btn-sm btn-outline-danger">
+                        <BsTrash className="me-1" /> Quitar Imagen
+                      </button>
+                    )}
+
+                    {error && error.includes("logo") && (
+                      <div className="text-danger small mt-1">{error}</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="form-actions mt-4">
+                  {loading ? (
+                    <LoadingSpinner />
+                  ) : (
+                    <button type="submit" className="btn btn-success px-4">
+                      {isEditing ? "GUARDAR CAMBIOS" : "GUARDAR MARCA"}
+                    </button>
+                  )}
+                </div>
+
+                {error && !error.includes("logo") && !error.includes("línea") && !error.includes("nombre") && (
+                  <div className="mt-3">
+                    <ErrorMessage message={error} onRetry={submitForm} />
+                  </div>
+                )}
+              </form>
+            </div>
           </div>
-          {/* Error del logo */}
-          {error && error.includes("logo") && (
-              <div className="text-danger small mt-1">{error}</div>
-          )}
         </div>
-
-        {/* Botón de Guardar */}
-        <div className="form-actions">
-          {loading ? <LoadingSpinner /> : (
-            // Texto dinámico del botón
-            <button type="submit" className="btn green">
-              {isEditing ? "GUARDAR CAMBIOS" : "GUARDAR MARCA"}
-            </button>
-          )}
-        </div>
-
-        {/* Error general */}
-        {error && !error.includes("logo") && (
-          <div className="mt-3">
-            <ErrorMessage message={error} onRetry={handleRetry} />
-          </div>
-        )}
-      </form>
+      </div>
     </div>
   );
 };
