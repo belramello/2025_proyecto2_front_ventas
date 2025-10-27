@@ -26,6 +26,7 @@ const ProveedoresModal = ({ show, onHide, producto }: ProveedoresModalProps) => 
         const data = await ProductosService.obtenerDetallesProveedorPorProductoId(producto.id);
         console.log("Detalle del producto recibido:", data);
         setDetalleProducto(data);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error("Error al obtener proveedores:", err);
         setError(err.response?.data?.message || "Error al cargar proveedores.");

@@ -50,8 +50,8 @@ const AddProduct = () => {
   useEffect(() => {
     const fetchMarcasYProveedores = async () => {
       try {
-        const dataMarcas = await MarcasService.getMarcas();
-        setMarcas(dataMarcas.marcas);
+        const dataMarcas = await MarcasService.getAllMarcas();
+        setMarcas(dataMarcas);
         const dataProv = await ProveedoresService.getProveedor();
         setProveedores(dataProv.proveedores);
       } catch (error) {
@@ -150,8 +150,8 @@ const AddProduct = () => {
   const handleMarcaCreated = async (nuevaMarca: Marca) => {
     try {
       setLoadingMarcas(true);
-      const dataMarcas = await MarcasService.getMarcas();
-      setMarcas(dataMarcas.marcas);
+      const dataMarcas = await MarcasService.getAllMarcas();
+      setMarcas(dataMarcas);
 
       // Auto-seleccionar la marca nueva y reiniciar línea
       setProduct((prevProduct) => ({

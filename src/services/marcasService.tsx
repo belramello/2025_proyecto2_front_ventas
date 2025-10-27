@@ -101,4 +101,40 @@ export const MarcasService = {
       throw error;
     }
   },
-};
+
+
+// --- 🔥 AÑADIR ESTA NUEVA FUNCIÓN ---
+  async getAllMarcas(): Promise<Marca[]> {
+    let allMarcas: Marca[] = [];
+    let currentPage = 1;
+    let lastPage = 1;
+
+    try {
+      do {
+        // 1. Llama a la función paginada
+        const paginatedResponse = await this.getMarcas(currentPage);
+
+        if (paginatedResponse && paginatedResponse.marcas) {
+          // 2. Agrega las marcas de esta página a la lista total
+          allMarcas = allMarcas.concat(paginatedResponse.marcas);
+          // 3. Actualiza cuál es la última página
+          lastPage = paginatedResponse.lastPage;
+          // 4. Pasa a la siguiente página
+          currentPage++;
+        } else {
+          // Si la respuesta no es válida, rompemos el bucle
+          break;
+        }
+        
+      } while (currentPage <= lastPage); // Repite mientras no hayamos llegado a la última página
+      
+      return allMarcas;
+
+    } catch (error) {
+      console.error("Error al obtener todas las marcas paginadas:", error);
+      throw error;
+    }
+  },
+  // --- FIN DE LA NUEVA FUNCIÓN ---
+
+  };

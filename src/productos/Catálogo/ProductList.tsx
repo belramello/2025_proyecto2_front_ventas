@@ -26,6 +26,8 @@ import ProveedoresModal from "./ProveedoresModal";
 import EditProductModal from "./EditModal";
 import DeleteProductModal from "./DeleteModal";
 
+
+
 // --- Usar VITE_API_URL para la URL raíz del servidor ---
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
