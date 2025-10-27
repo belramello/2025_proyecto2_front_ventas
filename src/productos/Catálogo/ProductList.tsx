@@ -186,20 +186,33 @@ const ProductsList = () => {
                       <td>{producto.descripcion}</td>
                       <td>{producto.linea.nombre}</td>
                       <td>{producto.codigo}</td>
+                      {/* --- CELDA DE STOCK (Versión 2 pisos) --- */}
                       <td className="stock-cell">
-                        <span>{producto.stock}</span>
-                        <PermissionGuard
-                          requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
-                        >
-                          <button
-                            className="btn btn-sm btn-outline-primary ms-2"
-                            title="Actualizar Stock"
-                            onClick={() => handleOpenStockModal(producto)}
+                        
+                        {/* 1. Fila de Arriba (Número + Botón) */}
+                        <div className="stock-cell-top">
+                          <span>{producto.stock}</span>
+                          <PermissionGuard
+                            requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
                           >
-                            <BsFillPlusCircleFill />
-                          </button>
-                        </PermissionGuard>
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              title="Actualizar Stock"
+                              onClick={() => handleOpenStockModal(producto)}
+                            >
+                              <BsFillPlusCircleFill />
+                            </button>
+                          </PermissionGuard>
+                        </div>
+
+                        {/* 2. Fila de Abajo (Badge condicional) */}
+                        {producto.stock < 10 && (
+                          <span className="badge bg-warning text-dark">
+                            POCO STOCK
+                          </span>
+                        )}
                       </td>
+                      {/* --- FIN CELDA DE STOCK --- */}
                       <td>${producto.precio}</td>
                       <td>
                         <button

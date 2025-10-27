@@ -2,7 +2,7 @@
 .products-container {
   /* --- ESTAS SON LAS LÍNEAS NUEVAS --- */
   /* Define un ancho máximo para el contenedor de la tabla */
-  max-width: 1400px; /* Podés achicar esto (ej: 1200px) si querés */
+  max-width: 1600px; /* Podés achicar esto (ej: 1200px) si querés */
   /* Centra el contenedor horizontalmente */
   margin-left: auto;
   margin-right: auto;
@@ -250,6 +250,21 @@
 }
 
 /* Alinear la celda de stock */
+/* Alinear la celda de stock (Contenedor principal) */
 .stock-cell {
   position: relative;
+  
+  /* --- ESTO ES LO NUEVO --- */
+  flex-direction: column; /* Apila los hijos verticalmente */
+  justify-content: center; /* Centra verticalmente */
+  align-items: center; /* Centra horizontalmente */
+  gap: 0.25rem; /* Espacio pequeño entre la fila de arriba y el badge */
+}
+
+/* Fila superior (para [Stock] + [Botón]) */
+.stock-cell-top {
+ justify-content: center;
+  flex-direction: row; /* Hijos en horizontal */
+  align-items: center;
+  gap: 0.5rem; /* Espacio entre el número y el botón */
 }
