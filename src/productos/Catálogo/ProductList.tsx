@@ -9,7 +9,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import { ProductosService } from "../../services/productosService";
 import type { Producto } from "../interfaces/producto-interface";
 import type { ProductosPaginatedResponse } from "../interfaces/productos-paginated-response.interface";
-import api from "../../utils/api";
+// import api from "../../utils/api"; // <-- Ya no necesitamos esto para la URL
 import "./ProductsList.css";
 import { PermissionGuard } from "../../auth/guards/permisos-guard";
 import { Permisos } from "../../auth/enums/permisos";
@@ -18,6 +18,10 @@ import { Permisos } from "../../auth/enums/permisos";
 import UpdateStockModal from "../Stock/UpdateStock";
 import type { UpdateProductoDto } from "../interfaces/Update-producto.dto";
 // ------------------------------
+
+// --- Usar VITE_API_URL para la URL raíz del servidor ---
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// ---------------------------------------------------------
 
 const ProductsList = () => {
   const navigate = useNavigate();
@@ -35,8 +39,6 @@ const ProductsList = () => {
   );
   // --------------------------
 
-  const backendUrl = api.defaults.baseURL;
-
   const fetchProductos = useCallback(async (pageNumber: number) => {
     setLoading(true);
     setError(null);
@@ -46,7 +48,7 @@ const ProductsList = () => {
       setProductos(data.productos);
       setLastPage(data.lastPage);
       setPage(data.page);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Error cargando productos. Intentá de nuevo.");
     } finally {
@@ -62,7 +64,7 @@ const ProductsList = () => {
     fetchProductos(page);
   };
 
-  // --- Handlers para el modal ---
+  // --- Handlers para el modal (sin cambios) ---
   const handleOpenStockModal = (producto: Producto) => {
     setSelectedProducto(producto);
     setShowStockModal(true);
@@ -73,10 +75,6 @@ const ProductsList = () => {
     setShowStockModal(false);
   };
 
-  /**
-   * Maneja la lógica de actualización del stock.
-   * Es llamada por el componente Modal.
-   */
   const handleStockUpdate = async (
     productoId: number,
     cantidadIngresada: number
@@ -85,23 +83,17 @@ const ProductsList = () => {
       throw new Error("No hay un producto seleccionado para actualizar.");
     }
 
-    // Calcular el nuevo stock total
     const stockActual = selectedProducto.stock;
     const nuevoStockTotal = stockActual + cantidadIngresada;
 
-    // Crear el DTO para el servicio
     const updateDto: UpdateProductoDto = {
       stock: nuevoStockTotal,
     };
 
-    // Llamar al servicio.
-    // El try/catch lo maneja el componente Modal,
-    // que mostrará el error si algo falla.
     await ProductosService.actualizarProducto(productoId, updateDto);
 
-    // Si tiene éxito, cerrar el modal y recargar la lista
     handleCloseStockModal();
-    fetchProductos(page); // Recargar la lista para ver el stock actualizado
+    fetchProductos(page);
   };
   // --- Fin Handlers Modal ---
 
@@ -151,13 +143,24 @@ const ProductsList = () => {
               </thead>
               <tbody>
                 {productos.map((producto) => (
-                  <tr key={producto.id}>
+                  <tr
+                    key={producto.id}
+                    // --- AQUÍ ESTÁ LA LÓGICA ---
+                    // Si el stock es menor a 10, se aplica la clase 'low-stock-row'
+                    className={
+                      producto.stock < 10 ? "low-stock-row" : ""
+                    }
+                    // ----------------------------------------------------
+                  >
                     <td className="col-foto">
                       {producto.fotoUrl ? (
                         <img
-                          src={`${backendUrl}/${producto.fotoUrl}`}
+                          src={`${API_URL}/${producto.fotoUrl}`}
                           alt={producto.nombre}
                           className="product-image"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder-logo.jpg";
+                          }}
                         />
                       ) : (
                         <div className="product-image-placeholder">Sin foto</div>
@@ -167,19 +170,17 @@ const ProductsList = () => {
                     <td>{producto.descripcion}</td>
                     <td>{producto.linea.nombre}</td>
                     <td>{producto.codigo}</td>
-                    
-                    {/* --- Celda de Stock con Botón --- */}
+
                     <td className="stock-cell">
                       <span>{producto.stock}</span>
-                      {producto.stock < 10 && (
-                        <span className="low-stock ms-2">POCO STOCK</span>
-                      )}
-                      
-                      <PermissionGuard 
+
+                      {/* Se eliminó el <span> de "POCO STOCK" */}
+
+                      <PermissionGuard
                         requiredPermissions={Permisos.MODIFICAR_PRODUCTOS}
                       >
                         <button
-                          className="btn btn-sm btn-outline-primary ms-2 btn-update-stock"
+                          className="btn btn-sm btn-outline-primary ms-2"
                           title="Actualizar Stock"
                           onClick={() => handleOpenStockModal(producto)}
                         >
@@ -187,8 +188,7 @@ const ProductsList = () => {
                         </button>
                       </PermissionGuard>
                     </td>
-                    {/* ---------------------------------- */}
-                    
+
                     <td>${producto.precio}</td>
                     <PermissionGuard
                       requiredPermissions={[
@@ -243,7 +243,6 @@ const ProductsList = () => {
         onStockUpdate={handleStockUpdate}
       />
       {/* ----------------------------- */}
-      
     </div>
   );
 };

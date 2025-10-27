@@ -7,4 +7,8 @@ export interface UpdateProductoDto {
   marcaId?: number;
   lineaId?: number;
   stock?: number;
+  detalleProveedores?: Array<{
+    proveedorId: number;
+    codigo: string;
+  }>;
 }

@@ -16,4 +16,5 @@ export interface Producto {
   precio: number;
   stock: number;
   fotoUrl: string | null;
+  descripcion: string;
 }

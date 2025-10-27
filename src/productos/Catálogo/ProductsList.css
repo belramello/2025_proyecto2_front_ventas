@@ -33,10 +33,36 @@
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  color: #fff;
+  /* color: #fff; */
   transition: all 0.2s ease-in-out;
   letter-spacing: 0.3px;
 }
+
+.btn.btn-outline-primary,
+.btn.btn-outline-secondary,
+.btn.btn-outline-success,
+.btn.btn-outline-danger,
+.btn.btn-outline-warning,
+.btn.btn-outline-info,
+.btn.btn-outline-light,
+.btn.btn-outline-dark {
+  border: 1px solid;
+}
+
+/* --- Forzar color al botón de stock --- */
+.btn.btn-outline-primary {
+  background-color: #0d6efd; /* Color primary de Bootstrap */
+  color: #fff !important; /* Forzar texto blanco */
+  border-color: #0d6efd; /* Borde del mismo color */
+}
+
+.btn.btn-outline-primary:hover {
+  background-color: #0b5ed7; /* Color más oscuro al pasar el mouse */
+  border-color: #0a58ca;
+  color: #fff !important;
+}
+/* --- FIN CAMBIO ADICIONAL --- */
+
 
 .btn:hover {
   transform: scale(1.05);
@@ -45,6 +71,7 @@
 /* Colores según tipo de acción */
 .btn.orange {
   background-color: #ff9f43;
+  color: #fff;
 }
 
 .btn.orange:hover {
@@ -53,6 +80,7 @@
 
 .btn.purple {
   background-color: #a55eea;
+  color: #fff;
 }
 
 .btn.purple:hover {
@@ -61,6 +89,7 @@
 
 .btn.green {
   background-color: #2ecc71;
+  color: #fff;
 }
 
 .btn.green:hover {
@@ -78,6 +107,7 @@
 
 .btn.red {
   background-color: #e74c3c;
+  color: #fff;
 }
 
 .btn.red:hover {
@@ -116,17 +146,23 @@
   vertical-align: middle;
 }
 
-/* --- Indicador de poco stock --- */
-.low-stock {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background-color: #ffeaa7;
-  color: #d35400;
-  font-size: 12px;
-  font-weight: 600;
+/* --- REGLAS PARA "POCO STOCK" --- */
+.products-table tbody tr.low-stock-row td {
+  background-color: #fffbe6 !important; /* Fondo amarillo suave */
 }
+
+/* Resalta el número de stock en esa fila */
+.products-table tbody tr.low-stock-row .stock-cell span:first-child {
+  color: #d35400; /* Naranja oscuro */
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Color de hover para la fila de alerta */
+.products-table tbody tr.low-stock-row:hover td {
+  background-color: #fff8d9 !important; /* Amarillo hover un poco más oscuro */
+}
+
 
 /* --- Ajustes responsivos --- */
 @media (max-width: 768px) {
@@ -200,4 +236,9 @@
 /* Columna Foto: Que ocupe el menor espacio posible */
 .col-foto {
   width: 1%;
+}
+
+/* Alinear la celda de stock */
+.stock-cell {
+  position: relative;
 }
