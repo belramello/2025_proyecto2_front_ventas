@@ -139,7 +139,6 @@ function App() {
             element={
               <ProtectedRoute>
                 {" "}
-                {/* Aseguramos ProtectedRoute */}
                 <NavBar />
                 <PermissionGuard
                   requiredPermissions={[
@@ -155,7 +154,6 @@ function App() {
             }
           />
 
-          {/* Ruta Modificar Permisos de Rol */}
           <Route
             path="/roles/:id/permisos"
             element={
@@ -207,7 +205,7 @@ function App() {
                 <PermissionGuard
                   requiredPermissions={Permisos.MODIFICAR_MARCAS}
                 >
-                  <FormularioMarca /> {/* Reutilizamos el formulario */}
+                  <FormularioMarca />
                 </PermissionGuard>
               </ProtectedRoute>
             }
@@ -229,7 +227,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <NavBar />
-                <ProveedorScreen />
+                <PermissionGuard
+                  requiredPermissions={[
+                    Permisos.VER_PROVEEDOR,
+                    Permisos.CREAR_PROVEEDOR,
+                    Permisos.MODIFICAR_PROVEEDOR,
+                    Permisos.ELIMINAR_PROVEEDOR,
+                  ]}
+                >
+                  <ProveedorScreen />
+                </PermissionGuard>
               </ProtectedRoute>
             }
           />

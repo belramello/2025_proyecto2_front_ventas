@@ -21,6 +21,10 @@ export const Permisos = {
   VER_USUARIOS: 20,
   ELIMINAR_USUARIOS: 21,
   MODIFICAR_USUARIOS: 22,
+  CREAR_PROVEEDOR: 23,
+  MODIFICAR_PROVEEDOR: 24,
+  ELIMINAR_PROVEEDOR: 25,
+  VER_PROVEEDOR: 26,
 };
 
 export type PermisosType = (typeof Permisos)[keyof typeof Permisos];
