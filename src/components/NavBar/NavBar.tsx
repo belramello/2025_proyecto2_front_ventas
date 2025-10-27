@@ -108,17 +108,34 @@ function NavBarComponent() {
                 </a>
               </li>
             </PermissionGuard>
-
-            <li className="nav-item">
-              <a className="nav-link" href="/proveedores">
-                Proveedores
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="/lineas">
-                Lineas
-              </a>
-            </li>
+            <PermissionGuard
+              requiredPermissions={[
+                Permisos.CREAR_PROVEEDOR,
+                Permisos.VER_PROVEEDOR,
+                Permisos.MODIFICAR_PROVEEDOR,
+                Permisos.ELIMINAR_PROVEEDOR,
+              ]}
+            >
+              <li className="nav-item">
+                <a className="nav-link" href="/proveedores">
+                  Proveedores
+                </a>
+              </li>
+            </PermissionGuard>
+            <PermissionGuard
+              requiredPermissions={[
+                Permisos.CREAR_LINEAS,
+                Permisos.VER_LINEAS,
+                Permisos.MODIFICAR_LINEAS,
+                Permisos.ELIMINAR_LINEAS,
+              ]}
+            >
+              <li className="nav-item">
+                <a className="nav-link" href="/lineas">
+                  Lineas
+                </a>
+              </li>
+            </PermissionGuard>
 
             <PermissionGuard requiredPermissions={[Permisos.VER_LOGS]}>
               <li className="nav-item">

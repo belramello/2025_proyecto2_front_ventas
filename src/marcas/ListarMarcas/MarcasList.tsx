@@ -6,7 +6,10 @@ import Pagination from "../../components/Pagination"; // Asegurate que esté imp
 import LoadingSpinner from "../../components/LoadingSpinner";
 import ErrorMessage from "../../components/ErrorMessage";
 import { MarcasService } from "../../services/marcasService";
-import type { Marca, MarcasPaginatedResponse } from "../interfaces/marca.interface";
+import type {
+  Marca,
+  MarcasPaginatedResponse,
+} from "../interfaces/marca.interface";
 import "./MarcasList.css";
 import { PermissionGuard } from "../../auth/guards/permisos-guard";
 import { Permisos } from "../../auth/enums/permisos";
@@ -27,9 +30,13 @@ const MarcasList = () => {
   const fetchMarcas = useCallback(async (pageNumber: number) => {
     setLoading(true);
     setError(null);
-    console.log(`[MarcasList] Iniciando fetchMarcas para página ${pageNumber}...`); // Log Inicio
+    console.log(
+      `[MarcasList] Iniciando fetchMarcas para página ${pageNumber}...`
+    ); // Log Inicio
     try {
-      const data: MarcasPaginatedResponse = await MarcasService.getMarcas(pageNumber);
+      const data: MarcasPaginatedResponse = await MarcasService.getMarcas(
+        pageNumber
+      );
       console.log("[MarcasList] Datos paginados recibidos:", data); // Log Datos Crudos
 
       if (data && Array.isArray(data.marcas)) {
@@ -37,13 +44,15 @@ const MarcasList = () => {
         setLastPage(data.lastPage);
         setPage(data.page);
       } else {
-        console.error("La respuesta paginada no tiene el formato esperado:", data);
+        console.error(
+          "La respuesta paginada no tiene el formato esperado:",
+          data
+        );
         setError("Error: formato de datos inesperado.");
         setMarcas([]);
         setPage(1);
         setLastPage(1);
       }
-
     } catch (err) {
       console.error("[MarcasList] Error DETALLADO en fetchMarcas:", err); // Log Error
       setError("Error cargando marcas. Por favor, intentá de nuevo.");
@@ -73,7 +82,9 @@ const MarcasList = () => {
         }
       } catch (error: any) {
         console.error("Error al eliminar la marca:", error);
-        setError(error.response?.data?.message || "Error al eliminar la marca.");
+        setError(
+          error.response?.data?.message || "Error al eliminar la marca."
+        );
       } finally {
         setLoading(false);
       }
@@ -111,7 +122,9 @@ const MarcasList = () => {
             ) : loading ? (
               <LoadingSpinner />
             ) : marcas.length === 0 && page === 1 ? (
-              <p className="text-center text-muted mt-4">No hay marcas registradas.</p>
+              <p className="text-center text-muted mt-4">
+                No hay marcas registradas.
+              </p>
             ) : (
               <div className="table-responsive">
                 <table className="table table-striped table-bordered table-hover text-center align-middle">
@@ -121,22 +134,39 @@ const MarcasList = () => {
                       <th scope="col">Nombre</th>
                       <th scope="col">Descripción</th>
                       <th scope="col">Productos Asociados</th>
-                      <th scope="col">Editar</th>
-                      <th scope="col">Eliminar</th>
+                      <PermissionGuard
+                        requiredPermissions={[Permisos.MODIFICAR_MARCAS]}
+                      >
+                        <th scope="col">Editar</th>
+                      </PermissionGuard>
+                      <PermissionGuard
+                        requiredPermissions={[Permisos.ELIMINAR_MARCAS]}
+                      >
+                        <th scope="col">Eliminar</th>
+                      </PermissionGuard>
                     </tr>
                   </thead>
                   <tbody>
                     {marcas.map((marca) => {
                       // --- LOG: DATOS PARA CADA FILA ---
                       // AGREGAR ESTE LOG DE NUEVO
-                      console.log(`[MarcasList] Renderizando fila para marca ID ${marca.id}:`, marca);
+                      console.log(
+                        `[MarcasList] Renderizando fila para marca ID ${marca.id}:`,
+                        marca
+                      );
                       // ---------------------------------
 
-                      const logoPath = marca.logoUrl || '';
+                      const logoPath = marca.logoUrl || "";
                       // Usar logoUrl si viene del mapper, sino construirlo
-                      const logoUrl = marca.logoUrl || (marca.logoUrl
-                        ? `${API_URL}/${logoPath.startsWith('uploads') ? logoPath : `uploads/logos/${logoPath}`}`
-                        : "/placeholder-logo.jpg"); // Asegurate que la extensión coincida
+                      const logoUrl =
+                        marca.logoUrl ||
+                        (marca.logoUrl
+                          ? `${API_URL}/${
+                              logoPath.startsWith("uploads")
+                                ? logoPath
+                                : `uploads/logos/${logoPath}`
+                            }`
+                          : "/placeholder-logo.jpg"); // Asegurate que la extensión coincida
 
                       return (
                         <tr key={marca.id}>
@@ -145,30 +175,38 @@ const MarcasList = () => {
                               src={logoUrl}
                               alt={`Logo ${marca.nombre}`}
                               className="marca-logo-thumbnail"
-                              onError={(e) => { e.currentTarget.src = "/placeholder-logo.jpg"; }} // Asegurate que la extensión coincida
+                              onError={(e) => {
+                                e.currentTarget.src = "/placeholder-logo.jpg";
+                              }} // Asegurate que la extensión coincida
                             />
                           </td>
                           <td>{marca.nombre}</td>
                           <td>{marca.descripcion || "-"}</td>
                           {/* Mostrar productos asociados */}
                           <td>{marca.productosAsociados}</td>
-                          <td>
-                            {/* TODO: Usar Permisos.MODIFICAR_MARCAS */}
-                            <PermissionGuard requiredPermissions={Permisos.MODIFICAR_MARCAS}>
+                          <PermissionGuard
+                            requiredPermissions={Permisos.MODIFICAR_MARCAS}
+                          >
+                            <td>
                               <PrimaryButton
                                 label="EDITAR"
                                 variant="warning"
-                               onClick={() => navigate(`/edit-marca/${marca.id}`)} // TODO: Navegar a ruta de edición
+                                onClick={() =>
+                                  navigate(`/edit-marca/${marca.id}`)
+                                } // TODO: Navegar a ruta de edición
                               />
-                            </PermissionGuard>
-                          </td>
-                          <td>
-                            {/* TODO: Usar Permisos.ELIMINAR_MARCAS */}
-                            <PermissionGuard requiredPermissions={Permisos.ELIMINAR_MARCAS}>
+                            </td>
+                          </PermissionGuard>
+                          <PermissionGuard
+                            requiredPermissions={Permisos.ELIMINAR_MARCAS}
+                          >
+                            <td>
                               {/* Verificar si productosAsociados existe y es mayor a 0 */}
-                              {typeof marca.productosAsociados === 'number' && marca.productosAsociados > 0 ? (
+                              {typeof marca.productosAsociados === "number" &&
+                              marca.productosAsociados > 0 ? (
                                 <span className="text-eliminar-advertencia">
-                                  No se puede eliminar porque tiene productos asociados
+                                  No se puede eliminar porque tiene productos
+                                  asociados
                                 </span>
                               ) : (
                                 <PrimaryButton
@@ -177,8 +215,8 @@ const MarcasList = () => {
                                   onClick={() => handleDelete(marca.id)}
                                 />
                               )}
-                            </PermissionGuard>
-                          </td>
+                            </td>
+                          </PermissionGuard>
                         </tr>
                       );
                     })}
@@ -191,14 +229,13 @@ const MarcasList = () => {
 
         {/* --- Componente Pagination --- */}
         {!loading && lastPage > 1 && (
-           <Pagination
-             currentPage={page}
-             lastPage={lastPage}
-             onPageChange={(newPage) => setPage(newPage)}
-           />
+          <Pagination
+            currentPage={page}
+            lastPage={lastPage}
+            onPageChange={(newPage) => setPage(newPage)}
+          />
         )}
         {/* --- Fin Pagination --- */}
-
       </PermissionGuard>
     </div>
   );
